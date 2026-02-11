@@ -3,8 +3,12 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:  # Allow manual triggers
 
 name: R-CMD-check
+
+permissions:
+  contents: read
 
 jobs:
   R-CMD-check:
@@ -45,3 +49,4 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+          args: 'c("--no-manual", "--as-cran")'
