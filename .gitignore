@@ -1,0 +1,17 @@
+.Rhistory
+.Rdata
+.RData
+.Ruserdata
+.Rproj.user
+*.tar.gz
+*.Rcheck/
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+renv/library/
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
