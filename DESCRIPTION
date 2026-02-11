@@ -1,11 +1,33 @@
 Package: betydata
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Type: Package
+Title: Public Data from the BETYdb Database
+Version: 0.1.0
+Authors@R: c(
+    person("David", "LeBauer", email = "dlebauer@arizona.edu", role = c("aut", "cre")),
+    person("Akash B V", email = "www.divinehome12@gmail.com", role = "aut"),
+    person("University of Illinois, NCSA", role = "cph")
+    )
+Description: An R data package providing offline access to public data from 
+    the BETYdb database (betydb.org). Includes plant traits, crop yields, 
+    and supporting metadata for bioenergy and ecosystem research. This 
+    package enables reproducible analyses without requiring database access.
+License: BSD_3_clause + file LICENSE
+URL: https://github.com/PecanProject/betydata,
+     https://betydb.org
+BugReports: https://github.com/PecanProject/betydata/issues
+Depends: 
+    R (>= 3.5.0)
+Suggests:
+    arrow,
+    dplyr,
+    ggplot2,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Encoding: UTF-8
+LazyData: true
+LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
