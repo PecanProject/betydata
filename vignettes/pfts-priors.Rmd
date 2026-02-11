@@ -1,0 +1,265 @@
+---
+title: "Working with Plant Functional Types and Priors"
+subtitle: "Bayesian Model Parameterization using betydata"
+author: "Akash B V"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Working with Plant Functional Types and Priors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Introduction
+
+This vignette demonstrates how to work with Plant Functional Types (PFTs) and Bayesian prior distributions using `betydata`. These are central to the PEcAn ecosystem modeling workflow.
+
+Key concepts:
+
+* **PFT (Plant Functional Type)**: A grouping of species with similar functional characteristics used for ecosystem modeling
+* **Prior**: A probability distribution encoding expert knowledge about a parameter before observing data
+* **Posterior**: Updated distribution after combining prior with observations
+
+## Setup
+```{r}
+library(betydata)
+library(dplyr)
+library(ggplot2)
+
+# Load PFT and prior datasets
+data(pfts)
+data(priors)
+data(variables)
+data(pfts_species)
+data(pfts_priors)
+data(species)
+data(traitsview)
+```
+
+## Understanding PFTs
+
+### Available PFTs
+```{r}
+# Number of PFTs
+nrow(pfts)
+
+# PFT structure
+glimpse(pfts)
+
+# Common PFT names
+pfts |>
+  count(name, sort = TRUE) |>
+  head(20)
+```
+
+### Species Membership
+
+Each PFT contains species assigned by researchers:
+```{r}
+# How many species per PFT?
+species_per_pft <- pfts_species |>
+  count(pft_id, name = "n_species")
+
+summary(species_per_pft$n_species)
+
+# Find species in a specific PFT (e.g. Miscanthus)
+miscanthus_pft <- pfts |> filter(grepl("miscanthus", name, ignore.case = TRUE))
+
+if (nrow(miscanthus_pft) > 0) {
+  miscanthus_species <- pfts_species |>
+    filter(pft_id %in% miscanthus_pft$id) |>
+    left_join(species |> select(id, scientificname), by = c("specie_id" = "id"))
+  
+  print(miscanthus_species)
+}
+```
+
+## Working with Priors
+
+### Prior Distribution Structure
+```{r}
+glimpse(priors)
+
+# Distribution types used
+priors |> count(distn, sort = TRUE)
+
+# Variables with priors
+priors |>
+  left_join(variables |> select(id, name), by = c("variable_id" = "id")) |>
+  count(name, sort = TRUE) |>
+  head(15)
+```
+
+### Visualizing a Prior Distribution
+```{r}
+# Get SLA priors first
+sla_var_id <- variables |> 
+  filter(name == "SLA") |> 
+  pull(id)
+
+sla_priors <- priors |>
+  filter(variable_id %in% sla_var_id)
+
+# Function to evaluate any prior distribution
+eval_prior_density <- function(p, x = NULL) {
+  # Generate appropriate x range if not provided
+  if (is.null(x)) {
+    x <- switch(p$distn,
+      "gamma" = seq(0, qgamma(0.999, p$parama, p$paramb), length.out = 1000),
+      "norm" = seq(p$parama - 4*p$paramb, p$parama + 4*p$paramb, length.out = 1000),
+      "lnorm" = seq(0.001, qlnorm(0.999, p$parama, p$paramb), length.out = 1000),
+      "beta" = seq(0.001, 0.999, length.out = 1000),
+      "unif" = seq(p$parama, p$paramb, length.out = 1000),
+      "weibull" = seq(0, qweibull(0.999, p$parama, p$paramb), length.out = 1000),
+      "exp" = seq(0, qexp(0.999, p$parama), length.out = 1000),
+      seq(0, 100, length.out = 1000)
+    )
+  }
+  
+  y <- switch(p$distn,
+    "gamma"   = dgamma(x, shape = p$parama, rate = p$paramb),
+    "norm"    = dnorm(x, mean = p$parama, sd = p$paramb),
+    "lnorm"   = dlnorm(x, meanlog = p$parama, sdlog = p$paramb),
+    "beta"    = dbeta(x, shape1 = p$parama, shape2 = p$paramb),
+    "unif"    = dunif(x, min = p$parama, max = p$paramb),
+    "weibull" = dweibull(x, shape = p$parama, scale = p$paramb),
+    "exp"     = dexp(x, rate = p$parama),
+    rep(0, length(x))  # fallback
+  )
+  
+  list(x = x, y = y)
+}
+
+# Plot if SLA priors exist
+if (nrow(sla_priors) > 0) {
+  p <- sla_priors[1, ]
+  result <- eval_prior_density(p)
+  
+  ggplot(data.frame(x = result$x, y = result$y), aes(x, y)) +
+    geom_line(linewidth = 1) +
+    labs(
+      title = "Prior distribution for SLA",
+      subtitle = paste0(p$distn, "(", round(p$parama, 2), ", ", round(p$paramb, 2), ")"),
+      x = "SLA (m2/kg)",
+      y = "Density"
+    ) +
+    theme_minimal()
+}
+```
+
+## Linking PFTs to Priors
+
+The `pfts_priors` table connects PFTs to their associated prior distributions:
+```{r}
+# Structure of the mapping
+glimpse(pfts_priors)
+
+# Priors per PFT
+priors_per_pft <- pfts_priors |>
+  count(pft_id, name = "n_priors")
+
+summary(priors_per_pft$n_priors)
+
+# Example: Find all priors for a specific PFT
+if (exists("miscanthus_pft") && nrow(miscanthus_pft) > 0) {
+  pft_id <- miscanthus_pft$id[1]
+  
+  pft_priors <- pfts_priors |>
+    filter(pft_id == !!pft_id) |>
+    left_join(priors, by = c("prior_id" = "id")) |>
+    left_join(variables |> select(id, name, units), by = c("variable_id" = "id"))
+  
+  pft_priors |>
+    select(name, units, distn, parama, paramb)
+}
+```
+
+## Comparing Prior to Data
+
+A key use case: compare the prior distribution to observed data.
+```{r}
+# SLA observations for grasses
+sla_data <- traitsview |>
+  filter(
+    trait == "SLA",
+    genus %in% c("Miscanthus", "Panicum"),
+    !is.na(mean),
+    checked >= 0
+  ) |>
+  pull(mean)
+
+if (length(sla_data) > 10 && exists("x") && exists("y")) {
+  # Create plot comparing prior to histogram of data
+  ggplot() +
+    geom_histogram(
+      data = data.frame(sla = sla_data),
+      aes(x = sla, y = after_stat(density)),
+      bins = 30, fill = "steelblue", alpha = 0.6
+    ) +
+    geom_line(
+      data = data.frame(x = x, y = y),
+      aes(x, y),
+      color = "red", linewidth = 1, linetype = "dashed"
+    ) +
+    labs(
+      title = "SLA: Prior Distribution vs. Observed Data",
+      subtitle = "Red dashed = prior, Blue = observed data (Miscanthus + Panicum)",
+      x = "SLA (m2/kg)",
+      y = "Density"
+    ) +
+    xlim(0, 80)
+}
+```
+
+## Extracting Data for a PFT
+
+A common workflow: get all trait data for species in a given PFT.
+```{r}
+# Function to get trait data for a PFT
+get_pft_data <- function(pft_name, trait_name = NULL) {
+  # Find PFT id
+  pft_id <- pfts |> 
+    filter(grepl(pft_name, name, ignore.case = TRUE)) |>
+    pull(id)
+  
+  if (length(pft_id) == 0) {
+    warning("PFT not found: ", pft_name)
+    return(NULL)
+  }
+  
+  # Get species in this PFT
+  spp_ids <- pfts_species |>
+    filter(pft_id %in% !!pft_id) |>
+    pull(specie_id)
+  
+  # Filter traitsview
+  result <- traitsview |>
+    filter(species_id %in% spp_ids)
+  
+  if (!is.null(trait_name)) {
+    result <- result |> filter(trait == trait_name)
+  }
+  
+  result
+}
+
+# Example usage
+willow_sla <- get_pft_data("salix", "SLA")
+if (!is.null(willow_sla) && nrow(willow_sla) > 0) {
+  summary(willow_sla$mean)
+}
+```
+
+## Session Info
+```{r}
+sessionInfo()
+```

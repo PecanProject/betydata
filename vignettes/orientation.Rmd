@@ -1,0 +1,188 @@
+---
+title: "Getting Started with betydata"
+subtitle: "Offline Access to BETYdb Plant Trait Data"
+author: "Akash B V"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with betydata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+## Introduction
+
+The `betydata` package provides offline access to public data from BETYdb, the Biofuel Ecophysiological Traits and Yields database. This vignette demonstrates the basics of loading and exploring the packaged datasets.
+
+**Key features:**
+
+-   No database connection required
+-   Versioned, reproducible data snapshots
+-   Pre-joined, analysis-ready data frames
+-   Compatible with tidyverse workflows
+
+## Loading the Package
+
+```{r load-package}
+library(betydata)
+```
+
+## Available Datasets
+
+The package exports 16 datasets. List them all:
+
+```{r list-datasets}
+data(package = "betydata")$results[, c("Item", "Title")]
+```
+
+## The Primary Dataset: traitsview
+
+The `traitsview` dataset is a denormalized view combining traits and yields with their associated metadata:
+
+```{r explore-traitsview}
+data(traitsview)
+
+# Dimensions
+dim(traitsview)
+
+# Column names
+names(traitsview)
+```
+
+### Key Columns
+
+| Column           | Description                                   | Type      |
+|----------------|-----------------------------------------|----------------|
+| `trait`          | Variable name (e.g. "SLA", "Vcmax", "Ayield") | character |
+| `mean`           | Observed value                                | numeric   |
+| `units`          | Measurement units                             | character |
+| `scientificname` | Species scientific name                       | character |
+| `sitename`       | Research site name                            | character |
+| `author`         | Citation author                               | character |
+| `checked`        | QA/QC status (0 = unchecked, 1 = verified)    | integer   |
+
+## Basic Exploration
+
+```{r basic-exploration}
+# Preview
+head(traitsview[, c("trait", "mean", "units", "scientificname", "author")])
+
+# Most common traits
+if (requireNamespace("dplyr", quietly = TRUE)) {
+  library(dplyr)
+  traitsview |>
+    count(trait, sort = TRUE) |>
+    head(15)
+}
+```
+
+## Filtering by QA/QC Status
+
+```{r qa-filtering}
+# Distribution of checked values
+table(traitsview$checked, useNA = "ifany")
+
+# Work with verified records only
+verified <- traitsview[traitsview$checked == 1, ]
+nrow(verified)
+```
+
+## Support Tables
+
+### Species Taxonomy
+
+```{r species}
+data(species)
+dim(species)
+head(species[, c("id", "scientificname", "genus", "commonname")])
+```
+
+### Variables (Trait Definitions)
+
+```{r variables}
+data(variables)
+
+# Common model parameters
+variables[variables$name %in% c("SLA", "Vcmax", "leaf_respiration_rate_m2"), 
+          c("name", "units", "description")]
+```
+
+### Sites
+
+```{r sites}
+data(sites)
+
+# Sites with climate data
+sites_with_climate <- sites[!is.na(sites$mat) & !is.na(sites$map), ]
+nrow(sites_with_climate)
+```
+
+## Example: Bioenergy Crop Yields
+
+```{r bioenergy-yields}
+library(dplyr)
+
+# Define bioenergy genera
+bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Salix", "Saccharum")
+
+# Extract yield data
+yields <- traitsview |>
+  filter(
+    trait == "Ayield",
+    genus %in% bioenergy_genera,
+    !is.na(mean)
+  ) |>
+  select(genus, mean, units, sitename, author, citation_year, lat, lon)
+
+# Summary by genus
+yields |>
+  group_by(genus) |>
+  summarise(
+    n = n(),
+    mean_yield = mean(mean, na.rm = TRUE),
+    sd_yield = sd(mean, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+## Working with Plant Functional Types (PFTs)
+
+```{r pfts-example}
+data(pfts)
+data(pfts_species)
+
+# Find PFTs for common bioenergy species
+data(species)
+miscanthus_sp <- species |> 
+  filter(genus == "Miscanthus") |>
+  pull(id)
+
+# Which PFTs include Miscanthus species?
+pfts_species |>
+  filter(specie_id %in% miscanthus_sp) |>
+  left_join(pfts |> select(id, name), by = c("pft_id" = "id")) |>
+  distinct(name)
+```
+
+## Next Steps
+
+See additional vignettes for:
+
+-   `vignette("manuscript")` — Reproduce key figures from LeBauer et al. (2018)
+-   `vignette("sql-analogs")` — Offline equivalents of common SQL queries
+-   `vignette("pfts-priors")` — Working with PFTs and Bayesian priors
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```

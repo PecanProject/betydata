@@ -1,0 +1,210 @@
+---
+title: "Reproducing BETYdb Manuscript Analyses"
+subtitle: "Offline Replication using betydata"
+author: "Akash B V"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Reproducing BETYdb Manuscript Analyses}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+This vignette reproduces key analyses from the BETYdb manuscript (LeBauer et al., 2018) using the offline `betydata` package. The original analyses queried a live PostgreSQL database; here we demonstrate equivalent results using packaged data.
+
+**Citation:** LeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. *GCB Bioenergy*. https://doi.org/10.1111/gcbb.12420
+
+## Setup
+```{r load-packages}
+library(betydata)
+library(dplyr)
+library(ggplot2)
+
+# Set theme
+theme_set(theme_bw(base_size = 10, base_family = "sans"))
+```
+
+## Figure 1: Data Summary by Genus
+
+The manuscript presents trait and yield counts for bioenergy genera.
+```{r genus-summary}
+data(traitsview)
+
+# Define focal genera (from manuscript)
+bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Saccharum", 
+                      "Pinus", "Salix", "Robinia")
+
+# Compute counts by genus and result type
+genus_summary <- traitsview |>
+  filter(genus %in% bioenergy_genera, checked >= 0) |>
+  group_by(genus) |>
+  summarise(
+    n_traits = sum(result_type == "traits", na.rm = TRUE),
+    n_yields = sum(result_type == "yields", na.rm = TRUE),
+    total = n(),
+    .groups = "drop"
+  ) |>
+  arrange(desc(total))
+
+genus_summary
+```
+
+### Comparison Notes
+
+The counts differ slightly from the published manuscript because:
+
+1. betydata excludes `checked = -1` (failed QA/QC records)
+2. Snapshot date: betydata was exported on `r format(Sys.Date(), "%Y-%m-%d")`; the manuscript used 2017 data
+3. Access level filtering: betydata includes only public data (`access_level < 4`)
+
+## Figure 2: Trait Records by Genus
+```{r trait-counts-plot, fig.height = 6}
+# Key traits analyzed in manuscript
+focal_traits <- c("Ayield", "leafN", "LAI", "SLA", "Vcmax", 
+                  "leaf_respiration_rate_m2", "Jmax")
+
+trait_counts <- traitsview |>
+  filter(
+    genus %in% bioenergy_genera,
+    trait %in% focal_traits,
+    checked >= 0
+  ) |>
+  count(genus, trait, name = "n")
+
+ggplot(trait_counts, aes(x = genus, y = n, fill = trait)) +
+  geom_col(position = "dodge") +
+  scale_y_log10(breaks = c(1, 10, 100, 1000, 10000)) +
+  coord_flip() +
+  labs(
+    x = NULL,
+    y = "Number of Records (log scale)",
+    fill = "Trait"
+  ) +
+  theme(
+    legend.position = "right",
+    panel.grid.minor = element_blank()
+  )
+```
+
+## Figure 3: Trait Distributions
+
+The manuscript displays histograms of trait values across genera.
+```{r trait-distributions, fig.height = 8}
+# Select key traits for visualization
+hist_traits <- c("Ayield", "SLA", "Vcmax", "LAI")
+
+trait_data <- traitsview |>
+  filter(
+    trait %in% hist_traits,
+    !is.na(mean),
+    checked >= 0,
+    genus %in% c(bioenergy_genera, "Other")
+  ) |>
+  mutate(
+    genus = if_else(genus %in% bioenergy_genera, genus, "Other"),
+    genus = factor(genus)
+  )
+
+ggplot(trait_data, aes(x = mean, fill = genus)) +
+  geom_histogram(bins = 25, alpha = 0.7) +
+  facet_wrap(~trait, scales = "free", ncol = 2) +
+  labs(
+    x = "Observed Value",
+    y = "Count",
+    fill = "Genus"
+  ) +
+  theme(
+    legend.position = "bottom",
+    strip.background = element_blank()
+  )
+```
+
+## Table 1: Database Contents Summary
+```{r contents-table}
+contents <- traitsview |>
+  filter(checked >= 0) |>
+  group_by(genus) |>
+  summarise(
+    n_traits = sum(result_type == "traits", na.rm = TRUE),
+    n_yields = sum(result_type == "yields", na.rm = TRUE),
+    total = n(),
+    .groups = "drop"
+  ) |>
+  filter(total >= 100) |>  # Genera with substantial data
+  arrange(desc(total))
+
+# Top 15 genera
+knitr::kable(
+  head(contents, 15),
+  col.names = c("Genus", "Traits", "Yields", "Total"),
+  caption = "Data records by genus (top 15)"
+)
+```
+
+## Yield Meta-Analysis Subset
+
+The manuscript includes a meta-analysis of Miscanthus and Switchgrass yields. Here we extract the relevant subset:
+```{r yield-meta-analysis}
+# following manuscript criteria:
+# - Miscanthus and Panicum only
+# - yield trait (Ayield)
+# - with site coordinates
+
+yield_ma <- traitsview |>
+  filter(
+    genus %in% c("Miscanthus", "Panicum"),
+    trait == "Ayield",
+    !is.na(lat),
+    !is.na(lon),
+    !is.na(mean),
+    checked >= 0
+  ) |>
+  select(
+    id, genus, scientificname, mean, units, 
+    n, stat, statname, lat, lon,
+    author, citation_year, sitename, site_id
+  )
+
+yield_ma |>
+  group_by(genus) |>
+  summarise(
+    n_records = n(),
+    mean_yield = mean(mean),
+    sd_yield = sd(mean),
+    n_sites = n_distinct(site_id),
+    .groups = "drop"
+  )
+```
+
+## Geographic Distribution
+```{r geographic-map, fig.width = 8, fig.height = 5}
+# Simple map of yield observation locations
+ggplot(yield_ma, aes(x = lon, y = lat, color = genus)) +
+  geom_point(alpha = 0.6, size = 2) +
+  borders("world", colour = "grey70", fill = NA) +
+  coord_quickmap(xlim = c(-130, 50), ylim = c(20, 70)) +
+  labs(
+    x = "Longitude",
+    y = "Latitude",
+    color = "Genus",
+    title = "Miscanthus and Switchgrass Yield Observations"
+  ) +
+  theme_minimal()
+```
+
+## Session Info
+```{r session-info}
+sessionInfo()
+```

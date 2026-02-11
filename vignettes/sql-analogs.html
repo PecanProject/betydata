@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Akash B V" />
+
+<meta name="date" content="2026-02-11" />
+
+<title>Offline Analogs of BETYdb SQL Queries</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Offline Analogs of BETYdb SQL Queries</h1>
+<h3 class="subtitle">Common Database Queries Using betydata</h3>
+<h4 class="author">Akash B V</h4>
+<h4 class="date">2026-02-11</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This vignette demonstrates how to perform common BETYdb queries using
+<code>betydata</code> instead of connecting to a PostgreSQL
+database.</p>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(betydata)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># Load primary datasets</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">data</span>(traitsview)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">data</span>(species)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">data</span>(sites)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">data</span>(managements)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">data</span>(treatments)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="fu">data</span>(managements_treatments)</span></code></pre></div>
+</div>
+<div id="example-1-query-miscanthus-yield-data" class="section level2">
+<h2>Example 1: Query Miscanthus Yield Data</h2>
+<div id="original-sql" class="section level3">
+<h3>Original SQL</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="kw">SELECT</span> yields.<span class="kw">id</span>, yields.mean, yields.<span class="dt">date</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>       sites.sitename, species.scientificname</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="kw">FROM</span> yields</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> sites <span class="kw">ON</span> yields.site_id <span class="op">=</span> sites.<span class="kw">id</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> species <span class="kw">ON</span> yields.specie_id <span class="op">=</span> species.<span class="kw">id</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="kw">WHERE</span> species.genus <span class="op">=</span> <span class="st">&#39;Miscanthus&#39;</span>;</span></code></pre></div>
+</div>
+<div id="betydata-equivalent" class="section level3">
+<h3>betydata Equivalent</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>miscanthus_yields <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    genus <span class="sc">==</span> <span class="st">&quot;Miscanthus&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    trait <span class="sc">==</span> <span class="st">&quot;Ayield&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="fu">select</span>(id, mean, date, sitename, scientificname)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="fu">head</span>(miscanthus_yields)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 5</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;      id  mean date                                  sitename      scientificname</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;                                 &lt;chr&gt;         &lt;chr&gt;         </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 1 16738    41 Week of Dec 2, 2007 (America/Chicago) Dixon Spring… Miscanthus × …</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 2 16737    39 Week of Dec 2, 2007 (America/Chicago) Dixon Spring… Miscanthus × …</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 3 16736    38 Week of Dec 2, 2007 (America/Chicago) Dixon Spring… Miscanthus × …</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 4 16735    40 Week of Dec 2, 2007 (America/Chicago) Dixon Spring… Miscanthus × …</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 5 16751    18 Week of Dec 2, 2009 (America/Chicago) Dixon Spring… Miscanthus × …</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 6 16746    46 Week of Dec 3, 2008 (America/Chicago) Dixon Spring… Miscanthus × …</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="fu">nrow</span>(miscanthus_yields)</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; [1] 1021</span></span></code></pre></div>
+</div>
+</div>
+<div id="example-2-yield-data-with-experimental-treatments" class="section level2">
+<h2>Example 2: Yield Data with Experimental Treatments</h2>
+<div id="original-sql-pattern" class="section level3">
+<h3>Original SQL Pattern</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="kw">SELECT</span> yields.<span class="op">*</span>, treatments.name <span class="kw">AS</span> treatment_name,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>       managements.mgmttype, managements.<span class="kw">level</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="kw">FROM</span> yields</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> treatments <span class="kw">ON</span> yields.treatment_id <span class="op">=</span> treatments.<span class="kw">id</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> managements_treatments <span class="kw">ON</span> treatments.<span class="kw">id</span> <span class="op">=</span> managements_treatments.treatment_id</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> managements <span class="kw">ON</span> managements_treatments.management_id <span class="op">=</span> managements.<span class="kw">id</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="kw">WHERE</span> species.genus <span class="kw">IN</span> (<span class="st">&#39;Miscanthus&#39;</span>, <span class="st">&#39;Panicum&#39;</span>);</span></code></pre></div>
+</div>
+<div id="betydata-equivalent-1" class="section level3">
+<h3>betydata Equivalent</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Join managements with treatments</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>mgmt_treat <span class="ot">&lt;-</span> managements_treatments <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    managements <span class="sc">|&gt;</span> <span class="fu">select</span>(id, mgmttype, level, units, date),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;management_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  )</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co"># Grass yields with management info</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>grass_yields <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    genus <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Miscanthus&quot;</span>, <span class="st">&quot;Panicum&quot;</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    trait <span class="sc">==</span> <span class="st">&quot;Ayield&quot;</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>  <span class="fu">left_join</span>(mgmt_treat, <span class="at">by =</span> <span class="st">&quot;treatment_id&quot;</span>, <span class="at">relationship =</span> <span class="st">&quot;many-to-many&quot;</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co"># Summarize by management type</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>grass_yields <span class="sc">|&gt;</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(mgmttype)) <span class="sc">|&gt;</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>  <span class="fu">count</span>(genus, mgmttype, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; # A tibble: 18 × 3</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt;    genus      mgmttype              n</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;      &lt;chr&gt;             &lt;int&gt;</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt;  1 Panicum    harvest            3330</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt;  2 Panicum    fertilizer_N       2479</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt;  3 Panicum    fertilizer_N_rate  1906</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt;  4 Panicum    planting           1855</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co">#&gt;  5 Panicum    irrigation         1550</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="co">#&gt;  6 Miscanthus planting           1479</span></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a><span class="co">#&gt;  7 Miscanthus irrigation         1477</span></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co">#&gt;  8 Miscanthus fertilizer_N        850</span></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="co">#&gt;  9 Miscanthus fertilizer_N_rate   686</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a><span class="co">#&gt; 10 Miscanthus harvest             602</span></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co">#&gt; 11 Miscanthus fertilizer_P        530</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="co">#&gt; 12 Miscanthus fertilizer_K        515</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="co">#&gt; 13 Panicum    seeding             130</span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a><span class="co">#&gt; 14 Panicum    fertilizer_K_rate    26</span></span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a><span class="co">#&gt; 15 Panicum    fertilizer_P_rate    26</span></span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a><span class="co">#&gt; 16 Panicum    burned                8</span></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a><span class="co">#&gt; 17 Miscanthus fertilizer_K_rate     6</span></span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a><span class="co">#&gt; 18 Miscanthus row_spacing           6</span></span></code></pre></div>
+</div>
+</div>
+<div id="example-3-extract-nitrogen-fertilization-rates" class="section level2">
+<h2>Example 3: Extract Nitrogen Fertilization Rates</h2>
+<div id="original-dbplyr-pattern" class="section level3">
+<h3>Original dbplyr Pattern</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>nitrogen <span class="ot">&lt;-</span> managements <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">filter</span>(mgmttype <span class="sc">==</span> <span class="st">&quot;fertilizer_N_rate&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">select</span>(treatment_id, <span class="at">nrate =</span> level)</span></code></pre></div>
+</div>
+<div id="betydata-equivalent-2" class="section level3">
+<h3>betydata Equivalent</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Get nitrogen rates per treatment</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>nitrogen_rates <span class="ot">&lt;-</span> managements <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">filter</span>(mgmttype <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;fertilizer_N&quot;</span>, <span class="st">&quot;fertilizer_N_rate&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    managements_treatments <span class="sc">|&gt;</span> <span class="fu">select</span>(management_id, treatment_id),</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span> <span class="ot">=</span> <span class="st">&quot;management_id&quot;</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">select</span>(treatment_id, <span class="at">nrate =</span> level, units)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co"># Join with yield data</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>yields_with_n <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>    trait <span class="sc">==</span> <span class="st">&quot;Ayield&quot;</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>    genus <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Miscanthus&quot;</span>, <span class="st">&quot;Panicum&quot;</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>  <span class="fu">left_join</span>(nitrogen_rates, <span class="at">by =</span> <span class="st">&quot;treatment_id&quot;</span>, <span class="at">relationship =</span> <span class="st">&quot;many-to-many&quot;</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co"># Summary</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>yields_with_n <span class="sc">|&gt;</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(nrate)) <span class="sc">|&gt;</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>  <span class="fu">group_by</span>(genus) <span class="sc">|&gt;</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>    <span class="at">mean_N =</span> <span class="fu">mean</span>(nrate, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>    <span class="at">mean_yield =</span> <span class="fu">mean</span>(mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>  )</span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt;   genus          n mean_N mean_yield</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;int&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt; 1 Miscanthus  1536   71.6       11.7</span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt; 2 Panicum     4385  105.        10.7</span></span></code></pre></div>
+</div>
+</div>
+<div id="example-4-site-level-aggregation" class="section level2">
+<h2>Example 4: Site-Level Aggregation</h2>
+<div id="common-use-case" class="section level3">
+<h3>Common Use Case</h3>
+<p>Aggregate trait data by site for spatial analysis.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>site_summary <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(lat), <span class="sc">!</span><span class="fu">is.na</span>(lon)) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">group_by</span>(site_id, sitename, lat, lon) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">n_records =</span> <span class="fu">n</span>(),</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">n_traits =</span> <span class="fu">n_distinct</span>(trait),</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="at">n_species =</span> <span class="fu">n_distinct</span>(species_id),</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  )</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co"># Top 10 most data-rich sites</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>site_summary <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_records)) <span class="sc">|&gt;</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 7</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt;       site_id sitename                  lat     lon n_records n_traits n_species</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt;         &lt;int&gt; &lt;chr&gt;                   &lt;dbl&gt;   &lt;dbl&gt;     &lt;int&gt;    &lt;int&gt;     &lt;int&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt;  1 2000000004 Barrow Environmental …  71.3  -157.        6723        8        12</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt;  2         76 EBI Energy farm         40.1   -88.2       2357       12        32</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt;  3        274 Ihinger Hof             48.7     8.92      1253       11         7</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt;  4 2000000005 Kougarok (NGEE-Arctic)  65.2  -165.         745        5         5</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt;  5       1226 Luquillo                18.3   -65.7        715        5       142</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt;  6        390 Macknade Research Sta… -18.7   146.         640        3         1</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt;  7        511 Bambaroo               -18.9   146.         630       25         1</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt;  8 2000000017 Santa Cruz Experiment…   9.12  -79.7        600       10         4</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt;  9       1038 Harwood Mill Farm - M… -29.4   153.         514        1         1</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; 10 2000000008 PA-PNM                   8.99  -79.5        486        7        36</span></span></code></pre></div>
+</div>
+</div>
+<div id="example-5-citation-based-queries" class="section level2">
+<h2>Example 5: Citation-Based Queries</h2>
+<div id="find-all-data-from-a-specific-author" class="section level3">
+<h3>Find All Data from a Specific Author</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Find all LeBauer data</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>lebauer_data <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;LeBauer&quot;</span>, author, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>lebauer_data <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="fu">count</span>(trait, author, citation_year, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 4</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt;   trait             author  citation_year     n</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;             &lt;chr&gt;           &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; 1 stomatal_slope.BB LeBauer          2013     5</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; 2 stomatal_slope    LeBauer          2013     4</span></span></code></pre></div>
+</div>
+<div id="citations-with-most-data" class="section level3">
+<h3>Citations with Most Data</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">data</span>(citations)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>citation_counts <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">count</span>(citation_id, author, citation_year, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">15</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>citation_counts</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 15 × 4</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt;    citation_id author            citation_year     n</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt;          &lt;int&gt; &lt;chr&gt;                     &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt;  1  2000000016 Alistair Rogers            2017  6723</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt;  2         761 Laredo                     2003  3461</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt;  3         199 Feng                       2010  2742</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt;  4         189 Clifton-Brown              2002  1232</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt;  5  2000000021 Serbin and Rogers          2016   835</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt;  6  2000000017 Lianhong Gu                2016   816</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt;  7         782 Xiaohui Feng               2015   715</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt;  8  2000000027 Slot and Winter            2017   600</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt;  9         325 Inman-Bamber               2000   589</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt; 10         157 Lewandowski                1998   549</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt; 11          33 Sanderson                  1999   448</span></span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a><span class="co">#&gt; 12         692 Arundale                   2012   410</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a><span class="co">#&gt; 13         106 Christersson               2006   375</span></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a><span class="co">#&gt; 14         677 Lellei-Kovacs              2008   364</span></span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a><span class="co">#&gt; 15         381 Wang                       2010   323</span></span></code></pre></div>
+</div>
+</div>
+<div id="example-6-variabletrait-lookups" class="section level2">
+<h2>Example 6: Variable/Trait Lookups</h2>
+<div id="get-units-and-description-for-a-trait" class="section level3">
+<h3>Get Units and Description for a Trait</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">data</span>(variables)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co"># Look up specific traits</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>variables <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;SLA&quot;</span>, <span class="st">&quot;Vcmax&quot;</span>, <span class="st">&quot;leaf_respiration_rate_m2&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="fu">select</span>(name, units, description, min, max)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 5</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt;   name                     units              description            min   max  </span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                    &lt;chr&gt;              &lt;chr&gt;                  &lt;chr&gt; &lt;chr&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; 1 SLA                      m2 kg-1            Specific Leaf Area     0.1   100  </span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; 2 Vcmax                    umol [CO2] m-2 s-1 maximum rubisco carbo… 0     500  </span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt; 3 leaf_respiration_rate_m2 umol [CO2] m-2 s-1 Rd; leaf dark respira… 0     500</span></span></code></pre></div>
+</div>
+</div>
+<div id="performance-comparison" class="section level2">
+<h2>Performance Comparison</h2>
+<p>Because <code>betydata</code> datasets are pre-loaded R data frames,
+queries are typically faster than database connections:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Time a complex filter</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">system.time</span>({</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  result <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    <span class="fu">filter</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>      genus <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Miscanthus&quot;</span>, <span class="st">&quot;Panicum&quot;</span>, <span class="st">&quot;Populus&quot;</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>      trait <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;SLA&quot;</span>, <span class="st">&quot;Vcmax&quot;</span>, <span class="st">&quot;Ayield&quot;</span>),</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>      checked <span class="sc">==</span> <span class="dv">1</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>    <span class="fu">group_by</span>(genus, trait) <span class="sc">|&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">mean =</span> <span class="fu">mean</span>(mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>})</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt;    user  system elapsed </span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt;   0.009   0.000   0.009</span></span></code></pre></div>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt; R version 4.4.0 (2024-04-24)</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; Running under: AlmaLinux 8.10 (Cerulean Leopard)</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; Matrix products: default</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; BLAS/LAPACK: FlexiBLAS NETLIB;  LAPACK version 3.12.0</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; locale:</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co">#&gt; time zone: America/New_York</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a><span class="co">#&gt; [1] dplyr_1.1.4    betydata_0.1.0</span></span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a><span class="co">#&gt;  [1] vctrs_0.6.5       cli_3.6.5         knitr_1.50        rlang_1.1.6      </span></span>
+<span id="cb13-28"><a href="#cb13-28" tabindex="-1"></a><span class="co">#&gt;  [5] xfun_0.53         generics_0.1.4    jsonlite_2.0.0    glue_1.8.0       </span></span>
+<span id="cb13-29"><a href="#cb13-29" tabindex="-1"></a><span class="co">#&gt;  [9] htmltools_0.5.8.1 sass_0.4.10       rmarkdown_2.30    evaluate_1.0.5   </span></span>
+<span id="cb13-30"><a href="#cb13-30" tabindex="-1"></a><span class="co">#&gt; [13] jquerylib_0.1.4   tibble_3.3.0      fastmap_1.2.0     yaml_2.3.10      </span></span>
+<span id="cb13-31"><a href="#cb13-31" tabindex="-1"></a><span class="co">#&gt; [17] lifecycle_1.0.4   compiler_4.4.0    pkgconfig_2.0.3   rstudioapi_0.17.1</span></span>
+<span id="cb13-32"><a href="#cb13-32" tabindex="-1"></a><span class="co">#&gt; [21] digest_0.6.37     R6_2.6.1          utf8_1.2.6        tidyselect_1.2.1 </span></span>
+<span id="cb13-33"><a href="#cb13-33" tabindex="-1"></a><span class="co">#&gt; [25] pillar_1.11.1     magrittr_2.0.4    bslib_0.9.0       tools_4.4.0      </span></span>
+<span id="cb13-34"><a href="#cb13-34" tabindex="-1"></a><span class="co">#&gt; [29] withr_3.0.2       cachem_1.1.0</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

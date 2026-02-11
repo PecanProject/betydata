@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Akash B V" />
+
+<meta name="date" content="2026-02-11" />
+
+<title>Working with Plant Functional Types and Priors</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Working with Plant Functional Types and
+Priors</h1>
+<h3 class="subtitle">Bayesian Model Parameterization using betydata</h3>
+<h4 class="author">Akash B V</h4>
+<h4 class="date">2026-02-11</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This vignette demonstrates how to work with Plant Functional Types
+(PFTs) and Bayesian prior distributions using <code>betydata</code>.
+These are central to the PEcAn ecosystem modeling workflow.</p>
+<p>Key concepts:</p>
+<ul>
+<li><strong>PFT (Plant Functional Type)</strong>: A grouping of species
+with similar functional characteristics used for ecosystem modeling</li>
+<li><strong>Prior</strong>: A probability distribution encoding expert
+knowledge about a parameter before observing data</li>
+<li><strong>Posterior</strong>: Updated distribution after combining
+prior with observations</li>
+</ul>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(betydata)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># Load PFT and prior datasets</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">data</span>(pfts)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">data</span>(priors)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">data</span>(variables)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="fu">data</span>(pfts_species)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="fu">data</span>(pfts_priors)</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">data</span>(species)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="fu">data</span>(traitsview)</span></code></pre></div>
+</div>
+<div id="understanding-pfts" class="section level2">
+<h2>Understanding PFTs</h2>
+<div id="available-pfts" class="section level3">
+<h3>Available PFTs</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Number of PFTs</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">nrow</span>(pfts)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; [1] 386</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># PFT structure</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="fu">glimpse</span>(pfts)</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; Rows: 386</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Columns: 8</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; $ id           &lt;dbl&gt; 110, 131, 109, 125, 126, 61, 70, 19, 22, 127, 119, 120, 1…</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; $ definition   &lt;chr&gt; &quot;Early successional hardwood for eastern temperate forest…</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; $ created_at   &lt;dttm&gt; 2011-02-01 20:21:47, 2015-11-30 20:36:45, 2011-06-07 20:…</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; $ updated_at   &lt;dttm&gt; 2014-11-20 02:57:55, 2015-11-30 20:37:35, 2016-01-22 17:…</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; $ name         &lt;chr&gt; &quot;temperate.Early_Hardwood.Kent&quot;, &quot;sorghum&quot;, &quot;hardwood-pri…</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; $ parent_id    &lt;dbl&gt; 16, 130, 62, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 97, …</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; $ pft_type     &lt;chr&gt; &quot;plant&quot;, &quot;plant&quot;, &quot;plant&quot;, &quot;plant&quot;, &quot;plant&quot;, &quot;plant&quot;, &quot;pl…</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; $ modeltype_id &lt;dbl&gt; 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 3, 2, 2, …</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co"># Common PFT names</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>pfts <span class="sc">|&gt;</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>  <span class="fu">count</span>(name, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">20</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; # A tibble: 20 × 2</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt;    name                                  n</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                             &lt;int&gt;</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt;  1 tropics_BCI                           5</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt;  2 luquillo.late_tropical                3</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt;  3 populus                               3</span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt;  4 temperate.Southern_Pine               3</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt;  5 Duke.loblolly                         2</span></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt;  6 TrBE                                  2</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt;  7 broadleaf_evergreen_tropical_tree     2</span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt;  8 evergreen                             2</span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt;  9 luquillo_tropical                     2</span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt; 10 semiarid.grassland                    2</span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; 11 soil                                  2</span></span>
+<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt; 12 soil.IF                               2</span></span>
+<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt; 13 temperate.broadleaf.deciduous         2</span></span>
+<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt; 14 temperate.coniferous                  2</span></span>
+<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a><span class="co">#&gt; 15 temperate.deciduous                   2</span></span>
+<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt; 16 timothy                               2</span></span>
+<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt; 17 tundra.deciduous.NGEE_Arctic          2</span></span>
+<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt; 18 Abi_bal                               1</span></span>
+<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="co">#&gt; 19 Abies Balsamea (Balsam Fir)           1</span></span>
+<span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a><span class="co">#&gt; 20 Abies Fraseri (Fraser Fir)            1</span></span></code></pre></div>
+</div>
+<div id="species-membership" class="section level3">
+<h3>Species Membership</h3>
+<p>Each PFT contains species assigned by researchers:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># How many species per PFT?</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>species_per_pft <span class="ot">&lt;-</span> pfts_species <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">count</span>(pft_id, <span class="at">name =</span> <span class="st">&quot;n_species&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="fu">summary</span>(species_per_pft<span class="sc">$</span>n_species)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;       1       1       2    1285      19   49626</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co"># Find species in a specific PFT (e.g. Miscanthus)</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>miscanthus_pft <span class="ot">&lt;-</span> pfts <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;miscanthus&quot;</span>, name, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(miscanthus_pft) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  miscanthus_species <span class="ot">&lt;-</span> pfts_species <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>    <span class="fu">filter</span>(pft_id <span class="sc">%in%</span> miscanthus_pft<span class="sc">$</span>id) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="fu">left_join</span>(species <span class="sc">|&gt;</span> <span class="fu">select</span>(id, scientificname), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;specie_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>))</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  </span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  <span class="fu">print</span>(miscanthus_species)</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>}</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 6</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt;   pft_id specie_id created_at          updated_at              id scientificname</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt;    &lt;dbl&gt;     &lt;dbl&gt; &lt;dttm&gt;              &lt;dttm&gt;               &lt;dbl&gt; &lt;chr&gt;         </span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; 1     45      2480 NA                  2011-03-01 21:02:40  50406 Miscanthus    </span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; 2     45      1477 NA                  NA                   50407 Miscanthus × …</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; 3    123      1477 2015-06-10 21:41:30 2015-06-10 21:41:30 200526 Miscanthus × …</span></span></code></pre></div>
+</div>
+</div>
+<div id="working-with-priors" class="section level2">
+<h2>Working with Priors</h2>
+<div id="prior-distribution-structure" class="section level3">
+<h3>Prior Distribution Structure</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">glimpse</span>(priors)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; Rows: 889</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; Columns: 12</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; $ id          &lt;dbl&gt; 1, 5, 17, 286, 40, 45, 46, 57, 287, 60, 288, 10, 63, 48, 6…</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; $ citation_id &lt;dbl&gt; 276, NA, 276, 837, 51, NA, NA, 225, 838, 160, 840, 203, 19…</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; $ variable_id &lt;dbl&gt; 36, 49, 44, 583, 4, 22, 22, 27, 568, 10, 492, 22, 193, 39,…</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; $ phylogeny   &lt;chr&gt; &quot;plants&quot;, &quot;all plants&quot;, &quot;monocots&quot;, &quot;all plants&quot;, NA, NA, …</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; $ distn       &lt;chr&gt; &quot;gamma&quot;, &quot;beta&quot;, &quot;beta&quot;, &quot;unif&quot;, &quot;lnorm&quot;, &quot;gamma&quot;, &quot;gamma&quot;…</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; $ parama      &lt;dbl&gt; 1.470, 1.500, 3.610, 0.000, 4.510, 12.800, 3.060, 4.060, 0…</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; $ paramb      &lt;dbl&gt; 0.0578, 1.5000, 0.4330, 0.3000, 0.6400, 0.1800, 0.0700, 7.…</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; $ paramc      &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; $ n           &lt;dbl&gt; 0, 0, 0, 0, 19, 50, 90, 0, 10, 95, 0, 10, 0, 56, 0, 16, 6,…</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; $ notes       &lt;chr&gt; &quot;optimized to gamma with 95% CI = [5,80]; median = 20&quot;, &quot;a…</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; $ created_at  &lt;dttm&gt; NA, NA, NA, 2015-06-09 16:23:35, NA, NA, NA, NA, 2015-06-…</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; $ updated_at  &lt;dttm&gt; 2011-12-06 21:10:41, 2010-08-19 19:44:46, 2011-12-08 15:4…</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co"># Distribution types used</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>priors <span class="sc">|&gt;</span> <span class="fu">count</span>(distn, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 9 × 2</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt;   distn       n</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;int&gt;</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; 1 unif      325</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; 2 norm      239</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; 3 beta       99</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; 4 lnorm      94</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; 5 weibull    59</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; 6 gamma      55</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; 7 binom       7</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt; 8 exp         6</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; 9 pois        5</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co"># Variables with priors</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>priors <span class="sc">|&gt;</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>  <span class="fu">left_join</span>(variables <span class="sc">|&gt;</span> <span class="fu">select</span>(id, name), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;variable_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>  <span class="fu">count</span>(name, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">15</span>)</span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; # A tibble: 15 × 2</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt;    name               n</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;          &lt;int&gt;</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt;  1 AGEMX             21</span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt;  2 DMAX              21</span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt;  3 DMIN              21</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt;  4 Gmax              21</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt;  5 SPRTND            19</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt;  6 SPRTMX            17</span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt;  7 FROST             15</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt;  8 SLTA              13</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt;  9 SLTB              13</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; 10 MPLANT            11</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt; 11 SLA               11</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co">#&gt; 12 stomatal_slope    11</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co">#&gt; 13 HTMAX             10</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co">#&gt; 14 Vcmax             10</span></span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a><span class="co">#&gt; 15 c2n_leaf          10</span></span></code></pre></div>
+</div>
+<div id="visualizing-a-prior-distribution" class="section level3">
+<h3>Visualizing a Prior Distribution</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Get SLA priors first</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>sla_var_id <span class="ot">&lt;-</span> variables <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">&quot;SLA&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">pull</span>(id)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>sla_priors <span class="ot">&lt;-</span> priors <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="fu">filter</span>(variable_id <span class="sc">%in%</span> sla_var_id)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># Function to evaluate any prior distribution</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>eval_prior_density <span class="ot">&lt;-</span> <span class="cf">function</span>(p, <span class="at">x =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="co"># Generate appropriate x range if not provided</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(x)) {</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="cf">switch</span>(p<span class="sc">$</span>distn,</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>      <span class="st">&quot;gamma&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">qgamma</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>      <span class="st">&quot;norm&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(p<span class="sc">$</span>parama <span class="sc">-</span> <span class="dv">4</span><span class="sc">*</span>p<span class="sc">$</span>paramb, p<span class="sc">$</span>parama <span class="sc">+</span> <span class="dv">4</span><span class="sc">*</span>p<span class="sc">$</span>paramb, <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>      <span class="st">&quot;lnorm&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fu">qlnorm</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>      <span class="st">&quot;beta&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fl">0.999</span>, <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>      <span class="st">&quot;unif&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb, <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>      <span class="st">&quot;weibull&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">qweibull</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>      <span class="st">&quot;exp&quot;</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">qexp</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>      <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    )</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>  }</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>  </span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="cf">switch</span>(p<span class="sc">$</span>distn,</span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>    <span class="st">&quot;gamma&quot;</span>   <span class="ot">=</span> <span class="fu">dgamma</span>(x, <span class="at">shape =</span> p<span class="sc">$</span>parama, <span class="at">rate =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>    <span class="st">&quot;norm&quot;</span>    <span class="ot">=</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> p<span class="sc">$</span>parama, <span class="at">sd =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>    <span class="st">&quot;lnorm&quot;</span>   <span class="ot">=</span> <span class="fu">dlnorm</span>(x, <span class="at">meanlog =</span> p<span class="sc">$</span>parama, <span class="at">sdlog =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>    <span class="st">&quot;beta&quot;</span>    <span class="ot">=</span> <span class="fu">dbeta</span>(x, <span class="at">shape1 =</span> p<span class="sc">$</span>parama, <span class="at">shape2 =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>    <span class="st">&quot;unif&quot;</span>    <span class="ot">=</span> <span class="fu">dunif</span>(x, <span class="at">min =</span> p<span class="sc">$</span>parama, <span class="at">max =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a>    <span class="st">&quot;weibull&quot;</span> <span class="ot">=</span> <span class="fu">dweibull</span>(x, <span class="at">shape =</span> p<span class="sc">$</span>parama, <span class="at">scale =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a>    <span class="st">&quot;exp&quot;</span>     <span class="ot">=</span> <span class="fu">dexp</span>(x, <span class="at">rate =</span> p<span class="sc">$</span>parama),</span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a>    <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(x))  <span class="co"># fallback</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a>  )</span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a>  </span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a>}</span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a><span class="co"># Plot if SLA priors exist</span></span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sla_priors) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a>  p <span class="ot">&lt;-</span> sla_priors[<span class="dv">1</span>, ]</span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">eval_prior_density</span>(p)</span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a>  </span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> result<span class="sc">$</span>x, <span class="at">y =</span> result<span class="sc">$</span>y), <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb5-47"><a href="#cb5-47" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">&quot;Prior distribution for SLA&quot;</span>,</span>
+<span id="cb5-48"><a href="#cb5-48" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="fu">paste0</span>(p<span class="sc">$</span>distn, <span class="st">&quot;(&quot;</span>, <span class="fu">round</span>(p<span class="sc">$</span>parama, <span class="dv">2</span>), <span class="st">&quot;, &quot;</span>, <span class="fu">round</span>(p<span class="sc">$</span>paramb, <span class="dv">2</span>), <span class="st">&quot;)&quot;</span>),</span>
+<span id="cb5-49"><a href="#cb5-49" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">&quot;SLA (m2/kg)&quot;</span>,</span>
+<span id="cb5-50"><a href="#cb5-50" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Density&quot;</span></span>
+<span id="cb5-51"><a href="#cb5-51" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb5-52"><a href="#cb5-52" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span>
+<span id="cb5-53"><a href="#cb5-53" tabindex="-1"></a>}</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+</div>
+</div>
+<div id="linking-pfts-to-priors" class="section level2">
+<h2>Linking PFTs to Priors</h2>
+<p>The <code>pfts_priors</code> table connects PFTs to their associated
+prior distributions:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Structure of the mapping</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">glimpse</span>(pfts_priors)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; Rows: 5,249</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; Columns: 5</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; $ pft_id     &lt;dbl&gt; 7, 7, 7, 7, 7, 7, 7, 7, 10, 10, 10, 10, 10, 10, 10, 10, 10,…</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; $ prior_id   &lt;dbl&gt; 1, 7, 13, 16, 17, 56, 66, 80, 1, 7, 9, 11, 12, 16, 17, 21, …</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; $ created_at &lt;dttm&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; $ updated_at &lt;dttm&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; $ id         &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co"># Priors per PFT</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>priors_per_pft <span class="ot">&lt;-</span> pfts_priors <span class="sc">|&gt;</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  <span class="fu">count</span>(pft_id, <span class="at">name =</span> <span class="st">&quot;n_priors&quot;</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="fu">summary</span>(priors_per_pft<span class="sc">$</span>n_priors)</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt;       1       5      14      14      20      43</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co"># Example: Find all priors for a specific PFT</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">exists</span>(<span class="st">&quot;miscanthus_pft&quot;</span>) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(miscanthus_pft) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>  pft_id <span class="ot">&lt;-</span> miscanthus_pft<span class="sc">$</span>id[<span class="dv">1</span>]</span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>  </span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>  pft_priors <span class="ot">&lt;-</span> pfts_priors <span class="sc">|&gt;</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>    <span class="fu">filter</span>(pft_id <span class="sc">==</span> <span class="sc">!!</span>pft_id) <span class="sc">|&gt;</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>    <span class="fu">left_join</span>(priors, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;prior_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>    <span class="fu">left_join</span>(variables <span class="sc">|&gt;</span> <span class="fu">select</span>(id, name, units), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;variable_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>))</span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>  </span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>  pft_priors <span class="sc">|&gt;</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>    <span class="fu">select</span>(name, units, distn, parama, paramb)</span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>}</span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; # A tibble: 11 × 5</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt;    name                           units                     distn parama  paramb</span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;                          &lt;chr&gt;                     &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt;  1 leaf_respiration_rate_m2       umol [CO2] m-2 s-1        lnorm  0.632    0.65</span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt;  2 cuticular_cond                 umol [H2O] m-2 s-1        lnorm  8.4      0.9 </span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt;  3 stomatal_slope.BB              [ratio]                   lnorm  1.24     0.28</span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt;  4 SLA                            m2 kg-1                   weib…  2.06    19   </span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt;  5 Vcmax                          umol [CO2] m-2 s-1        lnorm  3.75     0.3 </span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="co">#&gt;  6 growth_respiration_coefficient mol [CO2] mol-1 [net ass… beta  26       48   </span></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt;  7 Jmax                           umol [photons] m-2 s-1    weib…  2      150   </span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a><span class="co">#&gt;  8 c2n_leaf                       [ratio]                   gamma  4.18     0.13</span></span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a><span class="co">#&gt;  9 quantum_efficiency             fraction                  gamma 90.9   1580   </span></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a><span class="co">#&gt; 10 chi_leaf                       [ratio]                   lnorm  0.18     0.43</span></span>
+<span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a><span class="co">#&gt; 11 extinction_coefficient_diffuse &lt;NA&gt;                      lnorm -2.3      0.55</span></span></code></pre></div>
+</div>
+<div id="comparing-prior-to-data" class="section level2">
+<h2>Comparing Prior to Data</h2>
+<p>A key use case: compare the prior distribution to observed data.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># SLA observations for grasses</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>sla_data <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    trait <span class="sc">==</span> <span class="st">&quot;SLA&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    genus <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;Miscanthus&quot;</span>, <span class="st">&quot;Panicum&quot;</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(mean),</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>    checked <span class="sc">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="fu">pull</span>(mean)</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(sla_data) <span class="sc">&gt;</span> <span class="dv">10</span> <span class="sc">&amp;&amp;</span> <span class="fu">exists</span>(<span class="st">&quot;x&quot;</span>) <span class="sc">&amp;&amp;</span> <span class="fu">exists</span>(<span class="st">&quot;y&quot;</span>)) {</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="co"># Create plot comparing prior to histogram of data</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>      <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">sla =</span> sla_data),</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>      <span class="fu">aes</span>(<span class="at">x =</span> sla, <span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>      <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">&quot;steelblue&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.6</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>    <span class="fu">geom_line</span>(</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>      <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> x, <span class="at">y =</span> y),</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>      <span class="fu">aes</span>(x, y),</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">&quot;SLA: Prior Distribution vs. Observed Data&quot;</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">&quot;Red dashed = prior, Blue = observed data (Miscanthus + Panicum)&quot;</span>,</span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">&quot;SLA (m2/kg)&quot;</span>,</span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">&quot;Density&quot;</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>    <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">80</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="extracting-data-for-a-pft" class="section level2">
+<h2>Extracting Data for a PFT</h2>
+<p>A common workflow: get all trait data for species in a given PFT.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Function to get trait data for a PFT</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>get_pft_data <span class="ot">&lt;-</span> <span class="cf">function</span>(pft_name, <span class="at">trait_name =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="co"># Find PFT id</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  pft_id <span class="ot">&lt;-</span> pfts <span class="sc">|&gt;</span> </span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">grepl</span>(pft_name, name, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="fu">pull</span>(id)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  </span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(pft_id) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="st">&quot;PFT not found: &quot;</span>, pft_name)</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  }</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  </span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="co"># Get species in this PFT</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  spp_ids <span class="ot">&lt;-</span> pfts_species <span class="sc">|&gt;</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    <span class="fu">filter</span>(pft_id <span class="sc">%in%</span> <span class="sc">!!</span>pft_id) <span class="sc">|&gt;</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    <span class="fu">pull</span>(specie_id)</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>  </span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>  <span class="co"># Filter traitsview</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>  result <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    <span class="fu">filter</span>(species_id <span class="sc">%in%</span> spp_ids)</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>  </span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(trait_name)) {</span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>    result <span class="ot">&lt;-</span> result <span class="sc">|&gt;</span> <span class="fu">filter</span>(trait <span class="sc">==</span> trait_name)</span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>  }</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>  </span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>  result</span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>}</span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co"># Example usage</span></span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a>willow_sla <span class="ot">&lt;-</span> <span class="fu">get_pft_data</span>(<span class="st">&quot;salix&quot;</span>, <span class="st">&quot;SLA&quot;</span>)</span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(willow_sla) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(willow_sla) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>  <span class="fu">summary</span>(willow_sla<span class="sc">$</span>mean)</span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>}</span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a><span class="co">#&gt;    7.14   10.40   11.54   12.43   13.32   26.40</span></span></code></pre></div>
+</div>
+<div id="session-info" class="section level2">
+<h2>Session Info</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; R version 4.4.0 (2024-04-24)</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; Running under: AlmaLinux 8.10 (Cerulean Leopard)</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; Matrix products: default</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; BLAS/LAPACK: FlexiBLAS NETLIB;  LAPACK version 3.12.0</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; locale:</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#&gt; time zone: America/New_York</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a><span class="co">#&gt; attached base packages:</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a><span class="co">#&gt; [1] ggplot2_4.0.0  dplyr_1.1.4    betydata_0.1.0</span></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a><span class="co">#&gt;  [1] vctrs_0.6.5        cli_3.6.5          knitr_1.50         rlang_1.1.6       </span></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="co">#&gt;  [5] xfun_0.53          generics_0.1.4     S7_0.2.0           jsonlite_2.0.0    </span></span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="co">#&gt;  [9] labeling_0.4.3     glue_1.8.0         htmltools_0.5.8.1  sass_0.4.10       </span></span>
+<span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a><span class="co">#&gt; [13] scales_1.4.0       rmarkdown_2.30     grid_4.4.0         evaluate_1.0.5    </span></span>
+<span id="cb9-31"><a href="#cb9-31" tabindex="-1"></a><span class="co">#&gt; [17] jquerylib_0.1.4    tibble_3.3.0       fastmap_1.2.0      yaml_2.3.10       </span></span>
+<span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a><span class="co">#&gt; [21] lifecycle_1.0.4    compiler_4.4.0     RColorBrewer_1.1-3 pkgconfig_2.0.3   </span></span>
+<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a><span class="co">#&gt; [25] rstudioapi_0.17.1  farver_2.1.2       digest_0.6.37      R6_2.6.1          </span></span>
+<span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a><span class="co">#&gt; [29] utf8_1.2.6         dichromat_2.0-0.1  tidyselect_1.2.1   pillar_1.11.1     </span></span>
+<span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a><span class="co">#&gt; [33] magrittr_2.0.4     bslib_0.9.0        withr_3.0.2        gtable_0.3.6      </span></span>
+<span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a><span class="co">#&gt; [37] tools_4.4.0        cachem_1.1.0</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

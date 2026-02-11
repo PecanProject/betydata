@@ -1,0 +1,216 @@
+---
+title: "Offline Analogs of BETYdb SQL Queries"
+subtitle: "Common Database Queries Using betydata"
+author: "Akash B V"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Offline Analogs of BETYdb SQL Queries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE
+)
+```
+
+## Introduction
+
+This vignette demonstrates how to perform common BETYdb queries using `betydata` instead of connecting to a PostgreSQL database.
+
+## Setup
+```{r load-packages-data}
+library(betydata)
+library(dplyr)
+
+# Load primary datasets
+data(traitsview)
+data(species)
+data(sites)
+data(managements)
+data(treatments)
+data(managements_treatments)
+```
+
+## Example 1: Query Miscanthus Yield Data
+
+### Original SQL
+```sql
+SELECT yields.id, yields.mean, yields.date, 
+       sites.sitename, species.scientificname
+FROM yields
+  LEFT JOIN sites ON yields.site_id = sites.id
+  LEFT JOIN species ON yields.specie_id = species.id
+WHERE species.genus = 'Miscanthus';
+```
+
+### betydata Equivalent
+```{r miscanthus-yields}
+miscanthus_yields <- traitsview |>
+  filter(
+    genus == "Miscanthus",
+    trait == "Ayield"
+  ) |>
+  select(id, mean, date, sitename, scientificname)
+
+head(miscanthus_yields)
+nrow(miscanthus_yields)
+```
+
+## Example 2: Yield Data with Experimental Treatments
+
+### Original SQL Pattern
+```sql
+SELECT yields.*, treatments.name AS treatment_name,
+       managements.mgmttype, managements.level
+FROM yields
+  LEFT JOIN treatments ON yields.treatment_id = treatments.id
+  LEFT JOIN managements_treatments ON treatments.id = managements_treatments.treatment_id
+  LEFT JOIN managements ON managements_treatments.management_id = managements.id
+WHERE species.genus IN ('Miscanthus', 'Panicum');
+```
+
+### betydata Equivalent
+```{r yields-with-treatments}
+# Join managements with treatments
+mgmt_treat <- managements_treatments |>
+  left_join(
+    managements |> select(id, mgmttype, level, units, date),
+    by = c("management_id" = "id")
+  )
+
+# Grass yields with management info
+grass_yields <- traitsview |>
+  filter(
+    genus %in% c("Miscanthus", "Panicum"),
+    trait == "Ayield"
+  ) |>
+  left_join(mgmt_treat, by = "treatment_id", relationship = "many-to-many")
+
+# Summarize by management type
+grass_yields |>
+  filter(!is.na(mgmttype)) |>
+  count(genus, mgmttype, sort = TRUE)
+```
+
+## Example 3: Extract Nitrogen Fertilization Rates
+
+### Original dbplyr Pattern
+```r
+nitrogen <- managements %>% 
+  filter(mgmttype == "fertilizer_N_rate") %>%
+  select(treatment_id, nrate = level)
+```
+
+### betydata Equivalent
+```{r nitrogen-rates}
+# Get nitrogen rates per treatment
+nitrogen_rates <- managements |>
+  filter(mgmttype %in% c("fertilizer_N", "fertilizer_N_rate")) |>
+  left_join(
+    managements_treatments |> select(management_id, treatment_id),
+    by = c("id" = "management_id")
+  ) |>
+  select(treatment_id, nrate = level, units)
+
+# Join with yield data
+yields_with_n <- traitsview |>
+  filter(
+    trait == "Ayield",
+    genus %in% c("Miscanthus", "Panicum")
+  ) |>
+  left_join(nitrogen_rates, by = "treatment_id", relationship = "many-to-many")
+
+# Summary
+yields_with_n |>
+  filter(!is.na(nrate)) |>
+  group_by(genus) |>
+  summarise(
+    n = n(),
+    mean_N = mean(nrate, na.rm = TRUE),
+    mean_yield = mean(mean, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+## Example 4: Site-Level Aggregation
+
+### Common Use Case
+
+Aggregate trait data by site for spatial analysis.
+```{r site-aggregation}
+site_summary <- traitsview |>
+  filter(!is.na(lat), !is.na(lon)) |>
+  group_by(site_id, sitename, lat, lon) |>
+  summarise(
+    n_records = n(),
+    n_traits = n_distinct(trait),
+    n_species = n_distinct(species_id),
+    .groups = "drop"
+  )
+
+# Top 10 most data-rich sites
+site_summary |>
+  arrange(desc(n_records)) |>
+  head(10)
+```
+
+## Example 5: Citation-Based Queries
+
+### Find All Data from a Specific Author
+```{r author-search}
+# Find all LeBauer data
+lebauer_data <- traitsview |>
+  filter(grepl("LeBauer", author, ignore.case = TRUE))
+
+lebauer_data |>
+  count(trait, author, citation_year, sort = TRUE)
+```
+
+### Citations with Most Data
+```{r top-citations}
+data(citations)
+
+citation_counts <- traitsview |>
+  count(citation_id, author, citation_year, sort = TRUE) |>
+  head(15)
+
+citation_counts
+```
+
+## Example 6: Variable/Trait Lookups
+
+### Get Units and Description for a Trait
+```{r variable-lookup}
+data(variables)
+
+# Look up specific traits
+variables |>
+  filter(name %in% c("SLA", "Vcmax", "leaf_respiration_rate_m2")) |>
+  select(name, units, description, min, max)
+```
+
+## Performance Comparison
+
+Because `betydata` datasets are pre-loaded R data frames, queries are typically faster than database connections:
+```{r performance-test}
+# Time a complex filter
+system.time({
+  result <- traitsview |>
+    filter(
+      genus %in% c("Miscanthus", "Panicum", "Populus"),
+      trait %in% c("SLA", "Vcmax", "Ayield"),
+      checked == 1
+    ) |>
+    group_by(genus, trait) |>
+    summarise(n = n(), mean = mean(mean, na.rm = TRUE), .groups = "drop")
+})
+```
+
+## Session Info
+```{r session-info}
+sessionInfo()
+```
