@@ -6,6 +6,7 @@
 \title{Plant cultivars from BETYdb}
 \format{
 A data frame with cultivar information.
+See \code{names(cultivars)} for all columns.
 }
 \source{
 \url{https://betydb.org}

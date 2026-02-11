@@ -6,6 +6,7 @@
 \title{Measurement methods from BETYdb}
 \format{
 A data frame with method descriptions.
+See \code{names(methods)} for all columns.
 }
 \source{
 \url{https://betydb.org}

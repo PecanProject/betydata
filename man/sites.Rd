@@ -5,14 +5,8 @@
 \alias{sites}
 \title{Research sites from BETYdb}
 \format{
-A data frame with columns including:
-\describe{
-\item{id}{Site identifier}
-\item{sitename}{Site name}
-\item{city, state, country}{Location}
-\item{lat, lon}{Coordinates (decimal degrees)}
-\item{mat, map}{Mean annual temperature and precipitation}
-}
+A data frame. Key columns include id, sitename, city, state, country.
+See \code{names(sites)} for all columns.
 }
 \source{
 \url{https://betydb.org}

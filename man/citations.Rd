@@ -5,15 +5,8 @@
 \alias{citations}
 \title{Literature citations from BETYdb}
 \format{
-A data frame with columns including:
-\describe{
-\item{id}{Citation identifier}
-\item{author}{Author(s)}
-\item{year}{Publication year}
-\item{title}{Article/book title}
-\item{journal}{Journal name}
-\item{doi}{Digital Object Identifier}
-}
+A data frame. Key columns include id, author, year, title, journal, doi.
+See \code{names(citations)} for all columns.
 }
 \source{
 \url{https://betydb.org}

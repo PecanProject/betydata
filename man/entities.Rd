@@ -6,6 +6,7 @@
 \title{Entities from BETYdb}
 \format{
 A data frame with entity (individual/plot) information.
+See \code{names(entities)} for all columns.
 }
 \source{
 \url{https://betydb.org}

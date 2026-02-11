@@ -5,13 +5,8 @@
 \alias{priors}
 \title{Prior distributions from BETYdb}
 \format{
-A data frame with columns including:
-\describe{
-\item{id}{Prior identifier}
-\item{variable_id}{Associated variable}
-\item{distn}{Distribution type (e.g. "norm", "gamma")}
-\item{parama, paramb, paramc}{Distribution parameters}
-}
+A data frame. Key columns include id, variable_id, distn, parama, paramb.
+See \code{names(priors)} for all columns.
 }
 \source{
 \url{https://betydb.org}

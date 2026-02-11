@@ -5,14 +5,8 @@
 \alias{variables}
 \title{Variable definitions from BETYdb}
 \format{
-A data frame with columns including:
-\describe{
-\item{id}{Variable identifier}
-\item{name}{Variable name (e.g., "SLA", "Vcmax")}
-\item{description}{Full description}
-\item{units}{Standard units}
-\item{min, max}{Valid range}
-}
+A data frame. Key columns include id, name, description, units.
+See \code{names(variables)} for all columns.
 }
 \source{
 \url{https://betydb.org}

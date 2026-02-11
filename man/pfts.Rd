@@ -5,12 +5,8 @@
 \alias{pfts}
 \title{Plant Functional Types (PFTs) from BETYdb}
 \format{
-A data frame with columns including:
-\describe{
-\item{id}{PFT identifier}
-\item{name}{PFT name (e.g. "temperate.deciduous")}
-\item{definition}{Full definition}
-}
+A data frame. Key columns include id, name, definition.
+See \code{names(pfts)} for all columns.
 }
 \source{
 \url{https://betydb.org}

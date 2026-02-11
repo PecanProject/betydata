@@ -6,6 +6,7 @@
 \title{Experimental treatments from BETYdb}
 \format{
 A data frame with treatment definitions.
+See \code{names(treatments)} for all columns.
 }
 \source{
 \url{https://betydb.org}

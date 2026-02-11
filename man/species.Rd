@@ -5,15 +5,8 @@
 \alias{species}
 \title{Species taxonomy from BETYdb}
 \format{
-A data frame with columns including:
-\describe{
-\item{id}{Species identifier}
-\item{spcd}{Species code}
-\item{genus}{Taxonomic genus}
-\item{species}{Specific epithet}
-\item{scientificname}{Full scientific name}
-\item{commonname}{Common name(s)}
-}
+A data frame. Key columns include id, genus, species, scientificname,
+commonname. See \code{names(species)} for all columns.
 }
 \source{
 \url{https://betydb.org}
@@ -22,6 +15,7 @@ A data frame with columns including:
 species
 }
 \description{
-Taxonomic information for plant species in BETYdb.
+Taxonomic information for plant species in BETYdb including USDA PLANTS
+database attributes.
 }
 \keyword{datasets}

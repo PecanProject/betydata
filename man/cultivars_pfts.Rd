@@ -5,11 +5,8 @@
 \alias{cultivars_pfts}
 \title{Cultivar-PFT mapping from BETYdb}
 \format{
-A data frame with columns:
-\describe{
-\item{cultivar_id}{Foreign key to cultivars}
-\item{pft_id}{Foreign key to pfts}
-}
+A data frame with columns cultivar_id and pft_id (plus metadata).
+See \code{names(cultivars_pfts)} for all columns.
 }
 \source{
 \url{https://betydb.org}

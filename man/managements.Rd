@@ -6,6 +6,7 @@
 \title{Management practices from BETYdb}
 \format{
 A data frame with management event data.
+See \code{names(managements)} for all columns.
 }
 \source{
 \url{https://betydb.org}

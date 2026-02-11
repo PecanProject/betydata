@@ -5,11 +5,8 @@
 \alias{managements_treatments}
 \title{Management-Treatment mapping from BETYdb}
 \format{
-A data frame with columns:
-\describe{
-\item{management_id}{Foreign key to managements}
-\item{treatment_id}{Foreign key to treatments}
-}
+A data frame with columns management_id and treatment_id (plus metadata).
+See \code{names(managements_treatments)} for all columns.
 }
 \source{
 \url{https://betydb.org}

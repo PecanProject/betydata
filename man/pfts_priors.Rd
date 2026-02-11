@@ -5,11 +5,8 @@
 \alias{pfts_priors}
 \title{PFT-Prior mapping from BETYdb}
 \format{
-A data frame with columns:
-\describe{
-\item{pft_id}{Foreign key to pfts}
-\item{prior_id}{Foreign key to priors}
-}
+A data frame with columns pft_id and prior_id (plus metadata).
+See \code{names(pfts_priors)} for all columns.
 }
 \source{
 \url{https://betydb.org}

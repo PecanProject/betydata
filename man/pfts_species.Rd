@@ -5,11 +5,8 @@
 \alias{pfts_species}
 \title{PFT-Species mapping from BETYdb}
 \format{
-A data frame with columns:
-\describe{
-\item{pft_id}{Foreign key to pfts}
-\item{specie_id}{Foreign key to species}
-}
+A data frame with columns pft_id and specie_id (plus metadata).
+See \code{names(pfts_species)} for all columns.
 }
 \source{
 \url{https://betydb.org}
