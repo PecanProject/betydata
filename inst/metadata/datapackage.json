@@ -1,0 +1,255 @@
+{
+  "name": "betydata",
+  "title": "BETYdb Plant Traits and Yields Data Package",
+  "version": "0.1.0",
+  "created": "2026-02-11",
+  "licenses": [
+    {
+      "name": "ODC-By-1.0",
+      "title": "Open Data Commons Attribution License 1.0",
+      "path": "https://opendatacommons.org/licenses/by/1-0/"
+    }
+  ],
+  "sources": [
+    {
+      "title": "BETYdb",
+      "path": "https://betydb.org"
+    },
+    {
+      "title": "LeBauer et al. (2018) GCB Bioenergy",
+      "path": "https://doi.org/10.1111/gcbb.12420"
+    }
+  ],
+  "resources": [
+    {
+      "name": "traitsview",
+      "path": "data/traitsview.rda",
+      "format": "rda",
+      "title": "Traits and Yields View",
+      "description": "Denormalized view of plant trait measurements and crop yields",
+      "schema": {
+        "fields": [
+          {
+            "name": "checked",
+            "type": "integer"
+          },
+          {
+            "name": "result_type",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "type": "integer"
+          },
+          {
+            "name": "citation_id",
+            "type": "integer"
+          },
+          {
+            "name": "site_id",
+            "type": "integer"
+          },
+          {
+            "name": "treatment_id",
+            "type": "integer"
+          },
+          {
+            "name": "sitename",
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "name": "lat",
+            "type": "number"
+          },
+          {
+            "name": "lon",
+            "type": "number"
+          },
+          {
+            "name": "scientificname",
+            "type": "string"
+          },
+          {
+            "name": "commonname",
+            "type": "string"
+          },
+          {
+            "name": "genus",
+            "type": "string"
+          },
+          {
+            "name": "species_id",
+            "type": "integer"
+          },
+          {
+            "name": "cultivar_id",
+            "type": "integer"
+          },
+          {
+            "name": "author",
+            "type": "string"
+          },
+          {
+            "name": "citation_year",
+            "type": "integer"
+          },
+          {
+            "name": "treatment",
+            "type": "string"
+          },
+          {
+            "name": "date",
+            "type": "string"
+          },
+          {
+            "name": "time",
+            "type": "string"
+          },
+          {
+            "name": "raw_date",
+            "type": "string"
+          },
+          {
+            "name": "month",
+            "type": "integer"
+          },
+          {
+            "name": "year",
+            "type": "integer"
+          },
+          {
+            "name": "dateloc",
+            "type": "number"
+          },
+          {
+            "name": "trait",
+            "type": "string"
+          },
+          {
+            "name": "trait_description",
+            "type": "string"
+          },
+          {
+            "name": "mean",
+            "type": "number"
+          },
+          {
+            "name": "units",
+            "type": "string"
+          },
+          {
+            "name": "n",
+            "type": "integer"
+          },
+          {
+            "name": "statname",
+            "type": "string"
+          },
+          {
+            "name": "stat",
+            "type": "number"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "access_level",
+            "type": "integer"
+          },
+          {
+            "name": "cultivar",
+            "type": "string"
+          },
+          {
+            "name": "entity",
+            "type": "string"
+          },
+          {
+            "name": "method_name",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "species",
+      "path": "data/species.rda",
+      "format": "rda"
+    },
+    {
+      "name": "sites",
+      "path": "data/sites.rda",
+      "format": "rda"
+    },
+    {
+      "name": "variables",
+      "path": "data/variables.rda",
+      "format": "rda"
+    },
+    {
+      "name": "citations",
+      "path": "data/citations.rda",
+      "format": "rda"
+    },
+    {
+      "name": "cultivars",
+      "path": "data/cultivars.rda",
+      "format": "rda"
+    },
+    {
+      "name": "methods",
+      "path": "data/methods.rda",
+      "format": "rda"
+    },
+    {
+      "name": "treatments",
+      "path": "data/treatments.rda",
+      "format": "rda"
+    },
+    {
+      "name": "pfts",
+      "path": "data/pfts.rda",
+      "format": "rda"
+    },
+    {
+      "name": "priors",
+      "path": "data/priors.rda",
+      "format": "rda"
+    },
+    {
+      "name": "managements",
+      "path": "data/managements.rda",
+      "format": "rda"
+    },
+    {
+      "name": "entities",
+      "path": "data/entities.rda",
+      "format": "rda"
+    },
+    {
+      "name": "pfts_species",
+      "path": "data/pfts_species.rda",
+      "format": "rda"
+    },
+    {
+      "name": "pfts_priors",
+      "path": "data/pfts_priors.rda",
+      "format": "rda"
+    },
+    {
+      "name": "managements_treatments",
+      "path": "data/managements_treatments.rda",
+      "format": "rda"
+    },
+    {
+      "name": "cultivars_pfts",
+      "path": "data/cultivars_pfts.rda",
+      "format": "rda"
+    }
+  ]
+}
