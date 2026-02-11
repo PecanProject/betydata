@@ -21,6 +21,7 @@ Suggests:
     arrow,
     dplyr,
     ggplot2,
+    jsonlite,
     knitr,
     maps,
     rmarkdown,
