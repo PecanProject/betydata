@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: "betydata: Public Data from the BETYdb Database"
+version: 0.1.0
+abstract: >-
+  An R data package providing offline access to public plant trait and 
+  crop yield data from the BETYdb (Biofuel Ecophysiological Traits and 
+  Yields) database.
+license: BSD-3-Clause
+# doi: 10.5281/zenodo.XXXXXXX
+message: >-
+  If you use this data package, please cite both the software and 
+  the BETYdb paper using the metadata from 'preferred-citation'.
+type: dataset
+date-released: "2026-02-11"
+repository-code: https://github.com/PecanProject/betydata
+url: https://betydb.org
+keywords:
+  - plant traits
+  - crop yields
+  - bioenergy
+  - ecosystem modeling
+  - BETYdb
+  - PEcAn
+  - ecological data
+  - R data package
+authors:
+  - given-names: David
+    family-names: LeBauer
+    email: dlebauer@arizona.edu
+    affiliation: University of Arizona
+    orcid: 'https://orcid.org/0000-0001-7228-053X'
+  - given-names: Akash
+    family-names: BV
+    email: www.divinehome12@gmail.com
+    affiliation: CMR Institute of Technology, Bengaluru
