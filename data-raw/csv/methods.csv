@@ -1,0 +1,67 @@
+id,name,description,citation_id,created_at,updated_at
+3,PM,Penman-Monteith,617,2012-09-20 18:09:05,2012-09-20 18:09:05
+4,REB,"",620,2012-09-20 18:11:25,2012-09-20 18:11:56
+5,WB,"",621,2012-09-20 18:45:20,2012-09-20 18:45:20
+6,CC,"",623,2012-09-20 19:16:36,2012-09-20 19:16:36
+7,BREB,"",625,2012-09-20 19:37:48,2012-09-20 19:37:48
+40,Specific Leaf Area Leaf Punch,"3 dried leaf punches, 
+area of leaf punch = 2.01 cm2, 
+radius = 16 mm",,2017-02-20 19:17:47.489506,2017-02-20 19:17:47.489506
+11,BREB/Lysimeter,"",641,2012-09-30 23:15:21,2012-09-30 23:15:21
+14,SWB,Soil Water Balance ,653,2012-10-04 18:46:00,2012-10-04 18:46:00
+15,PT,Priestley-Taylor,653,2012-10-04 18:46:35,2012-10-04 18:46:35
+16,P,Penman,653,2012-10-04 18:47:01,2012-10-04 18:47:01
+17,PM,Penman-Monteith ,653,2012-10-04 18:47:28,2012-10-04 18:47:28
+18,H,Hargreaves ,653,2012-10-04 18:47:52,2012-10-04 18:47:52
+19,Warburg Manometric,"gas exchange is measured as pressure changes. Original reference is in W. W. Umbreit, R. H. Burris, J. F. Stauffer 1951 Manometric and Biochemical Techniques. But the book is  Allen 1969 and Lahde 1966 provide early references.",673,2013-01-14 20:45:48,2013-01-15 16:18:53
+20,Oxygen Electrode,"",233,2013-01-15 20:30:01,2013-02-01 16:56:31
+22,Local allometric equation id:06 (citation_id: 701 site_id: 1072),"leaf_length = 1.27 * #_of_living_leaves + 8.3
+",701,2013-09-12 15:34:04,2013-09-26 15:02:54
+23,Local allometric equation id:07 (citation_id: 701 site_id: 1072),"plant_dry_weight = 0.000324 * #_of_living_leaves ^ 3 + 0.67
+",701,2013-09-24 18:07:16,2013-09-26 15:03:01
+24,Local allometric equation id:08 (citation_id: 701 site_id: 1072),"leaf_area = 0.471 * leaf_length ^ 2 + 29.3
+",701,2013-09-24 18:07:46,2013-09-26 15:03:09
+25,Local allometric equation id:09 (citation_id: 701 site_id: 1072),"leaf_dry_weight = 0.00000142 * leaf_length ^ 3 + 0.003
+
+",701,2013-09-24 18:08:14,2013-09-26 15:03:15
+26,Local allometric equation id:10 (citation_id: 701 site_id: 1072),"root_dry_weight = -0.00085 * #_of_living_leaves + 0.11
+",701,2013-09-24 18:10:31,2013-09-26 15:03:22
+27,Local allometric equation id:11 (citation_id: 701 site_id: 1072),"dead_leaf_dry_weight = 0.00000097 * leaf_length ^ 3 + 0.002
+",701,2013-09-24 18:10:36,2013-09-26 15:03:31
+28,Local allometric equation id:13 (citation_id: 703 site_id: 1074),"leaf_biomass = 39.943 * #_of_living_leaves - 364.677
+",703,2013-09-24 18:10:47,2013-09-26 15:03:52
+29,Local allometric equation id:12 (citation_id: 703 site_id: 1074),"root_biomass = 1.0204 * #_of_living_leaves - 3.905
+",703,2013-09-24 18:10:52,2013-09-26 15:03:45
+30,Local allometric equation id:01 (citation_id: 702 site_id: 819),"leaf_area = 0.314 * leaf_length ^ 2
+",693,2013-09-24 18:13:09,2013-09-26 15:02:09
+31,Local allometric equation id:02 (citation_id: 702 site_id: 819),"leaf_area = 16.1 * leaf_length - 153
+",693,2013-09-24 18:13:13,2013-09-26 15:02:15
+32,Local allometric equation id:03 (citation_id: 702 site_id: 819),"leaf_dry_weight = 0.00149 * leaf_length ^ 3
+",693,2013-09-24 18:13:17,2013-09-26 15:02:22
+33,Local allometric equation id:04 (citation_id: 702 site_id: 819),"leaf_dry_weight = 3.06 * leaf_length - 41.3
+",693,2013-09-24 18:13:22,2013-09-26 15:02:28
+34,Local allometric equation id:05 (citation_id: 702 site_id: 819),"dead_leaf_dry_weight = 2.65 * leaf_length - 42.6
+",693,2013-09-24 18:13:26,2013-09-26 15:02:33
+35,CEPS-1,"""COAID Enhanced Production System for Sisal"": trial used to confirm the fiber production performance of four varieties under two regimes of density planting, 6400 and 8000 at various stages of growth.
+
+",719,2013-10-08 15:57:31,2013-10-08 16:00:14
+36,CEPS-2,"""COAID Enhanced Production System for Sisal"": trial used to demonstrate the production capability of the Hybrid sisal 11648 at a density of 6666 plants/ha
+
+",719,2013-10-08 15:58:25,2013-10-08 16:00:23
+37,ENT 1,Demonstrate enhanced nursery production methods,719,2013-10-08 16:02:05,2013-10-08 16:02:05
+38,ENT-2,Demonstrate enhanced nursery production methods,719,2013-10-08 16:02:39,2013-10-08 16:02:39
+39,UHDT,3 trials used to evaluate the effect of ultra high density planting on Sisal performance,719,2013-10-08 16:03:34,2013-10-08 16:03:34
+12,Crop Coefficient,"",643,2012-10-01 00:12:55,2012-10-01 00:12:55
+13,SEBAL,model,649,2012-10-04 16:42:38,2016-07-12 17:32:22.084464
+8,Eddy Covariance,"",848,2012-09-27 16:34:18,2016-07-12 17:38:10.136158
+9,Lysimeter,"",849,2012-09-27 17:14:59,2016-07-12 17:44:46.232263
+21,IRGA,"infrared gas analysis as a general method
+
+More specific details about the instrument used and method of measurement (e.g. open vs. closed path) would be more useful",850,2013-01-18 19:58:18,2016-07-12 17:51:26.105352
+1000000001,Soil_respiration_chamber_root_respiration,Using a sealed soil-respiration chamber to measure the respiration of excised roots,1000000200,2020-03-11 17:58:00.811786,2020-03-11 17:58:00.811786
+2000000001,spectroscopy,"Determination of leaf, wood and soil traits (e.g. C:N, ligno-cellulose, water content) using a high spectral resolution spectrometer/spectroradiometer either in the field or laboratory.  Spectral samples can be collected on fresh, dried, or dried and ground (i.e. homogenized) material and are converted to trait estimates using statistical (e.g. PLSR) or model inversion (e.g. PROSPECT) approaches.  Typically, the algorithms to convert spectra to traits are created within a calibration step, validated, and then later used to estimate traits on larger spectral dataset.",2000000004,2016-04-08 11:33:34.864071,2018-10-12 14:17:39.248354
+2000000003,Leaf-level gas exchange - light response curve,"Measurements of photosynthetic gas exchange across incident light levels to derive the parameters describing leaf-level responses to light.  Measurements are generally combined with statistical curve fitting for photosynthesis parameter estimation.
+
+Also see Bernacchi et al 2003 PC&E; Posada et al., 2009 Annals of Botany; Thornley, 1976, etc",2000000022,2018-10-12 14:23:59.52589,2018-10-12 14:24:41.762891
+2000000002,Leaf-level gas exchange,Measurement of leaf-level gas exchange using a infrared gas analyzer (e.g. Li-Cor 6400) combined with statistical curve fitting for photosynthesis parameter estimation,2000000022,2017-11-10 19:39:38.922053,2017-11-10 19:41:35.113081
+2000000004,Specific Leaf Area Flatbed Scanner,"Measurement of fresh leaf area using a flatbed scanner with a DPI of at least 600 dpi.  Leaves/needles are spread out on the scanning surface and arranged to avoid overlap.  Twisted needles or curled leaves are taped to the surface in order to get the correct, unbiased area.  A threshold is applied to highlight the leaves/needles or another approach is used to detect the foliage in the images and the area of the leaves is calculated based on pixel statistics.  The leaf material is then dried to calculate leaf dry mass and used to calculate the specific leaf area (typically in m2 / kg) on a dry-weight basis",2000000034,2019-01-17 13:30:48.5718,2019-01-17 13:35:30.374221
