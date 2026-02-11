@@ -17,3 +17,4 @@
 ^renv.lock$
 ^betydata\.Rproj$
 ^\.Rproj\.user$
+^CITATION\.cff$
