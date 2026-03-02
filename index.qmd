@@ -1,0 +1,75 @@
+---
+title: "betydata"
+subtitle: "Public Data from the BETYdb Database"
+---
+
+```{r}
+#| echo: false
+library(betydata)
+library(dplyr)
+```
+
+**betydata** is an R data package providing offline access to public data from [BETYdb](https://betydb.org) (Biofuel Ecophysiological Traits and Yields database). It enables reproducible analyses of plant traits, crop yields, and supporting metadata without requiring database connectivity.
+
+## At a Glance
+
+```{r}
+#| echo: false
+#| label: tbl-overview
+#| tbl-cap: "Dataset summary"
+tibble::tibble(
+  Metric = c(
+    "Total observations", "Unique traits", "Plant species",
+    "Research sites", "Literature citations", "Tables"
+  ),
+  Value = c(
+    format(nrow(traitsview), big.mark = ","),
+    n_distinct(traitsview$trait),
+    format(nrow(species), big.mark = ","),
+    nrow(sites),
+    nrow(citations),
+    16
+  )
+) |> knitr::kable()
+```
+
+## Installation
+
+```r
+# install.packages("remotes")
+remotes::install_github("PecanProject/betydata")
+```
+
+## Quick Start
+
+```{r}
+library(betydata)
+library(dplyr)
+
+# The primary table -- key columns first, IDs last
+traitsview
+
+# Bioenergy crop observations
+bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Salix", "Saccharum")
+traitsview |>
+  filter(genus %in% bioenergy_genera) |>
+  count(genus, sort = TRUE)
+```
+
+## Guides
+
+| Guide | Description |
+|-------|-------------|
+| [Getting Started](vignettes/getting_started.qmd) | Package overview, data model, and key concepts |
+| [Common Analyses](vignettes/common_analyses.qmd) | Practical analysis patterns with dplyr |
+| [PFTs & Priors](vignettes/pfts-priors.qmd) | Plant Functional Types and Bayesian prior distributions |
+| [Manuscript Reproduction](vignettes/manuscript.qmd) | Reproduce key analyses from LeBauer et al. (2018) |
+
+## Data License
+
+Data: [ODC-By-1.0](https://opendatacommons.org/licenses/by/1-0/)
+| Code: [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
+
+## Citation
+
+LeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. *GCB Bioenergy*. [doi:10.1111/gcbb.12420](https://doi.org/10.1111/gcbb.12420)
