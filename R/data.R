@@ -3,15 +3,17 @@
 #' Traits and yields from BETYdb
 #'
 #' A denormalized view combining plant trait measurements and crop yield data
-#' from the BETYdb database. This is the primary dataset for offline analysis.
+#' from the BETYdb database. This is the primary table for offline analysis.
+#' Columns are ordered with key analytical fields first (trait, mean, units,
+#' scientificname, genus) and ID columns last.
 #'
-#' @format A data frame with trait and yield observations. 
-#'   Use `names(traitsview)` to see all columns. Key columns include
-#'   checked (quality flag), result_type, id, mean, units, trait, and scientificname.
+#' @format A tibble with 43,532 rows and 35 columns.
+#'   Key columns: trait, mean, units, scientificname, genus, sitename, author.
+#'   Use `names(traitsview)` to see all columns.
 #' @source <https://betydb.org>, exported from traits_and_yields_view
 #' @seealso [species], [sites], [variables], [citations]
 #' @examples
-#' head(traitsview)
+#' traitsview
 #' names(traitsview)
 "traitsview"
 
