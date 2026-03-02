@@ -11,27 +11,31 @@
 
 |                           |                                                                        |
 |---------------------------|------------------------------------------------------------------------|
-| **Primary Dataset**       | `traitsview` - 43,532 trait and yield observations                     |
+| **Primary Table**         | `traitsview` - 43,532 trait and yield observations                     |
 | **Support Tables**        | 15 reference tables (species, sites, variables, citations, pfts, etc.) |
 | **Species Coverage**      | ~9,000 plant species with emphasis on bioenergy crops                  |
 | **Geographic Scope**      | Global, with concentration in North America and Europe                 |
-| **Temporal Range**        | 1900 – present                                                         |
+| **Temporal Range**        | 1900 -- present                                                        |
 | **Top Genera**            | *Miscanthus*, *Panicum*, *Populus*, *Salix*, *Saccharum*               |
-| **Data License**          | [ODC-By-1.0](https://opendatacommons.org/licenses/by/1-0/)             |
 | **Frictionless Metadata** | [`inst/metadata/datapackage.json`](inst/metadata/datapackage.json)     |
 
 ---
 
-## Datasets
+## Tables
 
-This package provides 16 datasets exported from BETYdb:
+This package provides a dataset with 16 tables exported from BETYdb.
 
-### Primary Dataset
+### Primary Table
 
-| Dataset       | Rows   | Columns | Description                                  |
+| Table         | Rows   | Columns | Description                                  |
 |---------------|--------|---------|----------------------------------------------|
-| `traitsview`  | 43,532 | 36      | Denormalized view of plant traits and yields |
-| Dataset       | Description                                                   |
+| `traitsview`  | 43,532 | 35      | Denormalized view of plant traits and yields |
+
+### Metadata Tables
+
+These tables provide reference data for species, sites, variables, and other entities linked to the trait observations.
+
+| Table         | Description                                                   |
 |---------------|---------------------------------------------------------------|
 | `species`     | Plant taxonomy (genus, species, common names)                 |
 | `sites`       | Research site locations with coordinates and climate data     |
@@ -47,7 +51,9 @@ This package provides 16 datasets exported from BETYdb:
 
 ### Relationship Tables
 
-| Dataset                    | Description                    |
+These junction tables connect entities in many-to-many relationships. Use `pfts_species` to find which species belong to a Plant Functional Type, or `managements_treatments` to link management practices to experimental treatments.
+
+| Table                      | Description                    |
 |----------------------------|--------------------------------|
 | `pfts_species`             | PFT <-> species mapping          |
 | `pfts_priors`              | PFT <-> prior mapping            |
@@ -73,20 +79,20 @@ R CMD INSTALL betydata
 ## Quick Start
 ```r
 library(betydata)
+library(dplyr)
 
-# Load the primary dataset
-data(traitsview)
-
-# Explore structure
-str(traitsview)
-head(traitsview)
+# Preview the primary table (columns are ordered for readability)
+traitsview
 
 # Count observations by trait
-library(dplyr)
-traitsview |> count(trait, sort = TRUE)
+traitsview |>
+  count(trait, sort = TRUE)
 
-# Count by genus (top bioenergy crops)
-traitsview |> count(genus, sort = TRUE) |> head(10)
+# Bioenergy crop yields
+bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Salix", "Saccharum")
+traitsview |>
+  filter(genus %in% bioenergy_genera) |>
+  count(genus, sort = TRUE)
 ```
 
 ---
@@ -103,35 +109,30 @@ All trait and yield data include a quality control flag:
 | `0`   | Unchecked | Not yet reviewed                                          |
 | `-1`  | Flagged   | Identified as incorrect (excluded from this package)      |
 
-**Note:** This package exports only `checked >= 0` data. Flagged records (`checked = -1`) are excluded during data preparation. For research requiring unchecked data, access the BETYdb PostgreSQL database directly.
-
-### Access Levels
-
-All data in this package is publicly available (`access_level = 4`). Restricted data (`access_level` 1–3) requires database access with appropriate permissions.
+This package exports only `checked >= 0` data. Flagged records (`checked = -1`) are excluded during data preparation. All data in this package is public (from BETYdb records with `access_level = 4`). For restricted or flagged data, access the BETYdb PostgreSQL database directly.
 
 ---
 
 ## Key Traits and Yields
 
-The `traitsview` dataset contains measurements of ecophysiological traits and crop yields:
+The `traitsview` table contains measurements of ecophysiological traits and crop yields:
 
 ### Common Traits
 
-* **SLA** - Specific Leaf Area (m2/kg)
-* **Vcmax** - Maximum carboxylation rate (umol/m2/s)
-* **leafN** - Leaf nitrogen content (%)
-* **height** - Plant height (m)
-* **LAI** - Leaf Area Index (m2/m2)
+* **SLA** -- Specific Leaf Area (m2/kg)
+* **Vcmax** -- Maximum carboxylation rate (umol/m2/s)
+* **leafN** -- Leaf nitrogen content (%)
+* **height** -- Plant height (m)
+* **LAI** -- Leaf Area Index (m2/m2)
 
 ### Yield Variables
 
-* **Ayield** - Above-ground yield (Mg/ha)
-* **AGBiomass** - Above-ground biomass (Mg/ha)
+* **Ayield** -- Above-ground yield (Mg/ha)
+* **AGBiomass** -- Above-ground biomass (Mg/ha)
 
 Use the `variables` table for complete definitions and units:
 ```r
-data(variables)
-variables |> 
+variables |>
   filter(name %in% c("SLA", "Vcmax", "Ayield")) |>
   select(name, description, units)
 ```
@@ -142,9 +143,9 @@ variables |>
 
 ### .rda (Default)
 
-Lazy-loaded R data objects, optimized for R workflows:
+Lazy-loaded R data objects, available after `library(betydata)`:
 ```r
-data(traitsview)
+traitsview
 ```
 
 ### Parquet (Alternative)
@@ -176,12 +177,12 @@ Machine-readable metadata following the Frictionless data standard:
 
 Detailed tutorials are available as package vignettes:
 
-| Vignette       | Description                                              |
-|----------------|----------------------------------------------------------|
-| `orientation`  | Overview of package structure and data relationships     |
-| `sql-analogs`  | Migrate BETYdb SQL queries to R with dplyr               |
-| `pfts-priors`  | Working with PFTs and prior distributions                |
-| `manuscript`   | Reproduce analyses from LeBauer et al. (2018)            |
+| Vignette            | Description                                              |
+|---------------------|----------------------------------------------------------|
+| `getting_started`   | Overview of package structure and data relationships     |
+| `common_analyses`   | Common analysis patterns with dplyr                      |
+| `pfts-priors`       | Working with PFTs and prior distributions                |
+| `manuscript`        | Reproduce analyses from LeBauer et al. (2018)            |
 ```r
 browseVignettes("betydata")
 ```
