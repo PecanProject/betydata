@@ -6,6 +6,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r}
+#| include: false
+knitr::opts_chunk$set(eval = requireNamespace("betydata", quietly = TRUE))
+```
+
 ::: {.callout-note}
 ## What you will learn
 
