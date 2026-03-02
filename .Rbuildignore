@@ -10,11 +10,14 @@
 ^.lintr$
 ^codecov.yml$
 ^.pre-commit-config.yaml$
-^bety.code-workspace$
-^create_issue.sh$
-^bety-ref.md$
 ^renv$
 ^renv.lock$
 ^betydata\.Rproj$
 ^\.Rproj\.user$
 ^CITATION\.cff$
+^vignettes/.*_files$
+^_quarto\.yml$
+^_site$
+^_freeze$
+^index\.qmd$
+^_publish\.yml$
