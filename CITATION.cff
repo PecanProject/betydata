@@ -8,8 +8,8 @@ abstract: >-
 license: BSD-3-Clause
 # doi: 10.5281/zenodo.XXXXXXX
 message: >-
-  If you use this data package, please cite both the software and 
-  the BETYdb paper using the metadata from 'preferred-citation'.
+  If you use this data package, please cite both this software and
+  the BETYdb paper (see the project documentation or BETYdb website for citation details).
 type: dataset
 date-released: "2026-02-11"
 repository-code: https://github.com/PecanProject/betydata
