@@ -1,7 +1,5 @@
 # Tests for frictionless datapackage.json
 
-context("Metadata validation")
-
 test_that("datapackage.json exists and is valid JSON", {
   pkg_path <- system.file("metadata", "datapackage.json", package = "betydata")
   expect_true(file.exists(pkg_path))
