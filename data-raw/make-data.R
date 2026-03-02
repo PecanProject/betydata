@@ -73,6 +73,22 @@ traitsview <- read_csv(
 # Filter out checked = -1
 traitsview <- traitsview[is.na(traitsview$checked) | traitsview$checked != -1, ]
 
+# Drop access_level column (all records are public, access_level = 4)
+traitsview$access_level <- NULL
+
+# Reorder columns: key analytical columns first, IDs and metadata last
+col_order <- c(
+  "trait", "mean", "units", "scientificname", "genus",
+  "commonname", "sitename", "author", "citation_year",
+  "lat", "lon", "date", "year", "month",
+  "checked", "result_type", "treatment", "cultivar",
+  "entity", "method_name", "n", "statname", "stat",
+  "notes", "trait_description", "city", "time", "raw_date",
+  "dateloc", "id", "citation_id", "site_id", "treatment_id",
+  "species_id", "cultivar_id"
+)
+traitsview <- traitsview[, col_order]
+
 log_info(sprintf("  traitsview: %d rows, %d columns", nrow(traitsview), ncol(traitsview)))
 
 # --- Support tables ---
@@ -163,10 +179,13 @@ r_to_frictionless_type <- function(x) {
   "string"
 }
 
-# Build schema for traitsview
-traitsview_fields <- lapply(names(traitsview), function(col) {
-  list(name = col, type = r_to_frictionless_type(traitsview[[col]]))
-})
+# Build schema for any data frame
+build_schema <- function(df) {
+  fields <- lapply(names(df), function(col) {
+    list(name = col, type = r_to_frictionless_type(df[[col]]))
+  })
+  list(fields = fields)
+}
 
 # Build resources list
 datasets <- c("traitsview", "species", "sites", "variables", "citations",
@@ -175,6 +194,7 @@ datasets <- c("traitsview", "species", "sites", "variables", "citations",
               "managements_treatments", "cultivars_pfts")
 
 resources <- lapply(datasets, function(nm) {
+  df <- get(nm)
   base <- list(
     name = nm,
     path = paste0("data/", nm, ".rda"),
@@ -183,7 +203,9 @@ resources <- lapply(datasets, function(nm) {
   if (nm == "traitsview") {
     base$title <- "Traits and Yields View"
     base$description <- "Denormalized view of plant trait measurements and crop yields"
-    base$schema <- list(fields = traitsview_fields)
+  }
+  if (!is.null(df)) {
+    base$schema <- build_schema(df)
   }
   base
 })
