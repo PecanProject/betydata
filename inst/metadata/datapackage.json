@@ -2,7 +2,7 @@
   "name": "betydata",
   "title": "BETYdb Plant Traits and Yields Data Package",
   "version": "0.1.0",
-  "created": "2026-02-11",
+  "created": "2026-02-28",
   "licenses": [
     {
       "name": "ODC-By-1.0",
@@ -30,51 +30,19 @@
       "schema": {
         "fields": [
           {
-            "name": "checked",
-            "type": "integer"
-          },
-          {
-            "name": "result_type",
+            "name": "trait",
             "type": "string"
           },
           {
-            "name": "id",
-            "type": "integer"
-          },
-          {
-            "name": "citation_id",
-            "type": "integer"
-          },
-          {
-            "name": "site_id",
-            "type": "integer"
-          },
-          {
-            "name": "treatment_id",
-            "type": "integer"
-          },
-          {
-            "name": "sitename",
-            "type": "string"
-          },
-          {
-            "name": "city",
-            "type": "string"
-          },
-          {
-            "name": "lat",
+            "name": "mean",
             "type": "number"
           },
           {
-            "name": "lon",
-            "type": "number"
+            "name": "units",
+            "type": "string"
           },
           {
             "name": "scientificname",
-            "type": "string"
-          },
-          {
-            "name": "commonname",
             "type": "string"
           },
           {
@@ -82,12 +50,12 @@
             "type": "string"
           },
           {
-            "name": "species_id",
-            "type": "integer"
+            "name": "commonname",
+            "type": "string"
           },
           {
-            "name": "cultivar_id",
-            "type": "integer"
+            "name": "sitename",
+            "type": "string"
           },
           {
             "name": "author",
@@ -98,47 +66,47 @@
             "type": "integer"
           },
           {
-            "name": "treatment",
-            "type": "string"
+            "name": "lat",
+            "type": "number"
+          },
+          {
+            "name": "lon",
+            "type": "number"
           },
           {
             "name": "date",
             "type": "string"
           },
           {
-            "name": "time",
-            "type": "string"
-          },
-          {
-            "name": "raw_date",
-            "type": "string"
+            "name": "year",
+            "type": "integer"
           },
           {
             "name": "month",
             "type": "integer"
           },
           {
-            "name": "year",
+            "name": "checked",
             "type": "integer"
           },
           {
-            "name": "dateloc",
-            "type": "number"
-          },
-          {
-            "name": "trait",
+            "name": "result_type",
             "type": "string"
           },
           {
-            "name": "trait_description",
+            "name": "treatment",
             "type": "string"
           },
           {
-            "name": "mean",
-            "type": "number"
+            "name": "cultivar",
+            "type": "string"
           },
           {
-            "name": "units",
+            "name": "entity",
+            "type": "string"
+          },
+          {
+            "name": "method_name",
             "type": "string"
           },
           {
@@ -158,20 +126,48 @@
             "type": "string"
           },
           {
-            "name": "access_level",
+            "name": "trait_description",
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "name": "time",
+            "type": "string"
+          },
+          {
+            "name": "raw_date",
+            "type": "string"
+          },
+          {
+            "name": "dateloc",
+            "type": "number"
+          },
+          {
+            "name": "id",
             "type": "integer"
           },
           {
-            "name": "cultivar",
-            "type": "string"
+            "name": "citation_id",
+            "type": "integer"
           },
           {
-            "name": "entity",
-            "type": "string"
+            "name": "site_id",
+            "type": "integer"
           },
           {
-            "name": "method_name",
-            "type": "string"
+            "name": "treatment_id",
+            "type": "integer"
+          },
+          {
+            "name": "species_id",
+            "type": "integer"
+          },
+          {
+            "name": "cultivar_id",
+            "type": "integer"
           }
         ]
       }
@@ -179,77 +175,981 @@
     {
       "name": "species",
       "path": "data/species.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "spcd",
+            "type": "number"
+          },
+          {
+            "name": "genus",
+            "type": "string"
+          },
+          {
+            "name": "species",
+            "type": "string"
+          },
+          {
+            "name": "scientificname",
+            "type": "string"
+          },
+          {
+            "name": "commonname",
+            "type": "string"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "AcceptedSymbol",
+            "type": "string"
+          },
+          {
+            "name": "SynonymSymbol",
+            "type": "boolean"
+          },
+          {
+            "name": "Symbol",
+            "type": "string"
+          },
+          {
+            "name": "PLANTS_Floristic_Area",
+            "type": "string"
+          },
+          {
+            "name": "State",
+            "type": "string"
+          },
+          {
+            "name": "Category",
+            "type": "string"
+          },
+          {
+            "name": "Family",
+            "type": "string"
+          },
+          {
+            "name": "FamilySymbol",
+            "type": "string"
+          },
+          {
+            "name": "FamilyCommonName",
+            "type": "string"
+          },
+          {
+            "name": "xOrder",
+            "type": "string"
+          },
+          {
+            "name": "SubClass",
+            "type": "string"
+          },
+          {
+            "name": "Class",
+            "type": "string"
+          },
+          {
+            "name": "SubDivision",
+            "type": "string"
+          },
+          {
+            "name": "Division",
+            "type": "string"
+          },
+          {
+            "name": "SuperDivision",
+            "type": "string"
+          },
+          {
+            "name": "SubKingdom",
+            "type": "string"
+          },
+          {
+            "name": "Kingdom",
+            "type": "string"
+          },
+          {
+            "name": "ITIS_TSN",
+            "type": "number"
+          },
+          {
+            "name": "Duration",
+            "type": "string"
+          },
+          {
+            "name": "GrowthHabit",
+            "type": "string"
+          },
+          {
+            "name": "NativeStatus",
+            "type": "string"
+          },
+          {
+            "name": "NationalWetlandIndicatorStatus",
+            "type": "string"
+          },
+          {
+            "name": "RegionalWetlandIndicatorStatus",
+            "type": "string"
+          },
+          {
+            "name": "ActiveGrowthPeriod",
+            "type": "string"
+          },
+          {
+            "name": "AfterHarvestRegrowthRate",
+            "type": "string"
+          },
+          {
+            "name": "Bloat",
+            "type": "string"
+          },
+          {
+            "name": "C2N_Ratio",
+            "type": "string"
+          },
+          {
+            "name": "CoppicePotential",
+            "type": "string"
+          },
+          {
+            "name": "FallConspicuous",
+            "type": "string"
+          },
+          {
+            "name": "FireResistance",
+            "type": "string"
+          },
+          {
+            "name": "FoliageTexture",
+            "type": "string"
+          },
+          {
+            "name": "GrowthForm",
+            "type": "string"
+          },
+          {
+            "name": "GrowthRate",
+            "type": "string"
+          },
+          {
+            "name": "MaxHeight20Yrs",
+            "type": "number"
+          },
+          {
+            "name": "MatureHeight",
+            "type": "number"
+          },
+          {
+            "name": "KnownAllelopath",
+            "type": "string"
+          },
+          {
+            "name": "LeafRetention",
+            "type": "string"
+          },
+          {
+            "name": "Lifespan",
+            "type": "string"
+          },
+          {
+            "name": "LowGrowingGrass",
+            "type": "string"
+          },
+          {
+            "name": "NitrogenFixation",
+            "type": "boolean"
+          },
+          {
+            "name": "ResproutAbility",
+            "type": "string"
+          },
+          {
+            "name": "AdaptedCoarseSoils",
+            "type": "string"
+          },
+          {
+            "name": "AdaptedMediumSoils",
+            "type": "string"
+          },
+          {
+            "name": "AdaptedFineSoils",
+            "type": "string"
+          },
+          {
+            "name": "AnaerobicTolerance",
+            "type": "string"
+          },
+          {
+            "name": "CaCO3Tolerance",
+            "type": "string"
+          },
+          {
+            "name": "ColdStratification",
+            "type": "string"
+          },
+          {
+            "name": "DroughtTolerance",
+            "type": "string"
+          },
+          {
+            "name": "FertilityRequirement",
+            "type": "string"
+          },
+          {
+            "name": "FireTolerance",
+            "type": "string"
+          },
+          {
+            "name": "MinFrostFreeDays",
+            "type": "number"
+          },
+          {
+            "name": "HedgeTolerance",
+            "type": "string"
+          },
+          {
+            "name": "MoistureUse",
+            "type": "string"
+          },
+          {
+            "name": "pH_Minimum",
+            "type": "number"
+          },
+          {
+            "name": "pH_Maximum",
+            "type": "number"
+          },
+          {
+            "name": "Min_PlantingDensity",
+            "type": "number"
+          },
+          {
+            "name": "Max_PlantingDensity",
+            "type": "number"
+          },
+          {
+            "name": "Precipitation_Minimum",
+            "type": "number"
+          },
+          {
+            "name": "Precipitation_Maximum",
+            "type": "number"
+          },
+          {
+            "name": "RootDepthMinimum",
+            "type": "number"
+          },
+          {
+            "name": "SalinityTolerance",
+            "type": "string"
+          },
+          {
+            "name": "ShadeTolerance",
+            "type": "string"
+          },
+          {
+            "name": "TemperatureMinimum",
+            "type": "number"
+          },
+          {
+            "name": "BloomPeriod",
+            "type": "string"
+          },
+          {
+            "name": "CommercialAvailability",
+            "type": "string"
+          },
+          {
+            "name": "FruitSeedPeriodBegin",
+            "type": "string"
+          },
+          {
+            "name": "FruitSeedPeriodEnd",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_BareRoot",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Bulbs",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Container",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Corms",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Cuttings",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Seed",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Sod",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Sprigs",
+            "type": "string"
+          },
+          {
+            "name": "Propogated_by_Tubers",
+            "type": "string"
+          },
+          {
+            "name": "Seeds_per_Pound",
+            "type": "number"
+          },
+          {
+            "name": "SeedSpreadRate",
+            "type": "string"
+          },
+          {
+            "name": "SeedlingVigor",
+            "type": "string"
+          }
+        ]
+      }
     },
     {
       "name": "sites",
       "path": "data/sites.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "city",
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          },
+          {
+            "name": "mat",
+            "type": "number"
+          },
+          {
+            "name": "map",
+            "type": "number"
+          },
+          {
+            "name": "soil",
+            "type": "string"
+          },
+          {
+            "name": "som",
+            "type": "boolean"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "soilnotes",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "sitename",
+            "type": "string"
+          },
+          {
+            "name": "greenhouse",
+            "type": "boolean"
+          },
+          {
+            "name": "user_id",
+            "type": "number"
+          },
+          {
+            "name": "sand_pct",
+            "type": "number"
+          },
+          {
+            "name": "clay_pct",
+            "type": "number"
+          },
+          {
+            "name": "geometry",
+            "type": "string"
+          },
+          {
+            "name": "time_zone",
+            "type": "string"
+          }
+        ]
+      }
     },
     {
       "name": "variables",
       "path": "data/variables.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "units",
+            "type": "string"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "max",
+            "type": "string"
+          },
+          {
+            "name": "min",
+            "type": "string"
+          },
+          {
+            "name": "standard_name",
+            "type": "string"
+          },
+          {
+            "name": "standard_units",
+            "type": "string"
+          },
+          {
+            "name": "label",
+            "type": "string"
+          },
+          {
+            "name": "type",
+            "type": "string"
+          }
+        ]
+      }
     },
     {
       "name": "citations",
       "path": "data/citations.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "author",
+            "type": "string"
+          },
+          {
+            "name": "year",
+            "type": "number"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "journal",
+            "type": "string"
+          },
+          {
+            "name": "vol",
+            "type": "number"
+          },
+          {
+            "name": "pg",
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "type": "string"
+          },
+          {
+            "name": "pdf",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "doi",
+            "type": "string"
+          },
+          {
+            "name": "user_id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "cultivars",
       "path": "data/cultivars.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "specie_id",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "ecotype",
+            "type": "string"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "previous_id",
+            "type": "string"
+          }
+        ]
+      }
     },
     {
       "name": "methods",
       "path": "data/methods.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "citation_id",
+            "type": "number"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          }
+        ]
+      }
     },
     {
       "name": "treatments",
       "path": "data/treatments.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "definition",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "control",
+            "type": "boolean"
+          },
+          {
+            "name": "user_id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "pfts",
       "path": "data/pfts.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "definition",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "parent_id",
+            "type": "number"
+          },
+          {
+            "name": "pft_type",
+            "type": "string"
+          },
+          {
+            "name": "modeltype_id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "priors",
       "path": "data/priors.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "citation_id",
+            "type": "number"
+          },
+          {
+            "name": "variable_id",
+            "type": "number"
+          },
+          {
+            "name": "phylogeny",
+            "type": "string"
+          },
+          {
+            "name": "distn",
+            "type": "string"
+          },
+          {
+            "name": "parama",
+            "type": "number"
+          },
+          {
+            "name": "paramb",
+            "type": "number"
+          },
+          {
+            "name": "paramc",
+            "type": "number"
+          },
+          {
+            "name": "n",
+            "type": "number"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          }
+        ]
+      }
     },
     {
       "name": "managements",
       "path": "data/managements.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "citation_id",
+            "type": "number"
+          },
+          {
+            "name": "date",
+            "type": "date"
+          },
+          {
+            "name": "dateloc",
+            "type": "number"
+          },
+          {
+            "name": "mgmttype",
+            "type": "string"
+          },
+          {
+            "name": "level",
+            "type": "number"
+          },
+          {
+            "name": "units",
+            "type": "string"
+          },
+          {
+            "name": "notes",
+            "type": "string"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "user_id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "entities",
       "path": "data/entities.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "id",
+            "type": "number"
+          },
+          {
+            "name": "parent_id",
+            "type": "boolean"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "notes",
+            "type": "boolean"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          }
+        ]
+      }
     },
     {
       "name": "pfts_species",
       "path": "data/pfts_species.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "pft_id",
+            "type": "number"
+          },
+          {
+            "name": "specie_id",
+            "type": "number"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "pfts_priors",
       "path": "data/pfts_priors.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "pft_id",
+            "type": "number"
+          },
+          {
+            "name": "prior_id",
+            "type": "number"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "managements_treatments",
       "path": "data/managements_treatments.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "treatment_id",
+            "type": "number"
+          },
+          {
+            "name": "management_id",
+            "type": "number"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
     },
     {
       "name": "cultivars_pfts",
       "path": "data/cultivars_pfts.rda",
-      "format": "rda"
+      "format": "rda",
+      "schema": {
+        "fields": [
+          {
+            "name": "pft_id",
+            "type": "number"
+          },
+          {
+            "name": "cultivar_id",
+            "type": "number"
+          },
+          {
+            "name": "created_at",
+            "type": "datetime"
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime"
+          },
+          {
+            "name": "id",
+            "type": "number"
+          }
+        ]
+      }
     }
   ]
 }
