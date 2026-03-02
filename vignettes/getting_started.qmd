@@ -1,0 +1,193 @@
+---
+title: "Getting Started with betydata"
+vignette: >
+  %\VignetteIndexEntry{Getting Started with betydata}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+::: {.callout-note}
+## What you will learn
+
+- What data is available in betydata and how the 16 tables relate to each other
+- How to explore trait and yield observations using dplyr
+- Key concepts: traits, yields, QA/QC flags, and Plant Functional Types
+:::
+
+## What is betydata?
+
+The `betydata` package provides offline access to public data from [BETYdb](https://betydb.org), the Biofuel Ecophysiological Traits and Yields database. BETYdb is a centralized repository of plant trait measurements and crop yield data used in ecosystem modeling and agricultural research.
+
+A **trait** is a measurable characteristic of a plant -- for example, Specific Leaf Area (SLA, m2/kg), maximum carboxylation rate (Vcmax, umol/m2/s), or leaf nitrogen content (%). A **yield** is a measure of crop production per unit area (typically Mg/ha). Together, traits and yields form the foundation of ecosystem model parameterization and agricultural research.
+
+## Loading the Package
+
+```{r}
+library(betydata)
+library(dplyr)
+```
+
+## Data Architecture {#sec-architecture}
+
+The package contains **16 tables** organized in three tiers:
+
+```{r}
+#| label: tbl-tables
+#| tbl-cap: "All tables available in betydata"
+data(package = "betydata")$results[, c("Item", "Title")] |>
+  as.data.frame() |>
+  knitr::kable()
+```
+
+::: {.callout-tip}
+## Data Model
+
+The tables follow a relational structure:
+
+- **`traitsview`** is the primary denormalized table (pre-joined for convenience)
+- **Metadata tables** (`species`, `sites`, `variables`, `citations`, etc.) provide reference data
+- **Relationship tables** (`pfts_species`, `pfts_priors`, etc.) are many-to-many junction tables
+
+You can use `traitsview` for most analyses without joining anything. The metadata and relationship tables are available when you need additional detail or custom aggregations.
+:::
+
+## The Primary Table: traitsview {#sec-traitsview}
+
+The `traitsview` table is a denormalized view combining traits and yields with associated metadata. Key analytical columns are placed first for convenient interactive use:
+
+```{r}
+traitsview
+```
+
+### Key Columns {#sec-columns}
+
+| Column           | Description                                      | Example Values            |
+|------------------|--------------------------------------------------|---------------------------|
+| `trait`          | Variable name                                    | SLA, Vcmax, Ayield        |
+| `mean`           | Observed value                                   | 22.5, 38.1                |
+| `units`          | Measurement units                                | m2/kg, umol/m2/s          |
+| `scientificname` | Full species name                                | *Miscanthus x giganteus*  |
+| `genus`          | Genus                                            | Miscanthus, Panicum       |
+| `sitename`       | Research site                                    | Energy Farm, Urbana IL    |
+| `author`         | Citation author                                  | Heaton 2008               |
+| `checked`        | QA/QC status (0 = unchecked, 1 = verified)       | 0, 1                      |
+
+## Basic Exploration
+
+```{r}
+#| label: tbl-trait-counts
+#| tbl-cap: "Top 15 most common traits in betydata"
+traitsview |>
+  count(trait, sort = TRUE) |>
+  head(15) |>
+  knitr::kable()
+```
+
+## Data Quality: The `checked` Column {#sec-checked}
+
+::: {.callout-important}
+## Quality Control
+
+The `checked` column indicates data verification status:
+
+- **`1`** = Verified by an independent reviewer
+- **`0`** = Not yet reviewed (use with appropriate caution)
+- **`-1`** = Flagged as incorrect (**excluded** from this package)
+
+All data in this package is public (BETYdb `access_level = 4`).
+:::
+
+```{r}
+table(traitsview$checked, useNA = "ifany")
+
+verified <- traitsview |>
+  filter(checked == 1)
+nrow(verified)
+```
+
+## Support Tables {#sec-support}
+
+### Species Taxonomy
+
+The `species` table contains `r format(nrow(species), big.mark = ",")` entries with full taxonomic information:
+
+```{r}
+species |>
+  select(id, scientificname, genus, commonname)
+```
+
+### Variables (Trait Definitions)
+
+The `variables` table documents units, descriptions, and valid ranges for each measured trait:
+
+```{r}
+variables |>
+  filter(name %in% c("SLA", "Vcmax", "leaf_respiration_rate_m2", "Ayield")) |>
+  select(name, units, description)
+```
+
+### Sites
+
+```{r}
+sites_with_climate <- sites |>
+  filter(!is.na(mat), !is.na(map))
+nrow(sites_with_climate)
+```
+
+## Example: Bioenergy Crop Yields {#sec-bioenergy}
+
+```{r}
+#| label: tbl-bioenergy
+#| tbl-cap: "Yield summary for key bioenergy genera"
+bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Salix", "Saccharum")
+
+yields <- traitsview |>
+  filter(
+    trait == "Ayield",
+    genus %in% bioenergy_genera,
+    !is.na(mean)
+  ) |>
+  select(genus, mean, units, sitename, author, citation_year, lat, lon)
+
+yields |>
+  summarise(
+    n = n(),
+    mean_yield = round(mean(mean, na.rm = TRUE), 1),
+    sd_yield = round(sd(mean, na.rm = TRUE), 1),
+    .by = genus
+  ) |>
+  knitr::kable(col.names = c("Genus", "N", "Mean Yield (Mg/ha)", "SD"))
+```
+
+## Working with Plant Functional Types (PFTs) {#sec-pfts}
+
+::: {.callout-note}
+## What is a PFT?
+
+A **Plant Functional Type** groups species with similar ecological characteristics for ecosystem modeling. Instead of parameterizing models for each species individually, PFTs like "temperate deciduous trees" or "C4 grasses" define shared parameter distributions. This approach is essential when species-level data is sparse and makes modeling tractable at large scales.
+:::
+
+```{r}
+miscanthus_sp <- species |>
+  filter(genus == "Miscanthus") |>
+  pull(id)
+
+pfts_species |>
+  filter(specie_id %in% miscanthus_sp) |>
+  left_join(pfts |> select(id, name), by = c("pft_id" = "id")) |>
+  distinct(name)
+```
+
+## Next Steps
+
+| Vignette                       | Description                                   |
+|--------------------------------|-----------------------------------------------|
+| `vignette("common_analyses")`  | Common analysis patterns with dplyr           |
+| `vignette("pfts-priors")`      | Working with PFTs and Bayesian priors         |
+| `vignette("manuscript")`       | Reproduce analyses from LeBauer et al. (2018) |
+
+## References
+
+- LeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. *GCB Bioenergy*. [doi:10.1111/gcbb.12420](https://doi.org/10.1111/gcbb.12420)
+- LeBauer, D. S., et al. (2013). Facilitating feedbacks between field measurements and ecosystem models. *Ecological Monographs*, 83(2), 133--154.
+- BETYdb documentation: <https://betydb.org>

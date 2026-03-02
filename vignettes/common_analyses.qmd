@@ -1,0 +1,183 @@
+---
+title: "Common Analyses with betydata"
+vignette: >
+  %\VignetteIndexEntry{Common Analyses with betydata}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+::: {.callout-note}
+## What you will learn
+
+- How to extract and summarize yield data for specific genera
+- How to link management practices (fertilization, planting) to yield observations
+- Patterns for site-level aggregation, author-based queries, and variable lookups
+:::
+
+## Setup
+
+```{r}
+library(betydata)
+library(dplyr)
+```
+
+## Extracting Yield Data for a Genus {#sec-yields}
+
+A common starting point is pulling yield observations for a particular genus and summarizing them. The `Ayield` trait represents above-ground annual yield in Mg/ha.
+
+```{r}
+miscanthus_yields <- traitsview |>
+  filter(
+    genus == "Miscanthus",
+    trait == "Ayield"
+  ) |>
+  select(id, mean, date, sitename, scientificname)
+
+miscanthus_yields
+
+nrow(miscanthus_yields)
+```
+
+::: {.callout-tip}
+## Tibble Printing
+
+All tables are tibbles, which display the first 10 rows by default. With key columns ordered first (`trait`, `mean`, `units`, `scientificname`, `genus`), the default output is immediately informative without needing `head()` or column subsetting.
+:::
+
+## Working with Management Practices {#sec-management}
+
+Management practices (planting dates, fertilization rates, harvest methods) are stored in the `managements` table and linked to experimental treatments through the `managements_treatments` junction table. This linkage connects management details to yield observations in `traitsview`.
+
+```{r}
+mgmt_treat <- managements_treatments |>
+  left_join(
+    managements |> select(id, mgmttype, level, units, date),
+    by = c("management_id" = "id")
+  )
+
+grass_yields <- traitsview |>
+  filter(
+    genus %in% c("Miscanthus", "Panicum"),
+    trait == "Ayield"
+  ) |>
+  left_join(mgmt_treat, by = "treatment_id", relationship = "many-to-many")
+
+grass_yields |>
+  filter(!is.na(mgmttype)) |>
+  count(genus, mgmttype, sort = TRUE)
+```
+
+## Nitrogen Fertilization Rates {#sec-nitrogen}
+
+Extracting nitrogen application rates and joining them with yield data enables exploration of yield--nitrogen relationships. Nitrogen management is recorded as `fertilizer_N` or `fertilizer_N_rate` in the `mgmttype` column.
+
+```{r}
+nitrogen_rates <- managements |>
+  filter(mgmttype %in% c("fertilizer_N", "fertilizer_N_rate")) |>
+  left_join(
+    managements_treatments |> select(management_id, treatment_id),
+    by = c("id" = "management_id")
+  ) |>
+  select(treatment_id, nrate = level, units)
+
+yields_with_n <- traitsview |>
+  filter(
+    trait == "Ayield",
+    genus %in% c("Miscanthus", "Panicum")
+  ) |>
+  left_join(nitrogen_rates, by = "treatment_id", relationship = "many-to-many")
+
+yields_with_n |>
+  filter(!is.na(nrate)) |>
+  summarise(
+    n = n(),
+    mean_N = round(mean(nrate, na.rm = TRUE), 1),
+    mean_yield = round(mean(mean, na.rm = TRUE), 1),
+    .by = genus
+  ) |>
+  knitr::kable(col.names = c("Genus", "N obs", "Mean N rate", "Mean Yield (Mg/ha)"))
+```
+
+## Site-Level Aggregation {#sec-sites}
+
+Aggregating trait data by site is useful for spatial analysis and mapping data density across research locations.
+
+```{r}
+#| label: tbl-site-summary
+#| tbl-cap: "Top research sites by number of records"
+site_summary <- traitsview |>
+  filter(!is.na(lat), !is.na(lon)) |>
+  summarise(
+    n_records = n(),
+    n_traits = n_distinct(trait),
+    n_species = n_distinct(species_id),
+    .by = c(site_id, sitename, lat, lon)
+  )
+
+site_summary |>
+  arrange(desc(n_records)) |>
+  head(15) |>
+  knitr::kable()
+```
+
+::: {.callout-tip}
+## Geographic Data
+
+All sites with coordinates have `lat` and `lon` columns in both `traitsview` and the `sites` table. The `sites` table additionally contains `mat` (mean annual temperature) and `map` (mean annual precipitation) for sites where climate data is available.
+:::
+
+## Finding Data by Author {#sec-author}
+
+```{r}
+lebauer_data <- traitsview |>
+  filter(grepl("LeBauer", author, ignore.case = TRUE))
+
+lebauer_data |>
+  count(trait, author, citation_year, sort = TRUE)
+```
+
+## Most Data-Rich Citations {#sec-citations}
+
+```{r}
+#| label: tbl-citations
+#| tbl-cap: "Top 10 citations by number of records"
+traitsview |>
+  count(citation_id, author, citation_year, sort = TRUE) |>
+  head(10) |>
+  knitr::kable()
+```
+
+## Variable and Trait Lookups {#sec-variables}
+
+The `variables` table provides units, descriptions, and valid ranges for each measured trait. This is useful for understanding what a trait measures and checking whether observed values are within expected bounds.
+
+```{r}
+variables |>
+  filter(name %in% c("SLA", "Vcmax", "leaf_respiration_rate_m2", "Ayield")) |>
+  select(name, units, description, min, max) |>
+  knitr::kable()
+```
+
+## Performance {#sec-performance}
+
+Since all tables are loaded in memory as R data frames, filtering and joining operations run at in-memory speed with no network overhead.
+
+```{r}
+system.time({
+  result <- traitsview |>
+    filter(
+      genus %in% c("Miscanthus", "Panicum", "Populus"),
+      trait %in% c("SLA", "Vcmax", "Ayield"),
+      checked == 1
+    ) |>
+    summarise(
+      n = n(),
+      mean = mean(mean, na.rm = TRUE),
+      .by = c(genus, trait)
+    )
+})
+```
+
+## References
+
+- LeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. *GCB Bioenergy*. [doi:10.1111/gcbb.12420](https://doi.org/10.1111/gcbb.12420)
