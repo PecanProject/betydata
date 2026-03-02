@@ -294,11 +294,11 @@ What you will learn
 <h2 class="anchored" data-anchor-id="sec-background">Background</h2>
 <section id="plant-functional-types" class="level3">
 <h3 class="anchored" data-anchor-id="plant-functional-types">Plant Functional Types</h3>
-<p>Ecosystem models like <a href="https://pecanproject.github.io/">PEcAn</a> simulate how plants exchange carbon, water, and energy with the atmosphere. These models require parameter values for photosynthesis rates, leaf properties, allocation fractions, and other ecophysiological quantities. Rather than parameterizing every species individually, models group species into <strong>Plant Functional Types (PFTs)</strong>—categories like “temperate deciduous trees” or “C4 grasses”—and estimate shared parameters for each group.</p>
+<p>Ecosystem models simulate how plants exchange carbon, water, and energy with the atmosphere. These models require parameter values for photosynthesis rates, leaf properties, allocation fractions, and other ecophysiological quantities. Rather than parameterizing every species individually, models group species into <strong>Plant Functional Types (PFTs)</strong> – categories like “temperate deciduous trees” or “C4 grasses” – and estimate shared parameters for each group.</p>
 </section>
 <section id="bayesian-parameterization" class="level3">
 <h3 class="anchored" data-anchor-id="bayesian-parameterization">Bayesian Parameterization</h3>
-<p>PEcAn uses Bayesian inference to estimate model parameters. The workflow is:</p>
+<p>Bayesian inference is used to estimate model parameters. The workflow is:</p>
 <ol type="1">
 <li><strong>Prior distribution</strong> <span class="math inline">\(p(\theta)\)</span>: Encodes existing knowledge about a parameter <span class="math inline">\(\theta\)</span> before looking at data (e.g.&nbsp;“SLA is around 20 m2/kg with considerable uncertainty”)</li>
 <li><strong>Likelihood</strong> <span class="math inline">\(p(D|\theta)\)</span>: How probable the observed trait data <span class="math inline">\(D\)</span> is given parameter values</li>
@@ -761,7 +761,7 @@ Prior-Data Conflict
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>When the prior and data disagree strongly, the posterior will be dominated by whichever has lower variance. A very tight prior that disagrees with data can effectively ignore the data—a clear signal to revisit prior specification.</p>
+<p>When the prior and data disagree strongly, the posterior will be dominated by whichever has lower variance. A very tight prior that disagrees with data can effectively ignore the data – a clear signal to revisit prior specification.</p>
 </div>
 </div>
 <div class="cell">
