@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="David LeBauer and Akash B V">
+<meta name="dcterms.date" content="2026-03-01">
+
+<title>betydata - Working with Plant Functional Types and Priors</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Working with Plant Functional Types and Priors</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">betydata</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/PecanProject/betydata" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Home</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">Guides</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/getting_started.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/common_analyses.html" class="sidebar-item-text sidebar-link">Common Analyses</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Advanced</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/pfts-priors.html" class="sidebar-item-text sidebar-link active">PFTs &amp; Priors</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../vignettes/manuscript.html" class="sidebar-item-text sidebar-link">Manuscript Reproduction</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sec-background" id="toc-sec-background" class="nav-link active" data-scroll-target="#sec-background">Background</a>
+  <ul class="collapse">
+  <li><a href="#plant-functional-types" id="toc-plant-functional-types" class="nav-link" data-scroll-target="#plant-functional-types">Plant Functional Types</a></li>
+  <li><a href="#bayesian-parameterization" id="toc-bayesian-parameterization" class="nav-link" data-scroll-target="#bayesian-parameterization">Bayesian Parameterization</a></li>
+  </ul></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#sec-pfts" id="toc-sec-pfts" class="nav-link" data-scroll-target="#sec-pfts">Understanding PFTs</a>
+  <ul class="collapse">
+  <li><a href="#available-pfts" id="toc-available-pfts" class="nav-link" data-scroll-target="#available-pfts">Available PFTs</a></li>
+  <li><a href="#species-membership" id="toc-species-membership" class="nav-link" data-scroll-target="#species-membership">Species Membership</a></li>
+  </ul></li>
+  <li><a href="#sec-priors" id="toc-sec-priors" class="nav-link" data-scroll-target="#sec-priors">Working with Priors</a>
+  <ul class="collapse">
+  <li><a href="#prior-distribution-structure" id="toc-prior-distribution-structure" class="nav-link" data-scroll-target="#prior-distribution-structure">Prior Distribution Structure</a></li>
+  <li><a href="#sec-viz-prior" id="toc-sec-viz-prior" class="nav-link" data-scroll-target="#sec-viz-prior">Visualizing a Prior Distribution</a></li>
+  </ul></li>
+  <li><a href="#sec-pft-priors" id="toc-sec-pft-priors" class="nav-link" data-scroll-target="#sec-pft-priors">Linking PFTs to Priors</a></li>
+  <li><a href="#sec-prior-vs-data" id="toc-sec-prior-vs-data" class="nav-link" data-scroll-target="#sec-prior-vs-data">Comparing Prior to Data</a></li>
+  <li><a href="#sec-extract" id="toc-sec-extract" class="nav-link" data-scroll-target="#sec-extract">Extracting Data for a PFT</a></li>
+  <li><a href="#key-concepts-summary" id="toc-key-concepts-summary" class="nav-link" data-scroll-target="#key-concepts-summary">Key Concepts Summary</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Working with Plant Functional Types and Priors</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>David LeBauer and Akash B V </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 1, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+What you will learn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>How Plant Functional Types (PFTs) organize species for ecosystem modeling</li>
+<li>How prior distributions encode parameter knowledge before Bayesian inference</li>
+<li>How to visualize priors and compare them to observed trait data</li>
+</ul>
+</div>
+</div>
+<section id="sec-background" class="level2">
+<h2 class="anchored" data-anchor-id="sec-background">Background</h2>
+<section id="plant-functional-types" class="level3">
+<h3 class="anchored" data-anchor-id="plant-functional-types">Plant Functional Types</h3>
+<p>Ecosystem models like <a href="https://pecanproject.github.io/">PEcAn</a> simulate how plants exchange carbon, water, and energy with the atmosphere. These models require parameter values for photosynthesis rates, leaf properties, allocation fractions, and other ecophysiological quantities. Rather than parameterizing every species individually, models group species into <strong>Plant Functional Types (PFTs)</strong>—categories like “temperate deciduous trees” or “C4 grasses”—and estimate shared parameters for each group.</p>
+</section>
+<section id="bayesian-parameterization" class="level3">
+<h3 class="anchored" data-anchor-id="bayesian-parameterization">Bayesian Parameterization</h3>
+<p>PEcAn uses Bayesian inference to estimate model parameters. The workflow is:</p>
+<ol type="1">
+<li><strong>Prior distribution</strong> <span class="math inline">\(p(\theta)\)</span>: Encodes existing knowledge about a parameter <span class="math inline">\(\theta\)</span> before looking at data (e.g.&nbsp;“SLA is around 20 m2/kg with considerable uncertainty”)</li>
+<li><strong>Likelihood</strong> <span class="math inline">\(p(D|\theta)\)</span>: How probable the observed trait data <span class="math inline">\(D\)</span> is given parameter values</li>
+<li><strong>Posterior distribution</strong> <span class="math inline">\(p(\theta|D)\)</span>: Updated belief after combining prior and data via Bayes’ theorem:</li>
+</ol>
+<p><span id="eq-bayes"><span class="math display">\[
+p(\theta | D) \propto p(D | \theta) \cdot p(\theta)
+\tag{1}\]</span></span></p>
+<p>The tables in <code>betydata</code> provide the ingredients for this workflow: <code>priors</code> stores prior distributions, <code>traitsview</code> stores the observed data, and <code>pfts</code>/<code>pfts_species</code>/<code>pfts_priors</code> define which priors and species belong to each PFT.</p>
+</section>
+</section>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(betydata)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-pfts" class="level2">
+<h2 class="anchored" data-anchor-id="sec-pfts">Understanding PFTs</h2>
+<section id="available-pfts" class="level3">
+<h3 class="anchored" data-anchor-id="available-pfts">Available PFTs</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(pfts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 386</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pfts <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["name"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"110","2":"temperate.Early_Hardwood.Kent"},{"1":"131","2":"sorghum"},{"1":"109","2":"hardwood-priors"},{"1":"125","2":"Optics.Temperate_Mid_Hardwood"},{"1":"126","2":"Optics.Temperate_Early_Hardwood"},{"1":"61","2":"ebifarm.quru.doe_vd"},{"1":"70","2":"tempconif.doe_vd"},{"1":"19","2":"temperate.Late_Conifer"},{"1":"22","2":"temperate.South_Mid_Hardwood"},{"1":"127","2":"Optics.Temperate_Late_Conifer"},{"1":"119","2":"luquillo.mid_tropical"},{"1":"120","2":"luquillo.palm"},{"1":"118","2":"luquillo.early_tropical"},{"1":"122","2":"agave.yield-copy"},{"1":"123","2":"Miscanthus_x_giganteus"},{"1":"42","2":"temperate.coniferous"},{"1":"65","2":"populus"},{"1":"116","2":"salix-purpurea-old"},{"1":"130","2":"c4grass"},{"1":"124","2":"Optics.Temperate_Late_Hardwood"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+<section id="species-membership" class="level3">
+<h3 class="anchored" data-anchor-id="species-membership">Species Membership</h3>
+<p>Each PFT contains species assigned by researchers. The <code>pfts_species</code> junction table maps PFTs to species:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>species_per_pft <span class="ot">&lt;-</span> pfts_species <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(pft_id, <span class="at">name =</span> <span class="st">"n_species"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(species_per_pft<span class="sc">$</span>n_species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+      1       1       2    1285      19   49626 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>miscanthus_pft <span class="ot">&lt;-</span> pfts <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"miscanthus"</span>, name, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(miscanthus_pft) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  miscanthus_species <span class="ot">&lt;-</span> pfts_species <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(pft_id <span class="sc">%in%</span> miscanthus_pft<span class="sc">$</span>id) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      species <span class="sc">|&gt;</span> <span class="fu">select</span>(id, scientificname),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"specie_id"</span> <span class="ot">=</span> <span class="st">"id"</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  miscanthus_species</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["pft_id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["specie_id"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["created_at"],"name":[3],"type":["dttm"],"align":["right"]},{"label":["updated_at"],"name":[4],"type":["dttm"],"align":["right"]},{"label":["id"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["scientificname"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"45","2":"2480","3":"<NA>","4":"2011-03-01 21:02:40.00000","5":"50406","6":"Miscanthus"},{"1":"45","2":"1477","3":"<NA>","4":"<NA>","5":"50407","6":"Miscanthus × giganteus"},{"1":"123","2":"1477","3":"2015-06-10 21:41:30.12935","4":"2015-06-10 21:41:30.12935","5":"200526","6":"Miscanthus × giganteus"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-priors" class="level2">
+<h2 class="anchored" data-anchor-id="sec-priors">Working with Priors</h2>
+<section id="prior-distribution-structure" class="level3">
+<h3 class="anchored" data-anchor-id="prior-distribution-structure">Prior Distribution Structure</h3>
+<p>Each row in the <code>priors</code> table specifies a probability distribution for a model parameter. The key fields are:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>variable_id</code></td>
+<td>Which trait/parameter this prior describes</td>
+</tr>
+<tr class="even">
+<td><code>distn</code></td>
+<td>Distribution family (e.g.&nbsp;<code>norm</code>, <code>gamma</code>, <code>lnorm</code>)</td>
+</tr>
+<tr class="odd">
+<td><code>parama</code></td>
+<td>First parameter (mean, shape, etc.)</td>
+</tr>
+<tr class="even">
+<td><code>paramb</code></td>
+<td>Second parameter (sd, rate, etc.)</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>priors <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(distn, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="tbl-distn-counts" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;1: Distribution families used in BETYdb priors</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">distn</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">unif</td>
+<td style="text-align: right;">325</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">norm</td>
+<td style="text-align: right;">239</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">beta</td>
+<td style="text-align: right;">99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">94</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">weibull</td>
+<td style="text-align: right;">59</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: right;">55</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">binom</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">exp</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pois</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>priors <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(variables <span class="sc">|&gt;</span> <span class="fu">select</span>(id, name), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"variable_id"</span> <span class="ot">=</span> <span class="st">"id"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(name, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">15</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="tbl-prior-variables" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;2: Top variables with prior distributions</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">name</th>
+<th style="text-align: right;">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">AGEMX</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DMAX</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DMIN</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gmax</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SPRTND</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SPRTMX</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FROST</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SLTA</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SLTB</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MPLANT</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SLA</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stomatal_slope</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HTMAX</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vcmax</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c2n_leaf</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-viz-prior" class="level3">
+<h3 class="anchored" data-anchor-id="sec-viz-prior">Visualizing a Prior Distribution</h3>
+<p>Consider a prior for Specific Leaf Area (SLA). If the prior is <span class="math inline">\(\text{Gamma}(\alpha, \beta)\)</span>, then the density function is:</p>
+<p><span id="eq-gamma"><span class="math display">\[
+f(x; \alpha, \beta) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha - 1} e^{-\beta x}, \quad x &gt; 0
+\tag{2}\]</span></span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sla_var_id <span class="ot">&lt;-</span> variables <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"SLA"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(id)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>sla_priors <span class="ot">&lt;-</span> priors <span class="sc">|&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable_id <span class="sc">%in%</span> sla_var_id)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>eval_prior_density <span class="ot">&lt;-</span> <span class="cf">function</span>(p, <span class="at">x =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(x)) {</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="cf">switch</span>(p<span class="sc">$</span>distn,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">"gamma"</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">qgamma</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"norm"</span> <span class="ot">=</span> <span class="fu">seq</span>(p<span class="sc">$</span>parama <span class="sc">-</span> <span class="dv">4</span> <span class="sc">*</span> p<span class="sc">$</span>paramb, p<span class="sc">$</span>parama <span class="sc">+</span> <span class="dv">4</span> <span class="sc">*</span> p<span class="sc">$</span>paramb, <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">"lnorm"</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fu">qlnorm</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">"beta"</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.001</span>, <span class="fl">0.999</span>, <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"unif"</span> <span class="ot">=</span> <span class="fu">seq</span>(p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb, <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"weibull"</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">qweibull</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama, p<span class="sc">$</span>paramb), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"exp"</span> <span class="ot">=</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">qexp</span>(<span class="fl">0.999</span>, p<span class="sc">$</span>parama), <span class="at">length.out =</span> <span class="dv">1000</span>),</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="cf">switch</span>(p<span class="sc">$</span>distn,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"gamma"</span> <span class="ot">=</span> <span class="fu">dgamma</span>(x, <span class="at">shape =</span> p<span class="sc">$</span>parama, <span class="at">rate =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"norm"</span> <span class="ot">=</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> p<span class="sc">$</span>parama, <span class="at">sd =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"lnorm"</span> <span class="ot">=</span> <span class="fu">dlnorm</span>(x, <span class="at">meanlog =</span> p<span class="sc">$</span>parama, <span class="at">sdlog =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"beta"</span> <span class="ot">=</span> <span class="fu">dbeta</span>(x, <span class="at">shape1 =</span> p<span class="sc">$</span>parama, <span class="at">shape2 =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"unif"</span> <span class="ot">=</span> <span class="fu">dunif</span>(x, <span class="at">min =</span> p<span class="sc">$</span>parama, <span class="at">max =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"weibull"</span> <span class="ot">=</span> <span class="fu">dweibull</span>(x, <span class="at">shape =</span> p<span class="sc">$</span>parama, <span class="at">scale =</span> p<span class="sc">$</span>paramb),</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"exp"</span> <span class="ot">=</span> <span class="fu">dexp</span>(x, <span class="at">rate =</span> p<span class="sc">$</span>parama),</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(x))</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(sla_priors) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> sla_priors[<span class="dv">1</span>, ]</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>  prior_result <span class="ot">&lt;-</span> <span class="fu">eval_prior_density</span>(p)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  prior_x <span class="ot">&lt;-</span> prior_result<span class="sc">$</span>x</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>  prior_y <span class="ot">&lt;-</span> prior_result<span class="sc">$</span>y</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> prior_x, <span class="at">y =</span> prior_y), <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"#2c3e50"</span>) <span class="sc">+</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Prior: "</span>, p<span class="sc">$</span>distn, <span class="st">"("</span>, <span class="fu">round</span>(p<span class="sc">$</span>parama, <span class="dv">2</span>), <span class="st">", "</span>, <span class="fu">round</span>(p<span class="sc">$</span>paramb, <span class="dv">2</span>), <span class="st">")"</span>),</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"SLA (m2/kg)"</span>,</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Density"</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-sla-prior" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="pfts-priors_files/figure-html/fig-sla-prior-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;1: Prior distribution for Specific Leaf Area (SLA)</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-pft-priors" class="level2">
+<h2 class="anchored" data-anchor-id="sec-pft-priors">Linking PFTs to Priors</h2>
+<p>The <code>pfts_priors</code> table connects PFTs to their associated prior distributions, completing the Bayesian parameterization setup:</p>
+<p><span class="math display">\[
+\text{PFT} \xrightarrow{\texttt{pfts\_priors}} \text{Prior}(\theta) \xrightarrow{\texttt{variable\_id}} \text{Trait}
+\]</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>priors_per_pft <span class="ot">&lt;-</span> pfts_priors <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(pft_id, <span class="at">name =</span> <span class="st">"n_priors"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(priors_per_pft<span class="sc">$</span>n_priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+      1       5      14      14      20      43 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">exists</span>(<span class="st">"miscanthus_pft"</span>) <span class="sc">&amp;&amp;</span> <span class="fu">nrow</span>(miscanthus_pft) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  pft_id_val <span class="ot">&lt;-</span> miscanthus_pft<span class="sc">$</span>id[<span class="dv">1</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  pft_priors <span class="ot">&lt;-</span> pfts_priors <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(pft_id <span class="sc">==</span> pft_id_val) <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(priors, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"prior_id"</span> <span class="ot">=</span> <span class="st">"id"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(variables <span class="sc">|&gt;</span> <span class="fu">select</span>(id, name, units), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"variable_id"</span> <span class="ot">=</span> <span class="st">"id"</span>))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  pft_priors <span class="sc">|&gt;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(name, units, distn, parama, paramb) <span class="sc">|&gt;</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="tbl-pft-priors" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;3: Prior distributions for a Miscanthus PFT</caption>
+<colgroup>
+<col style="width: 34%">
+<col style="width: 39%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">units</th>
+<th style="text-align: left;">distn</th>
+<th style="text-align: right;">parama</th>
+<th style="text-align: right;">paramb</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">leaf_respiration_rate_m2</td>
+<td style="text-align: left;">umol [CO2] m-2 s-1</td>
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">0.632</td>
+<td style="text-align: right;">0.65</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cuticular_cond</td>
+<td style="text-align: left;">umol [H2O] m-2 s-1</td>
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">8.400</td>
+<td style="text-align: right;">0.90</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stomatal_slope.BB</td>
+<td style="text-align: left;">[ratio]</td>
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">1.240</td>
+<td style="text-align: right;">0.28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SLA</td>
+<td style="text-align: left;">m2 kg-1</td>
+<td style="text-align: left;">weibull</td>
+<td style="text-align: right;">2.060</td>
+<td style="text-align: right;">19.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vcmax</td>
+<td style="text-align: left;">umol [CO2] m-2 s-1</td>
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">3.750</td>
+<td style="text-align: right;">0.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">growth_respiration_coefficient</td>
+<td style="text-align: left;">mol [CO2] mol-1 [net assimilation]</td>
+<td style="text-align: left;">beta</td>
+<td style="text-align: right;">26.000</td>
+<td style="text-align: right;">48.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jmax</td>
+<td style="text-align: left;">umol [photons] m-2 s-1</td>
+<td style="text-align: left;">weibull</td>
+<td style="text-align: right;">2.000</td>
+<td style="text-align: right;">150.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c2n_leaf</td>
+<td style="text-align: left;">[ratio]</td>
+<td style="text-align: left;">gamma</td>
+<td style="text-align: right;">4.180</td>
+<td style="text-align: right;">0.13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">quantum_efficiency</td>
+<td style="text-align: left;">fraction</td>
+<td style="text-align: left;">gamma</td>
+<td style="text-align: right;">90.900</td>
+<td style="text-align: right;">1580.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">chi_leaf</td>
+<td style="text-align: left;">[ratio]</td>
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">0.180</td>
+<td style="text-align: right;">0.43</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">extinction_coefficient_diffuse</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">lnorm</td>
+<td style="text-align: right;">-2.300</td>
+<td style="text-align: right;">0.55</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-prior-vs-data" class="level2">
+<h2 class="anchored" data-anchor-id="sec-prior-vs-data">Comparing Prior to Data</h2>
+<p>A key validation step in Bayesian parameterization: compare the prior distribution to observed data. If the prior assigns negligible probability to regions where data actually falls, the prior may need revision.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Prior-Data Conflict
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When the prior and data disagree strongly, the posterior will be dominated by whichever has lower variance. A very tight prior that disagrees with data can effectively ignore the data—a clear signal to revisit prior specification.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>sla_data <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    trait <span class="sc">==</span> <span class="st">"SLA"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    genus <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Miscanthus"</span>, <span class="st">"Panicum"</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(mean),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    checked <span class="sc">&gt;=</span> <span class="dv">0</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(mean)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(sla_data) <span class="sc">&gt;</span> <span class="dv">10</span> <span class="sc">&amp;&amp;</span> <span class="fu">exists</span>(<span class="st">"prior_x"</span>) <span class="sc">&amp;&amp;</span> <span class="fu">exists</span>(<span class="st">"prior_y"</span>)) {</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">sla =</span> sla_data),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(<span class="at">x =</span> sla, <span class="at">y =</span> <span class="fu">after_stat</span>(density)),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> prior_x, <span class="at">y =</span> prior_y),</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(x, y),</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"#e74c3c"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Prior vs. Observed SLA"</span>,</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"Dashed red = prior distribution | Blue bars = observed data (Miscanthus + Panicum)"</span>,</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"SLA (m2/kg)"</span>,</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Density"</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">80</span>) <span class="sc">+</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-prior-vs-data" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="pfts-priors_files/figure-html/fig-prior-vs-data-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;2: SLA: Prior distribution vs.&nbsp;observed data for bioenergy grasses</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-extract" class="level2">
+<h2 class="anchored" data-anchor-id="sec-extract">Extracting Data for a PFT</h2>
+<p>A common workflow: retrieve all trait data for species belonging to a given PFT.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>get_pft_data <span class="ot">&lt;-</span> <span class="cf">function</span>(pft_name, <span class="at">trait_name =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  pft_ids <span class="ot">&lt;-</span> pfts <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">grepl</span>(pft_name, name, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(id)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(pft_ids) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="st">"PFT not found: "</span>, pft_name)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">tibble</span>())</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  spp_ids <span class="ot">&lt;-</span> pfts_species <span class="sc">|&gt;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(pft_id <span class="sc">%in%</span> pft_ids) <span class="sc">|&gt;</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(specie_id)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> traitsview <span class="sc">|&gt;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(species_id <span class="sc">%in%</span> spp_ids)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(trait_name)) {</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> result <span class="sc">|&gt;</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(trait <span class="sc">==</span> trait_name)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  result</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>willow_sla <span class="ot">&lt;-</span> <span class="fu">get_pft_data</span>(<span class="st">"salix"</span>, <span class="st">"SLA"</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(willow_sla) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>(willow_sla<span class="sc">$</span>mean)</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   7.14   10.40   11.54   12.43   13.32   26.40 </code></pre>
+</div>
+</div>
+</section>
+<section id="key-concepts-summary" class="level2">
+<h2 class="anchored" data-anchor-id="key-concepts-summary">Key Concepts Summary</h2>
+<table class="table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 31%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Table(s)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PFT definition</td>
+<td><code>pfts</code></td>
+<td>Named groupings of ecologically similar species</td>
+</tr>
+<tr class="even">
+<td>Species membership</td>
+<td><code>pfts_species</code></td>
+<td>Which species belong to which PFT</td>
+</tr>
+<tr class="odd">
+<td>Prior specification</td>
+<td><code>priors</code></td>
+<td>Distribution family + parameters for each trait</td>
+</tr>
+<tr class="even">
+<td>PFT-Prior link</td>
+<td><code>pfts_priors</code></td>
+<td>Which priors apply to which PFT</td>
+</tr>
+<tr class="odd">
+<td>Observed data</td>
+<td><code>traitsview</code></td>
+<td>Actual measurements for Bayesian updating</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>LeBauer, D. S., et al.&nbsp;(2018). BETYdb: a yield, trait, and ecosystem service database. <em>GCB Bioenergy</em>. <a href="https://doi.org/10.1111/gcbb.12420">doi:10.1111/gcbb.12420</a></li>
+<li>LeBauer, D. S., et al.&nbsp;(2013). Facilitating feedbacks between field measurements and ecosystem models. <em>Ecological Monographs</em>, 83(2), 133–154.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

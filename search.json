@@ -1,0 +1,352 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "betydata",
+    "section": "",
+    "text": "betydata is an R data package providing offline access to public data from BETYdb (Biofuel Ecophysiological Traits and Yields database), created for the PEcAn ecosystem modeling framework. It enables reproducible analyses of plant traits, crop yields, and supporting metadata without requiring database connectivity."
+  },
+  {
+    "objectID": "index.html#at-a-glance",
+    "href": "index.html#at-a-glance",
+    "title": "betydata",
+    "section": "At a Glance",
+    "text": "At a Glance\n\n\n\n\nTable 1: Dataset summary\n\n\nMetric\nValue\n\n\n\n\nTotal observations\n43,532\n\n\nUnique traits\n298\n\n\nPlant species\n70,741\n\n\nResearch sites\n23173\n\n\nLiterature citations\n985\n\n\nTables\n16"
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "betydata",
+    "section": "Installation",
+    "text": "Installation\n# install.packages(\"remotes\")\nremotes::install_github(\"PecanProject/betydata\")"
+  },
+  {
+    "objectID": "index.html#quick-start",
+    "href": "index.html#quick-start",
+    "title": "betydata",
+    "section": "Quick Start",
+    "text": "Quick Start\n\nlibrary(betydata)\nlibrary(dplyr)\n\n# The primary table -- key columns first, IDs last\ntraitsview\n\n\n\n  \n\n\n# Bioenergy crop observations\nbioenergy_genera <- c(\"Miscanthus\", \"Panicum\", \"Populus\", \"Salix\", \"Saccharum\")\ntraitsview |>\n  filter(genus %in% bioenergy_genera) |>\n  count(genus, sort = TRUE)"
+  },
+  {
+    "objectID": "index.html#guides",
+    "href": "index.html#guides",
+    "title": "betydata",
+    "section": "Guides",
+    "text": "Guides\n\n\n\nGuide\nDescription\n\n\n\n\nGetting Started\nPackage overview, data model, and key concepts\n\n\nCommon Analyses\nPractical analysis patterns with dplyr\n\n\nPFTs & Priors\nPlant Functional Types and Bayesian prior distributions\n\n\nManuscript Reproduction\nReproduce key analyses from LeBauer et al. (2018)"
+  },
+  {
+    "objectID": "index.html#data-license",
+    "href": "index.html#data-license",
+    "title": "betydata",
+    "section": "Data License",
+    "text": "Data License\nData: ODC-By-1.0 | Code: BSD-3-Clause"
+  },
+  {
+    "objectID": "index.html#citation",
+    "href": "index.html#citation",
+    "title": "betydata",
+    "section": "Citation",
+    "text": "Citation\nLeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. GCB Bioenergy. doi:10.1111/gcbb.12420"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html",
+    "href": "vignettes/common_analyses.html",
+    "title": "Common Analyses with betydata",
+    "section": "",
+    "text": "What you will learn\n\n\n\n\nHow to extract and summarize yield data for specific genera\nHow to link management practices (fertilization, planting) to yield observations\nPatterns for site-level aggregation, author-based queries, and variable lookups"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#setup",
+    "href": "vignettes/common_analyses.html#setup",
+    "title": "Common Analyses with betydata",
+    "section": "Setup",
+    "text": "Setup\n\nlibrary(betydata)\nlibrary(dplyr)"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-yields",
+    "href": "vignettes/common_analyses.html#sec-yields",
+    "title": "Common Analyses with betydata",
+    "section": "Extracting Yield Data for a Genus",
+    "text": "Extracting Yield Data for a Genus\nA common starting point is pulling yield observations for a particular genus and summarizing them. The Ayield trait represents above-ground annual yield in Mg/ha.\n\nmiscanthus_yields <- traitsview |>\n  filter(\n    genus == \"Miscanthus\",\n    trait == \"Ayield\"\n  ) |>\n  select(id, mean, date, sitename, scientificname)\n\nmiscanthus_yields\n\n\n\n  \n\n\nnrow(miscanthus_yields)\n\n[1] 1021\n\n\n\n\n\n\n\n\nTibble Printing\n\n\n\nAll tables are tibbles, which display the first 10 rows by default. With key columns ordered first (trait, mean, units, scientificname, genus), the default output is immediately informative without needing head() or column subsetting."
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-management",
+    "href": "vignettes/common_analyses.html#sec-management",
+    "title": "Common Analyses with betydata",
+    "section": "Working with Management Practices",
+    "text": "Working with Management Practices\nManagement practices (planting dates, fertilization rates, harvest methods) are stored in the managements table and linked to experimental treatments through the managements_treatments junction table. This linkage connects management details to yield observations in traitsview.\n\nmgmt_treat <- managements_treatments |>\n  left_join(\n    managements |> select(id, mgmttype, level, units, date),\n    by = c(\"management_id\" = \"id\")\n  )\n\ngrass_yields <- traitsview |>\n  filter(\n    genus %in% c(\"Miscanthus\", \"Panicum\"),\n    trait == \"Ayield\"\n  ) |>\n  left_join(mgmt_treat, by = \"treatment_id\", relationship = \"many-to-many\")\n\ngrass_yields |>\n  filter(!is.na(mgmttype)) |>\n  count(genus, mgmttype, sort = TRUE)"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-nitrogen",
+    "href": "vignettes/common_analyses.html#sec-nitrogen",
+    "title": "Common Analyses with betydata",
+    "section": "Nitrogen Fertilization Rates",
+    "text": "Nitrogen Fertilization Rates\nExtracting nitrogen application rates and joining them with yield data enables exploration of yield–nitrogen relationships. Nitrogen management is recorded as fertilizer_N or fertilizer_N_rate in the mgmttype column.\n\nnitrogen_rates <- managements |>\n  filter(mgmttype %in% c(\"fertilizer_N\", \"fertilizer_N_rate\")) |>\n  left_join(\n    managements_treatments |> select(management_id, treatment_id),\n    by = c(\"id\" = \"management_id\")\n  ) |>\n  select(treatment_id, nrate = level, units)\n\nyields_with_n <- traitsview |>\n  filter(\n    trait == \"Ayield\",\n    genus %in% c(\"Miscanthus\", \"Panicum\")\n  ) |>\n  left_join(nitrogen_rates, by = \"treatment_id\", relationship = \"many-to-many\")\n\nyields_with_n |>\n  filter(!is.na(nrate)) |>\n  summarise(\n    n = n(),\n    mean_N = round(mean(nrate, na.rm = TRUE), 1),\n    mean_yield = round(mean(mean, na.rm = TRUE), 1),\n    .by = genus\n  ) |>\n  knitr::kable(col.names = c(\"Genus\", \"N obs\", \"Mean N rate\", \"Mean Yield (Mg/ha)\"))\n\n\n\n\nGenus\nN obs\nMean N rate\nMean Yield (Mg/ha)\n\n\n\n\nPanicum\n4385\n105.1\n10.7\n\n\nMiscanthus\n1536\n71.6\n11.7"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-sites",
+    "href": "vignettes/common_analyses.html#sec-sites",
+    "title": "Common Analyses with betydata",
+    "section": "Site-Level Aggregation",
+    "text": "Site-Level Aggregation\nAggregating trait data by site is useful for spatial analysis and mapping data density across research locations.\n\nsite_summary <- traitsview |>\n  filter(!is.na(lat), !is.na(lon)) |>\n  summarise(\n    n_records = n(),\n    n_traits = n_distinct(trait),\n    n_species = n_distinct(species_id),\n    .by = c(site_id, sitename, lat, lon)\n  )\n\nsite_summary |>\n  arrange(desc(n_records)) |>\n  head(15) |>\n  knitr::kable()\n\n\n\nTable 1: Top research sites by number of records\n\n\n\n\n\n\n\n\n\n\n\nsite_id\nsitename\nlat\nlon\nn_records\nn_traits\nn_species\n\n\n\n\n2.000e+09\nBarrow Environmental Observatory (NGEE-Arctic)\n71.279875\n-156.60848\n6723\n8\n12\n\n\n7.600e+01\nEBI Energy farm\n40.063700\n-88.20200\n2357\n12\n32\n\n\n2.740e+02\nIhinger Hof\n48.740000\n8.92400\n1253\n11\n7\n\n\n2.000e+09\nKougarok (NGEE-Arctic)\n65.163451\n-164.81695\n745\n5\n5\n\n\n1.226e+03\nLuquillo\n18.310000\n-65.74000\n715\n5\n142\n\n\n3.900e+02\nMacknade Research Station\n-18.700000\n146.20000\n640\n3\n1\n\n\n5.110e+02\nBambaroo\n-18.858889\n146.19139\n630\n25\n1\n\n\n2.000e+09\nSanta Cruz Experimental Field Facility\n9.119870\n-79.70506\n600\n10\n4\n\n\n1.038e+03\nHarwood Mill Farm - Mizer\n-29.426000\n153.24100\n514\n1\n1\n\n\n2.000e+09\nPA-PNM\n8.994504\n-79.54296\n486\n7\n36\n\n\n2.760e+02\nGutenzell-duplicate\n48.700000\n9.20000\n482\n21\n1\n\n\n5.830e+02\nG. and R. Zanetti’s Farm\n-19.500000\n147.30000\n476\n8\n1\n\n\n8.520e+02\nAspenFACE\n45.667000\n-89.61670\n417\n18\n3\n\n\n1.041e+03\nLa Mercy\n-29.350000\n31.07000\n410\n1\n1\n\n\n6.940e+02\nCentro de Tecnologia Canavieira\n-22.700000\n-47.55000\n402\n9\n1\n\n\n\n\n\n\n\n\n\n\n\n\nGeographic Data\n\n\n\nAll sites with coordinates have lat and lon columns in both traitsview and the sites table. The sites table additionally contains mat (mean annual temperature) and map (mean annual precipitation) for sites where climate data is available."
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-author",
+    "href": "vignettes/common_analyses.html#sec-author",
+    "title": "Common Analyses with betydata",
+    "section": "Finding Data by Author",
+    "text": "Finding Data by Author\n\nlebauer_data <- traitsview |>\n  filter(grepl(\"LeBauer\", author, ignore.case = TRUE))\n\nlebauer_data |>\n  count(trait, author, citation_year, sort = TRUE)"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-citations",
+    "href": "vignettes/common_analyses.html#sec-citations",
+    "title": "Common Analyses with betydata",
+    "section": "Most Data-Rich Citations",
+    "text": "Most Data-Rich Citations\n\ntraitsview |>\n  count(citation_id, author, citation_year, sort = TRUE) |>\n  head(10) |>\n  knitr::kable()\n\n\n\nTable 2: Top 10 citations by number of records\n\n\ncitation_id\nauthor\ncitation_year\nn\n\n\n\n\n2.00e+09\nAlistair Rogers\n2017\n6723\n\n\n7.61e+02\nLaredo\n2003\n3461\n\n\n1.99e+02\nFeng\n2010\n2742\n\n\n1.89e+02\nClifton-Brown\n2002\n1232\n\n\n2.00e+09\nSerbin and Rogers\n2016\n835\n\n\n2.00e+09\nLianhong Gu\n2016\n816\n\n\n7.82e+02\nXiaohui Feng\n2015\n715\n\n\n2.00e+09\nSlot and Winter\n2017\n600\n\n\n3.25e+02\nInman-Bamber\n2000\n589\n\n\n1.57e+02\nLewandowski\n1998\n549"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-variables",
+    "href": "vignettes/common_analyses.html#sec-variables",
+    "title": "Common Analyses with betydata",
+    "section": "Variable and Trait Lookups",
+    "text": "Variable and Trait Lookups\nThe variables table provides units, descriptions, and valid ranges for each measured trait. This is useful for understanding what a trait measures and checking whether observed values are within expected bounds.\n\nvariables |>\n  filter(name %in% c(\"SLA\", \"Vcmax\", \"leaf_respiration_rate_m2\", \"Ayield\")) |>\n  select(name, units, description, min, max) |>\n  knitr::kable()\n\n\n\n\n\n\n\n\n\n\n\nname\nunits\ndescription\nmin\nmax\n\n\n\n\nSLA\nm2 kg-1\nSpecific Leaf Area\n0.1\n100\n\n\nAyield\nMg ha-1 yr-1\nannual aboveground yield\n0\nInfinity\n\n\nVcmax\numol [CO2] m-2 s-1\nmaximum rubisco carboxylation capacity\n0\n500\n\n\nleaf_respiration_rate_m2\numol [CO2] m-2 s-1\nRd; leaf dark respiration\n0\n500"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#sec-performance",
+    "href": "vignettes/common_analyses.html#sec-performance",
+    "title": "Common Analyses with betydata",
+    "section": "Performance",
+    "text": "Performance\nSince all tables are loaded in memory as R data frames, filtering and joining operations run at in-memory speed with no network overhead.\n\nsystem.time({\n  result <- traitsview |>\n    filter(\n      genus %in% c(\"Miscanthus\", \"Panicum\", \"Populus\"),\n      trait %in% c(\"SLA\", \"Vcmax\", \"Ayield\"),\n      checked == 1\n    ) |>\n    summarise(\n      n = n(),\n      mean = mean(mean, na.rm = TRUE),\n      .by = c(genus, trait)\n    )\n})\n\n   user  system elapsed \n  0.006   0.000   0.006"
+  },
+  {
+    "objectID": "vignettes/common_analyses.html#references",
+    "href": "vignettes/common_analyses.html#references",
+    "title": "Common Analyses with betydata",
+    "section": "References",
+    "text": "References\n\nLeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. GCB Bioenergy. doi:10.1111/gcbb.12420"
+  },
+  {
+    "objectID": "vignettes/getting_started.html",
+    "href": "vignettes/getting_started.html",
+    "title": "Getting Started with betydata",
+    "section": "",
+    "text": "What you will learn\n\n\n\n\nWhat data is available in betydata and how the 16 tables relate to each other\nHow to explore trait and yield observations using dplyr\nKey concepts: traits, yields, QA/QC flags, and Plant Functional Types"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#what-is-betydata",
+    "href": "vignettes/getting_started.html#what-is-betydata",
+    "title": "Getting Started with betydata",
+    "section": "What is betydata?",
+    "text": "What is betydata?\nThe betydata package provides offline access to public data from BETYdb, the Biofuel Ecophysiological Traits and Yields database. BETYdb is a centralized repository of plant trait measurements and crop yield data used by the PEcAn ecosystem modeling framework.\nA trait is a measurable characteristic of a plant—for example, Specific Leaf Area (SLA, m2/kg), maximum carboxylation rate (Vcmax, umol/m2/s), or leaf nitrogen content (%). A yield is a measure of crop production per unit area (typically Mg/ha). Together, traits and yields form the foundation of ecosystem model parameterization and agricultural research."
+  },
+  {
+    "objectID": "vignettes/getting_started.html#loading-the-package",
+    "href": "vignettes/getting_started.html#loading-the-package",
+    "title": "Getting Started with betydata",
+    "section": "Loading the Package",
+    "text": "Loading the Package\n\nlibrary(betydata)\nlibrary(dplyr)"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#sec-architecture",
+    "href": "vignettes/getting_started.html#sec-architecture",
+    "title": "Getting Started with betydata",
+    "section": "Data Architecture",
+    "text": "Data Architecture\nThe package contains 16 tables organized in three tiers:\n\ndata(package = \"betydata\")$results[, c(\"Item\", \"Title\")] |>\n  as.data.frame() |>\n  knitr::kable()\n\n\n\nTable 1: All tables available in betydata\n\n\nItem\nTitle\n\n\n\n\ncitations\nLiterature citations from BETYdb\n\n\ncultivars\nPlant cultivars from BETYdb\n\n\ncultivars_pfts\nCultivar-PFT mapping from BETYdb\n\n\nentities\nEntities from BETYdb\n\n\nmanagements\nManagement practices from BETYdb\n\n\nmanagements_treatments\nManagement-Treatment mapping from BETYdb\n\n\nmethods\nMeasurement methods from BETYdb\n\n\npfts\nPlant Functional Types (PFTs) from BETYdb\n\n\npfts_priors\nPFT-Prior mapping from BETYdb\n\n\npfts_species\nPFT-Species mapping from BETYdb\n\n\npriors\nPrior distributions from BETYdb\n\n\nsites\nResearch sites from BETYdb\n\n\nspecies\nSpecies taxonomy from BETYdb\n\n\ntraitsview\nTraits and Yields from BETYdb\n\n\ntreatments\nExperimental treatments from BETYdb\n\n\nvariables\nVariable definitions from BETYdb\n\n\n\n\n\n\n\n\n\n\n\n\nData Model\n\n\n\nThe tables follow a relational structure:\n\ntraitsview is the primary denormalized table (pre-joined for convenience)\nMetadata tables (species, sites, variables, citations, etc.) provide reference data\nRelationship tables (pfts_species, pfts_priors, etc.) are many-to-many junction tables\n\nYou can use traitsview for most analyses without joining anything. The metadata and relationship tables are available when you need additional detail or custom aggregations."
+  },
+  {
+    "objectID": "vignettes/getting_started.html#sec-traitsview",
+    "href": "vignettes/getting_started.html#sec-traitsview",
+    "title": "Getting Started with betydata",
+    "section": "The Primary Table: traitsview",
+    "text": "The Primary Table: traitsview\nThe traitsview table is a denormalized view combining traits and yields with associated metadata. Key analytical columns are placed first for convenient interactive use:\n\ntraitsview\n\n\n\n  \n\n\n\n\nKey Columns\n\n\n\n\n\n\n\n\nColumn\nDescription\nExample Values\n\n\n\n\ntrait\nVariable name\nSLA, Vcmax, Ayield\n\n\nmean\nObserved value\n22.5, 38.1\n\n\nunits\nMeasurement units\nm2/kg, umol/m2/s\n\n\nscientificname\nFull species name\nMiscanthus x giganteus\n\n\ngenus\nGenus\nMiscanthus, Panicum\n\n\nsitename\nResearch site\nEnergy Farm, Urbana IL\n\n\nauthor\nCitation author\nHeaton 2008\n\n\nchecked\nQA/QC status (0 = unchecked, 1 = verified)\n0, 1"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#basic-exploration",
+    "href": "vignettes/getting_started.html#basic-exploration",
+    "title": "Getting Started with betydata",
+    "section": "Basic Exploration",
+    "text": "Basic Exploration\n\ntraitsview |>\n  count(trait, sort = TRUE) |>\n  head(15) |>\n  knitr::kable()\n\n\n\nTable 2: Top 15 most common traits in betydata\n\n\ntrait\nn\n\n\n\n\nAyield\n8407\n\n\nleafN\n3645\n\n\nSLA\n3141\n\n\nc2n_leaf\n2510\n\n\nleafC\n2415\n\n\nSLN\n1345\n\n\nVcmax\n1115\n\n\nheight\n895\n\n\nsoil_respiration_m2\n874\n\n\nleaf_respiration_rate_m2\n850\n\n\nJmax\n849\n\n\nLAI\n744\n\n\nDBH\n733\n\n\nquantum_efficiency\n510\n\n\nleafP\n505"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#sec-checked",
+    "href": "vignettes/getting_started.html#sec-checked",
+    "title": "Getting Started with betydata",
+    "section": "Data Quality: The checked Column",
+    "text": "Data Quality: The checked Column\n\n\n\n\n\n\nQuality Control\n\n\n\nThe checked column indicates data verification status:\n\n1 = Verified by an independent reviewer\n0 = Not yet reviewed (use with appropriate caution)\n-1 = Flagged as incorrect (excluded from this package)\n\nAll data in this package is public (BETYdb access_level = 4).\n\n\n\ntable(traitsview$checked, useNA = \"ifany\")\n\n\n    0     1 \n29383 14149 \n\nverified <- traitsview |>\n  filter(checked == 1)\nnrow(verified)\n\n[1] 14149"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#sec-support",
+    "href": "vignettes/getting_started.html#sec-support",
+    "title": "Getting Started with betydata",
+    "section": "Support Tables",
+    "text": "Support Tables\n\nSpecies Taxonomy\nThe species table contains 70,741 entries with full taxonomic information:\n\nspecies |>\n  select(id, scientificname, genus, commonname)\n\n\n\n  \n\n\n\n\n\nVariables (Trait Definitions)\nThe variables table documents units, descriptions, and valid ranges for each measured trait:\n\nvariables |>\n  filter(name %in% c(\"SLA\", \"Vcmax\", \"leaf_respiration_rate_m2\", \"Ayield\")) |>\n  select(name, units, description)\n\n\n\n  \n\n\n\n\n\nSites\n\nsites_with_climate <- sites |>\n  filter(!is.na(mat), !is.na(map))\nnrow(sites_with_climate)\n\n[1] 453"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#sec-bioenergy",
+    "href": "vignettes/getting_started.html#sec-bioenergy",
+    "title": "Getting Started with betydata",
+    "section": "Example: Bioenergy Crop Yields",
+    "text": "Example: Bioenergy Crop Yields\n\nbioenergy_genera <- c(\"Miscanthus\", \"Panicum\", \"Populus\", \"Salix\", \"Saccharum\")\n\nyields <- traitsview |>\n  filter(\n    trait == \"Ayield\",\n    genus %in% bioenergy_genera,\n    !is.na(mean)\n  ) |>\n  select(genus, mean, units, sitename, author, citation_year, lat, lon)\n\nyields |>\n  summarise(\n    n = n(),\n    mean_yield = round(mean(mean, na.rm = TRUE), 1),\n    sd_yield = round(sd(mean, na.rm = TRUE), 1),\n    .by = genus\n  ) |>\n  knitr::kable(col.names = c(\"Genus\", \"N\", \"Mean Yield (Mg/ha)\", \"SD\"))\n\n\n\nTable 3: Yield summary for key bioenergy genera\n\n\nGenus\nN\nMean Yield (Mg/ha)\nSD\n\n\n\n\nPanicum\n2087\n10.1\n5.5\n\n\nSalix\n528\n15.8\n18.3\n\n\nMiscanthus\n1021\n12.8\n10.5\n\n\nPopulus\n841\n29.3\n29.0\n\n\nSaccharum\n3578\n34.9\n22.1"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#sec-pfts",
+    "href": "vignettes/getting_started.html#sec-pfts",
+    "title": "Getting Started with betydata",
+    "section": "Working with Plant Functional Types (PFTs)",
+    "text": "Working with Plant Functional Types (PFTs)\n\n\n\n\n\n\nWhat is a PFT?\n\n\n\nA Plant Functional Type groups species with similar ecological characteristics for ecosystem modeling. Instead of parameterizing models for each species individually, PFTs like “temperate deciduous trees” or “C4 grasses” define shared parameter distributions. This approach is essential when species-level data is sparse and makes modeling tractable at large scales.\n\n\n\nmiscanthus_sp <- species |>\n  filter(genus == \"Miscanthus\") |>\n  pull(id)\n\npfts_species |>\n  filter(specie_id %in% miscanthus_sp) |>\n  left_join(pfts |> select(id, name), by = c(\"pft_id\" = \"id\")) |>\n  distinct(name)"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#next-steps",
+    "href": "vignettes/getting_started.html#next-steps",
+    "title": "Getting Started with betydata",
+    "section": "Next Steps",
+    "text": "Next Steps\n\n\n\n\n\n\n\nVignette\nDescription\n\n\n\n\nvignette(\"common_analyses\")\nCommon analysis patterns with dplyr\n\n\nvignette(\"pfts-priors\")\nWorking with PFTs and Bayesian priors\n\n\nvignette(\"manuscript\")\nReproduce analyses from LeBauer et al. (2018)"
+  },
+  {
+    "objectID": "vignettes/getting_started.html#references",
+    "href": "vignettes/getting_started.html#references",
+    "title": "Getting Started with betydata",
+    "section": "References",
+    "text": "References\n\nLeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. GCB Bioenergy. doi:10.1111/gcbb.12420\nLeBauer, D. S., et al. (2013). Facilitating feedbacks between field measurements and ecosystem models. Ecological Monographs, 83(2), 133–154.\nBETYdb documentation: https://pecanproject.github.io/bety-documentation/"
+  },
+  {
+    "objectID": "vignettes/manuscript.html",
+    "href": "vignettes/manuscript.html",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "",
+    "text": "What you will learn\n\n\n\n\nHow to reproduce key figures and tables from the BETYdb publication\nHow to summarize trait and yield data by genus, trait, and site\nHow current data compares to the 2017 snapshot used in the paper"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#introduction",
+    "href": "vignettes/manuscript.html#introduction",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Introduction",
+    "text": "Introduction\nThis vignette reproduces key analyses from the BETYdb manuscript (LeBauer et al., 2018) using the betydata package.\nCitation: LeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. GCB Bioenergy. doi:10.1111/gcbb.12420"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#setup",
+    "href": "vignettes/manuscript.html#setup",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Setup",
+    "text": "Setup\n\nlibrary(betydata)\nlibrary(dplyr)\nlibrary(ggplot2)\n\ntheme_set(theme_bw(base_size = 10, base_family = \"sans\"))"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#sec-fig1",
+    "href": "vignettes/manuscript.html#sec-fig1",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Figure 1: Data Summary by Genus",
+    "text": "Figure 1: Data Summary by Genus\nThe manuscript presents trait and yield counts for key bioenergy genera. We reproduce this using traitsview:\n\nbioenergy_genera <- c(\"Miscanthus\", \"Panicum\", \"Populus\", \"Saccharum\",\n                       \"Pinus\", \"Salix\", \"Robinia\")\n\ngenus_summary <- traitsview |>\n  filter(genus %in% bioenergy_genera, checked >= 0) |>\n  summarise(\n    n_traits = sum(result_type == \"traits\", na.rm = TRUE),\n    n_yields = sum(result_type == \"yields\", na.rm = TRUE),\n    total = n(),\n    .by = genus\n  ) |>\n  arrange(desc(total))\n\ngenus_summary |>\n  knitr::kable(col.names = c(\"Genus\", \"Traits\", \"Yields\", \"Total\"))\n\n\n\nTable 1: Trait and yield counts by bioenergy genus\n\n\nGenus\nTraits\nYields\nTotal\n\n\n\n\nSaccharum\n1579\n3578\n5157\n\n\nPopulus\n3144\n841\n3985\n\n\nMiscanthus\n2666\n1021\n3687\n\n\nPanicum\n619\n2087\n2706\n\n\nSalix\n1847\n528\n2375\n\n\nPinus\n1377\n6\n1383\n\n\nRobinia\n41\n11\n52\n\n\n\n\n\n\n\n\n\n\n\n\nComparison Notes\n\n\n\nCounts may differ from the published manuscript because:\n\nQA/QC filtering: betydata excludes checked = -1 (failed QA/QC records)\nSnapshot date: betydata was exported from a current database snapshot; the manuscript used 2017 data\nAccess level: betydata includes only public data from BETYdb"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#sec-fig2",
+    "href": "vignettes/manuscript.html#sec-fig2",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Figure 2: Trait Records by Genus",
+    "text": "Figure 2: Trait Records by Genus\n\nfocal_traits <- c(\"Ayield\", \"leafN\", \"LAI\", \"SLA\", \"Vcmax\",\n                   \"leaf_respiration_rate_m2\", \"Jmax\")\n\ntrait_counts <- traitsview |>\n  filter(\n    genus %in% bioenergy_genera,\n    trait %in% focal_traits,\n    checked >= 0\n  ) |>\n  count(genus, trait, name = \"n\")\n\nggplot(trait_counts, aes(x = genus, y = n, fill = trait)) +\n  geom_col(position = \"dodge\") +\n  scale_y_log10(breaks = c(1, 10, 100, 1000, 10000)) +\n  coord_flip() +\n  labs(\n    x = NULL,\n    y = \"Number of Records (log scale)\",\n    fill = \"Trait\"\n  ) +\n  theme(\n    legend.position = \"right\",\n    panel.grid.minor = element_blank()\n  )\n\n\n\n\nFigure 1: Number of records for focal traits across bioenergy genera (log scale)"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#sec-fig3",
+    "href": "vignettes/manuscript.html#sec-fig3",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Figure 3: Trait Distributions",
+    "text": "Figure 3: Trait Distributions\nThe manuscript displays histograms of trait values across genera, showing the spread of measured values for key ecophysiological parameters.\n\nhist_traits <- c(\"Ayield\", \"SLA\", \"Vcmax\", \"LAI\")\n\ntrait_data <- traitsview |>\n  filter(\n    trait %in% hist_traits,\n    !is.na(mean),\n    checked >= 0,\n    genus %in% bioenergy_genera\n  )\n\nggplot(trait_data, aes(x = mean, fill = genus)) +\n  geom_histogram(bins = 25, alpha = 0.7) +\n  facet_wrap(~trait, scales = \"free\", ncol = 2) +\n  labs(\n    x = \"Observed Value\",\n    y = \"Count\",\n    fill = \"Genus\"\n  ) +\n  theme(\n    legend.position = \"bottom\",\n    strip.background = element_blank()\n  )\n\n\n\n\nFigure 2: Distribution of trait values for bioenergy genera"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#sec-table1",
+    "href": "vignettes/manuscript.html#sec-table1",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Table 1: Database Contents Summary",
+    "text": "Table 1: Database Contents Summary\n\ncontents <- traitsview |>\n  filter(checked >= 0) |>\n  summarise(\n    n_traits = sum(result_type == \"traits\", na.rm = TRUE),\n    n_yields = sum(result_type == \"yields\", na.rm = TRUE),\n    total = n(),\n    .by = genus\n  ) |>\n  filter(total >= 100) |>\n  arrange(desc(total))\n\nknitr::kable(\n  head(contents, 15),\n  col.names = c(\"Genus\", \"Traits\", \"Yields\", \"Total\")\n)\n\n\n\nTable 2: Data records by genus (top 15 with >= 100 records)\n\n\nGenus\nTraits\nYields\nTotal\n\n\n\n\nSaccharum\n1579\n3578\n5157\n\n\nPopulus\n3144\n841\n3985\n\n\nMiscanthus\n2666\n1021\n3687\n\n\nPanicum\n619\n2087\n2706\n\n\nSalix\n1847\n528\n2375\n\n\nPetasites\n1770\n0\n1770\n\n\nCarex\n1579\n0\n1579\n\n\nNA\n1463\n48\n1511\n\n\nEriophorum\n1471\n0\n1471\n\n\nPinus\n1377\n6\n1383\n\n\nAcer\n1044\n3\n1047\n\n\nPicea\n989\n0\n989\n\n\nBetula\n803\n0\n803\n\n\nQuercus\n645\n18\n663\n\n\nDupontia\n598\n0\n598"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#sec-meta-analysis",
+    "href": "vignettes/manuscript.html#sec-meta-analysis",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Yield Meta-Analysis Subset",
+    "text": "Yield Meta-Analysis Subset\nThe manuscript includes a meta-analysis of Miscanthus and switchgrass (Panicum) yields. Here we extract the relevant subset and compute summary statistics.\n\nyield_ma <- traitsview |>\n  filter(\n    genus %in% c(\"Miscanthus\", \"Panicum\"),\n    trait == \"Ayield\",\n    !is.na(lat),\n    !is.na(lon),\n    !is.na(mean),\n    checked >= 0\n  ) |>\n  select(\n    id, genus, scientificname, mean, units,\n    n, stat, statname, lat, lon,\n    author, citation_year, sitename, site_id\n  )\n\nyield_ma |>\n  summarise(\n    n_records = n(),\n    mean_yield = round(mean(mean), 1),\n    sd_yield = round(sd(mean), 1),\n    n_sites = n_distinct(site_id),\n    .by = genus\n  ) |>\n  knitr::kable(col.names = c(\"Genus\", \"Records\", \"Mean Yield (Mg/ha)\", \"SD\", \"Sites\"))\n\n\n\nTable 3: Yield meta-analysis summary for Miscanthus and Panicum\n\n\nGenus\nRecords\nMean Yield (Mg/ha)\nSD\nSites\n\n\n\n\nPanicum\n2011\n9.9\n5.4\n66\n\n\nMiscanthus\n993\n12.8\n10.5\n80"
+  },
+  {
+    "objectID": "vignettes/manuscript.html#sec-geography",
+    "href": "vignettes/manuscript.html#sec-geography",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "Geographic Distribution",
+    "text": "Geographic Distribution\n\nggplot(yield_ma, aes(x = lon, y = lat, color = genus)) +\n  geom_point(alpha = 0.6, size = 2) +\n  borders(\"world\", colour = \"grey70\", fill = NA) +\n  coord_quickmap(xlim = c(-130, 50), ylim = c(20, 70)) +\n  labs(\n    x = \"Longitude\",\n    y = \"Latitude\",\n    color = \"Genus\"\n  ) +\n  theme_minimal(base_size = 12)\n\n\n\n\nFigure 3: Geographic distribution of Miscanthus and switchgrass yield observations\n\n\n\n\n\n\n\n\n\n\nExtending This Analysis\n\n\n\nThe sites table contains additional geographic and climate metadata (mat, map, soil) that can be joined to enable climate-response analyses."
+  },
+  {
+    "objectID": "vignettes/manuscript.html#references",
+    "href": "vignettes/manuscript.html#references",
+    "title": "Reproducing BETYdb Manuscript Analyses",
+    "section": "References",
+    "text": "References\n\nLeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. GCB Bioenergy. doi:10.1111/gcbb.12420"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html",
+    "href": "vignettes/pfts-priors.html",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "",
+    "text": "What you will learn\n\n\n\n\nHow Plant Functional Types (PFTs) organize species for ecosystem modeling\nHow prior distributions encode parameter knowledge before Bayesian inference\nHow to visualize priors and compare them to observed trait data"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#sec-background",
+    "href": "vignettes/pfts-priors.html#sec-background",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Background",
+    "text": "Background\n\nPlant Functional Types\nEcosystem models like PEcAn simulate how plants exchange carbon, water, and energy with the atmosphere. These models require parameter values for photosynthesis rates, leaf properties, allocation fractions, and other ecophysiological quantities. Rather than parameterizing every species individually, models group species into Plant Functional Types (PFTs)—categories like “temperate deciduous trees” or “C4 grasses”—and estimate shared parameters for each group.\n\n\nBayesian Parameterization\nPEcAn uses Bayesian inference to estimate model parameters. The workflow is:\n\nPrior distribution \\(p(\\theta)\\): Encodes existing knowledge about a parameter \\(\\theta\\) before looking at data (e.g. “SLA is around 20 m2/kg with considerable uncertainty”)\nLikelihood \\(p(D|\\theta)\\): How probable the observed trait data \\(D\\) is given parameter values\nPosterior distribution \\(p(\\theta|D)\\): Updated belief after combining prior and data via Bayes’ theorem:\n\n\\[\np(\\theta | D) \\propto p(D | \\theta) \\cdot p(\\theta)\n\\tag{1}\\]\nThe tables in betydata provide the ingredients for this workflow: priors stores prior distributions, traitsview stores the observed data, and pfts/pfts_species/pfts_priors define which priors and species belong to each PFT."
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#setup",
+    "href": "vignettes/pfts-priors.html#setup",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Setup",
+    "text": "Setup\n\nlibrary(betydata)\nlibrary(dplyr)\nlibrary(ggplot2)"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#sec-pfts",
+    "href": "vignettes/pfts-priors.html#sec-pfts",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Understanding PFTs",
+    "text": "Understanding PFTs\n\nAvailable PFTs\n\nnrow(pfts)\n\n[1] 386\n\npfts |>\n  select(id, name) |>\n  head(20)\n\n\n\n  \n\n\n\n\n\nSpecies Membership\nEach PFT contains species assigned by researchers. The pfts_species junction table maps PFTs to species:\n\nspecies_per_pft <- pfts_species |>\n  count(pft_id, name = \"n_species\")\n\nsummary(species_per_pft$n_species)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n      1       1       2    1285      19   49626 \n\n\n\nmiscanthus_pft <- pfts |>\n  filter(grepl(\"miscanthus\", name, ignore.case = TRUE))\n\nif (nrow(miscanthus_pft) > 0) {\n  miscanthus_species <- pfts_species |>\n    filter(pft_id %in% miscanthus_pft$id) |>\n    left_join(\n      species |> select(id, scientificname),\n      by = c(\"specie_id\" = \"id\")\n    )\n  miscanthus_species\n}"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#sec-priors",
+    "href": "vignettes/pfts-priors.html#sec-priors",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Working with Priors",
+    "text": "Working with Priors\n\nPrior Distribution Structure\nEach row in the priors table specifies a probability distribution for a model parameter. The key fields are:\n\n\n\nField\nDescription\n\n\n\n\nvariable_id\nWhich trait/parameter this prior describes\n\n\ndistn\nDistribution family (e.g. norm, gamma, lnorm)\n\n\nparama\nFirst parameter (mean, shape, etc.)\n\n\nparamb\nSecond parameter (sd, rate, etc.)\n\n\n\n\npriors |>\n  count(distn, sort = TRUE) |>\n  knitr::kable()\n\n\n\nTable 1: Distribution families used in BETYdb priors\n\n\ndistn\nn\n\n\n\n\nunif\n325\n\n\nnorm\n239\n\n\nbeta\n99\n\n\nlnorm\n94\n\n\nweibull\n59\n\n\ngamma\n55\n\n\nbinom\n7\n\n\nexp\n6\n\n\npois\n5\n\n\n\n\n\n\n\npriors |>\n  left_join(variables |> select(id, name), by = c(\"variable_id\" = \"id\")) |>\n  count(name, sort = TRUE) |>\n  head(15) |>\n  knitr::kable()\n\n\n\nTable 2: Top variables with prior distributions\n\n\nname\nn\n\n\n\n\nAGEMX\n21\n\n\nDMAX\n21\n\n\nDMIN\n21\n\n\nGmax\n21\n\n\nSPRTND\n19\n\n\nSPRTMX\n17\n\n\nFROST\n15\n\n\nSLTA\n13\n\n\nSLTB\n13\n\n\nMPLANT\n11\n\n\nSLA\n11\n\n\nstomatal_slope\n11\n\n\nHTMAX\n10\n\n\nVcmax\n10\n\n\nc2n_leaf\n10\n\n\n\n\n\n\n\n\nVisualizing a Prior Distribution\nConsider a prior for Specific Leaf Area (SLA). If the prior is \\(\\text{Gamma}(\\alpha, \\beta)\\), then the density function is:\n\\[\nf(x; \\alpha, \\beta) = \\frac{\\beta^\\alpha}{\\Gamma(\\alpha)} x^{\\alpha - 1} e^{-\\beta x}, \\quad x > 0\n\\tag{2}\\]\n\nsla_var_id <- variables |>\n  filter(name == \"SLA\") |>\n  pull(id)\n\nsla_priors <- priors |>\n  filter(variable_id %in% sla_var_id)\n\neval_prior_density <- function(p, x = NULL) {\n  if (is.null(x)) {\n    x <- switch(p$distn,\n      \"gamma\" = seq(0, qgamma(0.999, p$parama, p$paramb), length.out = 1000),\n      \"norm\" = seq(p$parama - 4 * p$paramb, p$parama + 4 * p$paramb, length.out = 1000),\n      \"lnorm\" = seq(0.001, qlnorm(0.999, p$parama, p$paramb), length.out = 1000),\n      \"beta\" = seq(0.001, 0.999, length.out = 1000),\n      \"unif\" = seq(p$parama, p$paramb, length.out = 1000),\n      \"weibull\" = seq(0, qweibull(0.999, p$parama, p$paramb), length.out = 1000),\n      \"exp\" = seq(0, qexp(0.999, p$parama), length.out = 1000),\n      seq(0, 100, length.out = 1000)\n    )\n  }\n\n  y <- switch(p$distn,\n    \"gamma\" = dgamma(x, shape = p$parama, rate = p$paramb),\n    \"norm\" = dnorm(x, mean = p$parama, sd = p$paramb),\n    \"lnorm\" = dlnorm(x, meanlog = p$parama, sdlog = p$paramb),\n    \"beta\" = dbeta(x, shape1 = p$parama, shape2 = p$paramb),\n    \"unif\" = dunif(x, min = p$parama, max = p$paramb),\n    \"weibull\" = dweibull(x, shape = p$parama, scale = p$paramb),\n    \"exp\" = dexp(x, rate = p$parama),\n    rep(0, length(x))\n  )\n\n  list(x = x, y = y)\n}\n\nif (nrow(sla_priors) > 0) {\n  p <- sla_priors[1, ]\n  prior_result <- eval_prior_density(p)\n  prior_x <- prior_result$x\n  prior_y <- prior_result$y\n\n  ggplot(data.frame(x = prior_x, y = prior_y), aes(x, y)) +\n    geom_line(linewidth = 1, color = \"#2c3e50\") +\n    labs(\n      title = paste0(\"Prior: \", p$distn, \"(\", round(p$parama, 2), \", \", round(p$paramb, 2), \")\"),\n      x = \"SLA (m2/kg)\",\n      y = \"Density\"\n    ) +\n    theme_minimal(base_size = 12)\n}\n\n\n\n\nFigure 1: Prior distribution for Specific Leaf Area (SLA)"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#sec-pft-priors",
+    "href": "vignettes/pfts-priors.html#sec-pft-priors",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Linking PFTs to Priors",
+    "text": "Linking PFTs to Priors\nThe pfts_priors table connects PFTs to their associated prior distributions, completing the Bayesian parameterization setup:\n\\[\n\\text{PFT} \\xrightarrow{\\texttt{pfts\\_priors}} \\text{Prior}(\\theta) \\xrightarrow{\\texttt{variable\\_id}} \\text{Trait}\n\\]\n\npriors_per_pft <- pfts_priors |>\n  count(pft_id, name = \"n_priors\")\n\nsummary(priors_per_pft$n_priors)\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n      1       5      14      14      20      43 \n\n\n\nif (exists(\"miscanthus_pft\") && nrow(miscanthus_pft) > 0) {\n  pft_id_val <- miscanthus_pft$id[1]\n\n  pft_priors <- pfts_priors |>\n    filter(pft_id == pft_id_val) |>\n    left_join(priors, by = c(\"prior_id\" = \"id\")) |>\n    left_join(variables |> select(id, name, units), by = c(\"variable_id\" = \"id\"))\n\n  pft_priors |>\n    select(name, units, distn, parama, paramb) |>\n    knitr::kable(digits = 3)\n}\n\n\n\nTable 3: Prior distributions for a Miscanthus PFT\n\n\n\n\n\n\n\n\n\nname\nunits\ndistn\nparama\nparamb\n\n\n\n\nleaf_respiration_rate_m2\numol [CO2] m-2 s-1\nlnorm\n0.632\n0.65\n\n\ncuticular_cond\numol [H2O] m-2 s-1\nlnorm\n8.400\n0.90\n\n\nstomatal_slope.BB\n[ratio]\nlnorm\n1.240\n0.28\n\n\nSLA\nm2 kg-1\nweibull\n2.060\n19.00\n\n\nVcmax\numol [CO2] m-2 s-1\nlnorm\n3.750\n0.30\n\n\ngrowth_respiration_coefficient\nmol [CO2] mol-1 [net assimilation]\nbeta\n26.000\n48.00\n\n\nJmax\numol [photons] m-2 s-1\nweibull\n2.000\n150.00\n\n\nc2n_leaf\n[ratio]\ngamma\n4.180\n0.13\n\n\nquantum_efficiency\nfraction\ngamma\n90.900\n1580.00\n\n\nchi_leaf\n[ratio]\nlnorm\n0.180\n0.43\n\n\nextinction_coefficient_diffuse\nNA\nlnorm\n-2.300\n0.55"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#sec-prior-vs-data",
+    "href": "vignettes/pfts-priors.html#sec-prior-vs-data",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Comparing Prior to Data",
+    "text": "Comparing Prior to Data\nA key validation step in Bayesian parameterization: compare the prior distribution to observed data. If the prior assigns negligible probability to regions where data actually falls, the prior may need revision.\n\n\n\n\n\n\nPrior-Data Conflict\n\n\n\nWhen the prior and data disagree strongly, the posterior will be dominated by whichever has lower variance. A very tight prior that disagrees with data can effectively ignore the data—a clear signal to revisit prior specification.\n\n\n\nsla_data <- traitsview |>\n  filter(\n    trait == \"SLA\",\n    genus %in% c(\"Miscanthus\", \"Panicum\"),\n    !is.na(mean),\n    checked >= 0\n  ) |>\n  pull(mean)\n\nif (length(sla_data) > 10 && exists(\"prior_x\") && exists(\"prior_y\")) {\n  ggplot() +\n    geom_histogram(\n      data = data.frame(sla = sla_data),\n      aes(x = sla, y = after_stat(density)),\n      bins = 30, fill = \"steelblue\", alpha = 0.6\n    ) +\n    geom_line(\n      data = data.frame(x = prior_x, y = prior_y),\n      aes(x, y),\n      color = \"#e74c3c\", linewidth = 1, linetype = \"dashed\"\n    ) +\n    labs(\n      title = \"Prior vs. Observed SLA\",\n      subtitle = \"Dashed red = prior distribution | Blue bars = observed data (Miscanthus + Panicum)\",\n      x = \"SLA (m2/kg)\",\n      y = \"Density\"\n    ) +\n    xlim(0, 80) +\n    theme_minimal(base_size = 12)\n}\n\n\n\n\nFigure 2: SLA: Prior distribution vs. observed data for bioenergy grasses"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#sec-extract",
+    "href": "vignettes/pfts-priors.html#sec-extract",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Extracting Data for a PFT",
+    "text": "Extracting Data for a PFT\nA common workflow: retrieve all trait data for species belonging to a given PFT.\n\nget_pft_data <- function(pft_name, trait_name = NULL) {\n  pft_ids <- pfts |>\n    filter(grepl(pft_name, name, ignore.case = TRUE)) |>\n    pull(id)\n\n  if (length(pft_ids) == 0) {\n    warning(\"PFT not found: \", pft_name)\n    return(tibble())\n  }\n\n  spp_ids <- pfts_species |>\n    filter(pft_id %in% pft_ids) |>\n    pull(specie_id)\n\n  result <- traitsview |>\n    filter(species_id %in% spp_ids)\n\n  if (!is.null(trait_name)) {\n    result <- result |>\n      filter(trait == trait_name)\n  }\n\n  result\n}\n\nwillow_sla <- get_pft_data(\"salix\", \"SLA\")\nif (nrow(willow_sla) > 0) {\n  summary(willow_sla$mean)\n}\n\n   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n   7.14   10.40   11.54   12.43   13.32   26.40"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#key-concepts-summary",
+    "href": "vignettes/pfts-priors.html#key-concepts-summary",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "Key Concepts Summary",
+    "text": "Key Concepts Summary\n\n\n\n\n\n\n\n\nConcept\nTable(s)\nDescription\n\n\n\n\nPFT definition\npfts\nNamed groupings of ecologically similar species\n\n\nSpecies membership\npfts_species\nWhich species belong to which PFT\n\n\nPrior specification\npriors\nDistribution family + parameters for each trait\n\n\nPFT-Prior link\npfts_priors\nWhich priors apply to which PFT\n\n\nObserved data\ntraitsview\nActual measurements for Bayesian updating"
+  },
+  {
+    "objectID": "vignettes/pfts-priors.html#references",
+    "href": "vignettes/pfts-priors.html#references",
+    "title": "Working with Plant Functional Types and Priors",
+    "section": "References",
+    "text": "References\n\nLeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database. GCB Bioenergy. doi:10.1111/gcbb.12420\nLeBauer, D. S., et al. (2013). Facilitating feedbacks between field measurements and ecosystem models. Ecological Monographs, 83(2), 133–154."
+  }
+]
