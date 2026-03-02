@@ -1,0 +1,11 @@
+execute:
+  collapse: true
+  comment: "#>"
+  warning: false
+  message: false
+
+format:
+  html:
+    toc: true
+    theme: cosmo
+    df-print: paged
