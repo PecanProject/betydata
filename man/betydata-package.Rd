@@ -7,7 +7,7 @@
 \title{betydata: Public Data from the BETYdb Database}
 \description{
 Offline access to plant trait and yield data from BETYdb.
-Load datasets with \code{data(traitsview)}, \code{data(species)}, etc.
+All tables are lazy-loaded and available after \code{library(betydata)}.
 }
 \seealso{
 \link{traitsview}, \link{species}, \link{sites}, \link{variables}, \link{pfts}, \link{priors}
@@ -18,11 +18,6 @@ Load datasets with \code{data(traitsview)}, \code{data(species)}, etc.
 Authors:
 \itemize{
   \item Akash B V \email{www.divinehome12@gmail.com}
-}
-
-Other contributors:
-\itemize{
-  \item University of Illinois, NCSA [copyright holder]
 }
 
 }
