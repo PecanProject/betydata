@@ -18,7 +18,7 @@ Depends:
     R (>= 4.1.0)
 Suggests:
     arrow,
-    dplyr,
+    dplyr (>= 1.1.0),
     ggplot2,
     jsonlite,
     knitr,
