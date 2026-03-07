@@ -2,14 +2,14 @@ cff-version: 1.2.0
 title: "betydata: Public Data from the BETYdb Database"
 version: 0.1.0
 abstract: >-
-  An R data package providing offline access to public plant trait and 
-  crop yield data from the BETYdb (Biofuel Ecophysiological Traits and 
+  An R data package providing offline access to public plant trait and
+  crop yield data from the BETYdb (Biofuel Ecophysiological Traits and
   Yields) database.
 license: BSD-3-Clause
-# doi: 10.5281/zenodo.XXXXXXX
+# doi: -- will be assigned by Zenodo on first github release
 message: >-
   If you use this data package, please cite both this software and
-  the BETYdb paper (see the project documentation or BETYdb website for citation details).
+  the BETYdb paper (see preferred-citation below).
 type: dataset
 date-released: "2026-02-11"
 repository-code: https://github.com/PecanProject/betydata
@@ -33,3 +33,30 @@ authors:
     family-names: BV
     email: www.divinehome12@gmail.com
     affiliation: CMR Institute of Technology, Bengaluru
+preferred-citation:
+  type: article
+  title: >-
+    BETYdb: a yield, trait, and ecosystem service database applied to
+    second-generation bioenergy feedstock production
+  authors:
+    - given-names: David
+      family-names: LeBauer
+    - given-names: Rob
+      family-names: Kooper
+    - given-names: Patrick
+      family-names: Mulrooney
+    - given-names: Scott
+      family-names: Rohde
+    - given-names: Dan
+      family-names: Wang
+    - given-names: Stephen P.
+      family-names: Long
+    - given-names: Michael C.
+      family-names: Dietze
+  journal: GCB Bioenergy
+  year: 2018
+  volume: 10
+  issue: 1
+  start: 61
+  end: 71
+  doi: "10.1111/gcbb.12420"
