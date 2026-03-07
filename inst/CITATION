@@ -1,0 +1,33 @@
+citHeader("To cite betydata in publications, please use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "betydata: Public Data from the BETYdb Database",
+  author   = c(
+    person("David", "LeBauer"),
+    person("Akash", "BV")
+  ),
+  year     = "2026",
+  note     = paste("R package version", meta$Version),
+  url      = "https://github.com/PecanProject/betydata"
+)
+
+bibentry(
+  bibtype  = "Article",
+  title    = "BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production",
+  author   = c(
+    person("David", "LeBauer"),
+    person("Rob", "Kooper"),
+    person("Patrick", "Mulrooney"),
+    person("Scott", "Rohde"),
+    person("Dan", "Wang"),
+    person("Stephen P.", "Long"),
+    person("Michael C.", "Dietze")
+  ),
+  journal  = "GCB Bioenergy",
+  year     = "2018",
+  volume   = "10",
+  number   = "1",
+  pages    = "61--71",
+  doi      = "10.1111/gcbb.12420"
+)
