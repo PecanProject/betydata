@@ -16,7 +16,6 @@ renv/cellar/
 renv/lock/
 renv/python/
 renv/sandbox/
-data-raw/csv/
 _site/
 _freeze/
 /.quarto/
