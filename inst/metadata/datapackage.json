@@ -23,8 +23,9 @@
   "resources": [
     {
       "name": "traitsview",
-      "path": "data/traitsview.rda",
-      "format": "rda",
+      "path": "data-raw/csv/traitsview.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "title": "Traits and Yields View",
       "description": "Denormalized view of plant trait measurements and crop yields",
       "schema": {
@@ -174,8 +175,9 @@
     },
     {
       "name": "species",
-      "path": "data/species.rda",
-      "format": "rda",
+      "path": "data-raw/csv/species.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -535,8 +537,9 @@
     },
     {
       "name": "sites",
-      "path": "data/sites.rda",
-      "format": "rda",
+      "path": "data-raw/csv/sites.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -620,8 +623,9 @@
     },
     {
       "name": "variables",
-      "path": "data/variables.rda",
-      "format": "rda",
+      "path": "data-raw/csv/variables.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -681,8 +685,9 @@
     },
     {
       "name": "citations",
-      "path": "data/citations.rda",
-      "format": "rda",
+      "path": "data-raw/csv/citations.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -742,8 +747,9 @@
     },
     {
       "name": "cultivars",
-      "path": "data/cultivars.rda",
-      "format": "rda",
+      "path": "data-raw/csv/cultivars.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -783,8 +789,9 @@
     },
     {
       "name": "methods",
-      "path": "data/methods.rda",
-      "format": "rda",
+      "path": "data-raw/csv/methods.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -816,8 +823,9 @@
     },
     {
       "name": "treatments",
-      "path": "data/treatments.rda",
-      "format": "rda",
+      "path": "data-raw/csv/treatments.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -853,8 +861,9 @@
     },
     {
       "name": "pfts",
-      "path": "data/pfts.rda",
-      "format": "rda",
+      "path": "data-raw/csv/pfts.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -894,8 +903,9 @@
     },
     {
       "name": "priors",
-      "path": "data/priors.rda",
-      "format": "rda",
+      "path": "data-raw/csv/priors.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -951,8 +961,9 @@
     },
     {
       "name": "managements",
-      "path": "data/managements.rda",
-      "format": "rda",
+      "path": "data-raw/csv/managements.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -1004,8 +1015,9 @@
     },
     {
       "name": "entities",
-      "path": "data/entities.rda",
-      "format": "rda",
+      "path": "data-raw/csv/entities.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -1037,8 +1049,9 @@
     },
     {
       "name": "pfts_species",
-      "path": "data/pfts_species.rda",
-      "format": "rda",
+      "path": "data-raw/csv/pfts_species.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -1066,8 +1079,9 @@
     },
     {
       "name": "pfts_priors",
-      "path": "data/pfts_priors.rda",
-      "format": "rda",
+      "path": "data-raw/csv/pfts_priors.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -1095,8 +1109,9 @@
     },
     {
       "name": "managements_treatments",
-      "path": "data/managements_treatments.rda",
-      "format": "rda",
+      "path": "data-raw/csv/managements_treatments.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
@@ -1124,8 +1139,9 @@
     },
     {
       "name": "cultivars_pfts",
-      "path": "data/cultivars_pfts.rda",
-      "format": "rda",
+      "path": "data-raw/csv/cultivars_pfts.csv",
+      "format": "csv",
+      "mediatype": "text/csv",
       "schema": {
         "fields": [
           {
