@@ -29,7 +29,9 @@ jobs:
         with:
           extra-packages: |
             local::.
-
+            any::dplyr
+            any::ggplot2
+            any::knitr
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
