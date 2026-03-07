@@ -68,7 +68,7 @@ traitsview |>
 ## Data License
 
 Data: [ODC-By-1.0](https://opendatacommons.org/licenses/by/1-0/)
-| Code: [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
+Code: [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Citation
 
