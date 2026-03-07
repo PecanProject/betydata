@@ -17,7 +17,6 @@ log_info("Building betydata package data objects...")
 
 # Create output directories
 dir.create("data", showWarnings = FALSE)
-dir.create("inst/extdata/parquet", showWarnings = FALSE, recursive = TRUE)
 
 # Column type specifications for stable parsing
 traitsview_cols <- cols(
@@ -70,11 +69,27 @@ traitsview <- read_csv(
   na = c("", "NA")
 )
 
-# Filter out checked = -1
-traitsview <- traitsview[is.na(traitsview$checked) | traitsview$checked != -1, ]
+# Summarize access_level before filtering -- flag non-public records
+access_summary <- table(traitsview$access_level, useNA = "ifany")
+log_info("access_level distribution:")
+for (lvl in names(access_summary)) {
+  log_info(sprintf("access_level = %s: %d records", lvl, access_summary[[lvl]]))
+}
 
-# Drop access_level column (all records are public, access_level = 4)
+# Keep only public records (access_level == 4)
+non_public <- sum(traitsview$access_level != 4, na.rm = TRUE)
+if (non_public > 0) {
+  log_info(sprintf("Removing %d non-public records (access_level != 4)", non_public))
+  traitsview <- traitsview[traitsview$access_level == 4, ]
+}
+
+# Drop access_level column (all remaining records are public)
 traitsview$access_level <- NULL
+
+# Convert checked = NA to checked = 0, then remove failed QC records
+traitsview <- traitsview |>
+  dplyr::mutate(checked = ifelse(is.na(checked), 0L, checked)) |>
+  dplyr::filter(checked >= 0)
 
 # Reorder columns: key analytical columns first, IDs and metadata last
 col_order <- c(
@@ -141,30 +156,6 @@ if (!is.null(pfts_priors)) usethis::use_data(pfts_priors, overwrite = TRUE, comp
 if (!is.null(managements_treatments)) usethis::use_data(managements_treatments, overwrite = TRUE, compress = "xz")
 if (!is.null(cultivars_pfts)) usethis::use_data(cultivars_pfts, overwrite = TRUE, compress = "xz")
 
-
-log_info("Saving Parquet files to inst/extdata/parquet/...")
-if (requireNamespace("arrow", quietly = TRUE)) {
-  arrow::write_parquet(traitsview, "inst/extdata/parquet/traitsview.parquet")
-  if (!is.null(species)) arrow::write_parquet(species, "inst/extdata/parquet/species.parquet")
-  if (!is.null(sites)) arrow::write_parquet(sites, "inst/extdata/parquet/sites.parquet")
-  if (!is.null(variables)) arrow::write_parquet(variables, "inst/extdata/parquet/variables.parquet")
-  if (!is.null(citations)) arrow::write_parquet(citations, "inst/extdata/parquet/citations.parquet")
-  if (!is.null(cultivars)) arrow::write_parquet(cultivars, "inst/extdata/parquet/cultivars.parquet")
-  if (!is.null(methods)) arrow::write_parquet(methods, "inst/extdata/parquet/methods.parquet")
-  if (!is.null(treatments)) arrow::write_parquet(treatments, "inst/extdata/parquet/treatments.parquet")
-  if (!is.null(pfts)) arrow::write_parquet(pfts, "inst/extdata/parquet/pfts.parquet")
-  if (!is.null(priors)) arrow::write_parquet(priors, "inst/extdata/parquet/priors.parquet")
-  if (!is.null(managements)) arrow::write_parquet(managements, "inst/extdata/parquet/managements.parquet")
-  if (!is.null(entities)) arrow::write_parquet(entities, "inst/extdata/parquet/entities.parquet")
-  if (!is.null(pfts_species)) arrow::write_parquet(pfts_species, "inst/extdata/parquet/pfts_species.parquet")
-  if (!is.null(pfts_priors)) arrow::write_parquet(pfts_priors, "inst/extdata/parquet/pfts_priors.parquet")
-  if (!is.null(managements_treatments)) arrow::write_parquet(managements_treatments, "inst/extdata/parquet/managements_treatments.parquet")
-  if (!is.null(cultivars_pfts)) arrow::write_parquet(cultivars_pfts, "inst/extdata/parquet/cultivars_pfts.parquet")
-} else {
-  log_info("arrow package not available, skipping Parquet export")
-}
-
-
 # --- Generate datapackage.json ---
 log_info("Generating inst/metadata/datapackage.json...")
 dir.create("inst/metadata", showWarnings = FALSE, recursive = TRUE)
@@ -197,8 +188,9 @@ resources <- lapply(datasets, function(nm) {
   df <- get(nm)
   base <- list(
     name = nm,
-    path = paste0("data/", nm, ".rda"),
-    format = "rda"
+    path = paste0("data-raw/csv/", nm, ".csv"),
+    format = "csv",
+    mediatype = "text/csv"
   )
   if (nm == "traitsview") {
     base$title <- "Traits and Yields View"
