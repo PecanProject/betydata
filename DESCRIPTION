@@ -17,7 +17,6 @@ BugReports: https://github.com/PecanProject/betydata/issues
 Depends:
     R (>= 4.1.0)
 Suggests:
-    arrow,
     dplyr (>= 1.1.0),
     ggplot2,
     jsonlite,
@@ -32,5 +31,5 @@ Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3
