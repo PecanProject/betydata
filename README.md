@@ -109,7 +109,18 @@ All trait and yield data include a quality control flag:
 | `0`   | Unchecked | Not yet reviewed                                          |
 | `-1`  | Flagged   | Identified as incorrect (excluded from this package)      |
 
-This package exports only `checked >= 0` data. Flagged records (`checked = -1`) are excluded during data preparation. All data in this package is public (from BETYdb records with `access_level = 4`). For restricted or flagged data, access the BETYdb PostgreSQL database directly.
+This package exports only `checked >= 0` data. Flagged records (`checked = -1`) are excluded during data preparation. Records with `checked = NA` are converted to `checked = 0` (unchecked) during the build. All data in this package is public (from BETYdb records with `access_level = 4`). For restricted or flagged data, access the BETYdb PostgreSQL database directly.
+
+---
+
+## Reporting Data Issues
+
+If you find errors in the data or want to report verified records:
+
+- **Data corrections:** [File a data correction issue](https://github.com/PecanProject/betydata/issues/new?template=data_correction.md)
+- **Verified records:** [Report a verified record](https://github.com/PecanProject/betydata/issues/new?template=verified_record.md)
+
+To submit corrections via pull request, edit the relevant CSV file in `data-raw/csv/`, rebuild with `source("data-raw/make-data.R")`, and submit a PR using the data correction template.
 
 ---
 
@@ -146,16 +157,6 @@ variables |>
 Lazy-loaded R data objects, available after `library(betydata)`:
 ```r
 traitsview
-```
-
-### Parquet (Alternative)
-
-For use with Arrow/DuckDB or cross-platform workflows:
-```r
-library(arrow)
-traitsview <- read_parquet(
-  system.file("extdata/parquet/traitsview.parquet", package = "betydata")
-)
 ```
 
 ### Frictionless Data Package
