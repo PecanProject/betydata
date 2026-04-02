@@ -7,8 +7,14 @@
 #' Columns are ordered with key analytical fields first (trait, mean, units,
 #' scientificname, genus) and ID columns last.
 #'
+#' The view is a UNION of traits and yields tables in BETYdb,
+#' so the unique row identifier is the composite key `(result_type, id)`,
+#' not `id` alone. A given `id` value can appear once under
+#' `result_type = "traits"` and once under `result_type = "yields"`.
+#'
 #' @format A tibble with 43,532 rows and 35 columns.
 #'   Key columns: trait, mean, units, scientificname, genus, sitename, author.
+#'   Unique row key: (result_type, id).
 #'   Use `names(traitsview)` to see all columns.
 #' @source <https://betydb.org>, exported from traits_and_yields_view
 #' @seealso [species], [sites], [variables], [citations]
