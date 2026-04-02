@@ -76,6 +76,17 @@ traitsview
 | `sitename`       | Research site                                    | Energy Farm, Urbana IL    |
 | `author`         | Citation author                                  | Heaton 2008               |
 | `checked`        | QA/QC status (0 = unchecked, 1 = verified)       | 0, 1                      |
+| `result_type`    | Source table: "traits" or "yields"               | traits, yields            |
+| `id`             | Row ID within the source table                   | 1, 42                     |
+
+::: {.callout-important}
+## Unique Row Identifier
+
+The `traitsview` table is a union of BETYdb `traits` and `yields` tables.
+The row key is `(result_type, id)`, not `id` alone; same `id`
+value can appear under both `result_type = "traits"` and
+`result_type = "yields"`.
+:::
 
 ## Basic Exploration
 
