@@ -31,6 +31,8 @@ This package provides a dataset with 16 tables exported from BETYdb.
 |---------------|--------|---------|----------------------------------------------|
 | `traitsview`  | 43,532 | 35      | Denormalized view of plant traits and yields |
 
+The `traitsview` table is a union of `traits` and `yields` tables in BETYdb. The unique row identifier is composite key `(result_type, id)`, not `id` alone; a given `id` can appear under both `result_type = "traits"` and `result_type = "yields"`.
+
 ### Metadata Tables
 
 These tables provide reference data for species, sites, variables, and other entities linked to the trait observations.
