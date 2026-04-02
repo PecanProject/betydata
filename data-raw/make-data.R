@@ -77,11 +77,12 @@ for (lvl in names(access_summary)) {
 }
 
 # Keep only public records (access_level == 4)
-non_public <- sum(traitsview$access_level != 4, na.rm = TRUE)
+# Explicit NA check; rows with NA access_level are not public
+non_public <- sum(traitsview$access_level != 4 | is.na(traitsview$access_level))
 if (non_public > 0) {
-  log_info(sprintf("Removing %d non-public records (access_level != 4)", non_public))
-  traitsview <- traitsview[traitsview$access_level == 4, ]
+  log_info(sprintf("Removing %d non-public records (access_level != 4 or NA)", non_public))
 }
+traitsview <- traitsview[traitsview$access_level == 4 & !is.na(traitsview$access_level), ]
 
 # Drop access_level column (all remaining records are public)
 traitsview$access_level <- NULL
@@ -184,6 +185,10 @@ datasets <- c("traitsview", "species", "sites", "variables", "citations",
               "managements", "entities", "pfts_species", "pfts_priors",
               "managements_treatments", "cultivars_pfts")
 
+# NOTE: paths are relative to the repo root, not installed package.
+# data-raw/ is excluded from the built package via .Rbuildignore.
+# These paths are for provenance, they point to the source CSVs
+# in the repository, not files shipped with installed package.
 resources <- lapply(datasets, function(nm) {
   df <- get(nm)
   base <- list(
