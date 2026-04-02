@@ -32,6 +32,7 @@ jobs:
             any::dplyr
             any::ggplot2
             any::knitr
+            any::maps
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
