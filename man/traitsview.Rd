@@ -7,6 +7,7 @@
 \format{
 A tibble with 43,532 rows and 35 columns.
 Key columns: trait, mean, units, scientificname, genus, sitename, author.
+Unique row key: (result_type, id).
 Use \code{names(traitsview)} to see all columns.
 }
 \source{
@@ -20,6 +21,12 @@ A denormalized view combining plant trait measurements and crop yield data
 from the BETYdb database. This is the primary table for offline analysis.
 Columns are ordered with key analytical fields first (trait, mean, units,
 scientificname, genus) and ID columns last.
+}
+\details{
+The view is a UNION of traits and yields tables in BETYdb,
+so the unique row identifier is the composite key \verb{(result_type, id)},
+not \code{id} alone. A given \code{id} value can appear once under
+\code{result_type = "traits"} and once under \code{result_type = "yields"}.
 }
 \examples{
 traitsview
