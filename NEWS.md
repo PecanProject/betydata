@@ -14,7 +14,7 @@
   - Public data only (`access_level == 4`); build enforces this with a hard filter
 * Format: `.rda` files with xz compression (lazy-loaded)
 * Metadata:
-  - Frictionless `datapackage.json` in `inst/metadata/`
+  - Frictionless `datapackage.json` at repo root (following Frictionless spec)
   - Full roxygen2 documentation for all datasets
 * Vignettes:
   - `getting_started`: Package overview, data model, and key concepts
