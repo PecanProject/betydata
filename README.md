@@ -9,15 +9,15 @@
 
 ## Overview
 
-|                           |                                                                        |
-|---------------------------|------------------------------------------------------------------------|
-| **Primary Table**         | `traitsview` - 43,532 trait and yield observations                     |
-| **Support Tables**        | 15 reference tables (species, sites, variables, citations, pfts, etc.) |
-| **Species Coverage**      | ~9,000 plant species with emphasis on bioenergy crops                  |
-| **Geographic Scope**      | Global, with concentration in North America and Europe                 |
-| **Temporal Range**        | 1900 -- present                                                        |
-| **Top Genera**            | *Miscanthus*, *Panicum*, *Populus*, *Salix*, *Saccharum*               |
-| **Frictionless Metadata** | [`inst/metadata/datapackage.json`](inst/metadata/datapackage.json)     |
+|                           |                                                                           |
+|---------------------------|---------------------------------------------------------------------------|
+| **Primary Table**         | `traitsview` - 43,532 trait and yield observations                        |
+| **Support Tables**        | 15 reference tables (species, sites, variables, citations, pfts, etc.)    |
+| **Species Coverage**      | ~9,000 plant species with emphasis on bioenergy crops                     |
+| **Geographic Scope**      | Global, with concentration in North America and Europe                    |
+| **Temporal Range**        | 1900 -- present                                                           |
+| **Top Genera**            | *Miscanthus*, *Panicum*, *Populus*, *Salix*, *Saccharum*                  |
+| **Frictionless Metadata** | [`datapackage.json`](datapackage.json) (repo root, per Frictionless spec) |
 
 ---
 
@@ -165,7 +165,7 @@ traitsview
 
 Machine-readable metadata following the Frictionless data standard:
 ```json
-// inst/metadata/datapackage.json
+// datapackage.json (repo root)
 {
   "name": "betydata",
   "title": "BETYdb Plant Traits and Yields Data Package",
