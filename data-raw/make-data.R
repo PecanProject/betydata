@@ -158,8 +158,7 @@ if (!is.null(managements_treatments)) usethis::use_data(managements_treatments, 
 if (!is.null(cultivars_pfts)) usethis::use_data(cultivars_pfts, overwrite = TRUE, compress = "xz")
 
 # --- Generate datapackage.json ---
-log_info("Generating inst/metadata/datapackage.json...")
-dir.create("inst/metadata", showWarnings = FALSE, recursive = TRUE)
+log_info("Generating datapackage.json at repo root (Frictionless spec)...")
 
 # Helper to infer Frictionless type from R class
 r_to_frictionless_type <- function(x) {
@@ -185,10 +184,11 @@ datasets <- c("traitsview", "species", "sites", "variables", "citations",
               "managements", "entities", "pfts_species", "pfts_priors",
               "managements_treatments", "cultivars_pfts")
 
-# NOTE: paths are relative to the repo root, not installed package.
-# data-raw/ is excluded from the built package via .Rbuildignore.
-# These paths are for provenance, they point to the source CSVs
-# in the repository, not files shipped with installed package.
+# datapackage.json lives at the repo root (Frictionless spec requires the
+# descriptor at the root of the data package). Paths are relative to the repo
+# root.  data-raw/ is excluded from the built R package via .Rbuildignore, as
+# is datapackage.json itself; this descriptor is for the repository / data
+# release, not for the installed R package.
 resources <- lapply(datasets, function(nm) {
   df <- get(nm)
   base <- list(
@@ -224,6 +224,6 @@ datapackage <- list(
   resources = resources
 )
 
-jsonlite::write_json(datapackage, "inst/metadata/datapackage.json", 
+jsonlite::write_json(datapackage, "datapackage.json", 
                      auto_unbox = TRUE, pretty = TRUE)
-log_info("  datapackage.json written")
+log_info("  datapackage.json written to repo root")

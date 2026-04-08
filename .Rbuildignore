@@ -21,3 +21,4 @@
 ^_freeze$
 ^index\.qmd$
 ^_publish\.yml$
+^datapackage\.json$
