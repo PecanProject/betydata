@@ -17,7 +17,7 @@
 | **Geographic Scope**      | Global, with concentration in North America and Europe                    |
 | **Temporal Range**        | 1900 -- present                                                           |
 | **Top Genera**            | *Miscanthus*, *Panicum*, *Populus*, *Salix*, *Saccharum*                  |
-| **Frictionless Metadata** | [`datapackage.json`](datapackage.json) (repo root, per Frictionless spec) |
+| **Frictionless Metadata** | [`datapackage.json`](datapackage.json)  |
 
 ---
 
