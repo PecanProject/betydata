@@ -1,0 +1,49 @@
+project:
+  type: website
+  output-dir: _site
+  preview:
+    watch-inputs: true
+  render:
+    - index.qmd
+    - vignettes/*.qmd
+
+website:
+  title: "betydata"
+  search: true
+  sidebar:
+    style: docked
+    collapse-level: 1
+    contents:
+      - href: index.qmd
+        text: Home
+      - section: Guides
+        contents:
+          - href: vignettes/getting_started.qmd
+            text: Getting Started
+          - href: vignettes/common_analyses.qmd
+            text: Common Analyses
+      - section: Advanced
+        contents:
+          - href: vignettes/pfts-priors.qmd
+            text: PFTs & Priors
+          - href: vignettes/manuscript.qmd
+            text: Manuscript Reproduction
+    tools:
+      - icon: github
+        href: https://github.com/PecanProject/betydata
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    self-contained: false
+    df-print: paged
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto
+
+author: "David LeBauer and Akash B V"
+date: today
