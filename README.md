@@ -3,7 +3,9 @@
 [![License: ODC-By-1.0](https://img.shields.io/badge/data%20license-ODC--By--1.0-green.svg)](https://opendatacommons.org/licenses/by/1-0/)
 [![DOI](https://img.shields.io/badge/Paper-10.1111%2Fgcbb.12420-blue.svg)](https://doi.org/10.1111/gcbb.12420)
 
-**betydata** provides offline access to public data from the [BETYdb: Biofuel Ecophysiological Traits and Yields Database](https://betydb.org). This R data package enables reproducible analyses of plant traits, crop yields, and ecosystem service data without requiring database connectivity.
+**betydata** provides offline access to public data from [BETYdb](https://betydb.org), ([LeBauer et al, 2018](https://doi.org/10.1111/gcbb.12420)). This R data package enables reproducible analyses of plant traits, crop yields, and ecosystem service data without requiring database connectivity.
+
+> BETYdb stands for "Biofuel Ecophysiological Traits and Yields Database", but species and trait coverage is broad, and covers ecosystems from the tropics to the tundra.
 
 ---
 
@@ -126,9 +128,9 @@ To submit corrections via pull request, edit the relevant CSV file in `data-raw/
 
 ---
 
-## Key Traits and Yields
+## Key Traits
 
-The `traitsview` table contains measurements of ecophysiological traits and crop yields:
+The `traitsview` table contains measurements of ecophysiological traits and crop yields. These are some of the most common traits:
 
 ### Common Traits
 
@@ -137,9 +139,6 @@ The `traitsview` table contains measurements of ecophysiological traits and crop
 * **leafN** -- Leaf nitrogen content (%)
 * **height** -- Plant height (m)
 * **LAI** -- Leaf Area Index (m2/m2)
-
-### Yield Variables
-
 * **Ayield** -- Above-ground yield (Mg/ha)
 * **AGBiomass** -- Above-ground biomass (Mg/ha)
 
@@ -148,30 +147,6 @@ Use the `variables` table for complete definitions and units:
 variables |>
   filter(name %in% c("SLA", "Vcmax", "Ayield")) |>
   select(name, description, units)
-```
-
----
-
-## Data Formats
-
-### .rda (Default)
-
-Lazy-loaded R data objects, available after `library(betydata)`:
-```r
-traitsview
-```
-
-### Frictionless Data Package
-
-Machine-readable metadata following the Frictionless data standard:
-```json
-// datapackage.json (repo root)
-{
-  "name": "betydata",
-  "title": "BETYdb Plant Traits and Yields Data Package",
-  "licenses": [{"name": "ODC-By-1.0", ...}],
-  "resources": [...]
-}
 ```
 
 ---
@@ -189,3 +164,7 @@ Detailed tutorials are available as package vignettes:
 ```r
 browseVignettes("betydata")
 ```
+
+## Reference
+
+LeBauer, D., Kooper, R., Mulrooney, P., Rohde, S., Wang, D., Long, S.P. and Dietze, M.C. (2018), BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. GCB Bioenergy, 10: 61-71. https://doi.org/10.1111/gcbb.12420
