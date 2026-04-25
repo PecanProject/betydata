@@ -32,11 +32,13 @@
         "fields": [
           {
             "name": "trait",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
           {
             "name": "mean",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
           {
             "name": "units",
@@ -68,11 +70,13 @@
           },
           {
             "name": "lat",
-            "type": "number"
+            "type": "number",
+            "constraints": { "minimum": -90, "maximum": 90 }
           },
           {
             "name": "lon",
-            "type": "number"
+            "type": "number",
+            "constraints": { "minimum": -180, "maximum": 180 }
           },
           {
             "name": "date",
@@ -84,11 +88,13 @@
           },
           {
             "name": "month",
-            "type": "integer"
+            "type": "integer",
+            "constraints": { "minimum": 1, "maximum": 12 }
           },
           {
             "name": "checked",
-            "type": "integer"
+            "type": "integer",
+            "constraints": { "enum": [0, 1] }
           },
           {
             "name": "result_type",
@@ -112,7 +118,8 @@
           },
           {
             "name": "n",
-            "type": "integer"
+            "type": "integer",
+            "constraints": { "minimum": 1 }
           },
           {
             "name": "statname",
@@ -148,7 +155,8 @@
           },
           {
             "name": "id",
-            "type": "integer"
+            "type": "integer",
+            "constraints": { "required": true }
           },
           {
             "name": "citation_id",
@@ -182,357 +190,98 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
-          },
-          {
-            "name": "spcd",
-            "type": "number"
-          },
-          {
-            "name": "genus",
-            "type": "string"
-          },
-          {
-            "name": "species",
-            "type": "string"
-          },
-          {
-            "name": "scientificname",
-            "type": "string"
-          },
-          {
-            "name": "commonname",
-            "type": "string"
-          },
-          {
-            "name": "notes",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "AcceptedSymbol",
-            "type": "string"
-          },
-          {
-            "name": "SynonymSymbol",
-            "type": "boolean"
-          },
-          {
-            "name": "Symbol",
-            "type": "string"
-          },
-          {
-            "name": "PLANTS_Floristic_Area",
-            "type": "string"
-          },
-          {
-            "name": "State",
-            "type": "string"
-          },
-          {
-            "name": "Category",
-            "type": "string"
-          },
-          {
-            "name": "Family",
-            "type": "string"
-          },
-          {
-            "name": "FamilySymbol",
-            "type": "string"
-          },
-          {
-            "name": "FamilyCommonName",
-            "type": "string"
-          },
-          {
-            "name": "xOrder",
-            "type": "string"
-          },
-          {
-            "name": "SubClass",
-            "type": "string"
-          },
-          {
-            "name": "Class",
-            "type": "string"
-          },
-          {
-            "name": "SubDivision",
-            "type": "string"
-          },
-          {
-            "name": "Division",
-            "type": "string"
-          },
-          {
-            "name": "SuperDivision",
-            "type": "string"
-          },
-          {
-            "name": "SubKingdom",
-            "type": "string"
-          },
-          {
-            "name": "Kingdom",
-            "type": "string"
-          },
-          {
-            "name": "ITIS_TSN",
-            "type": "number"
-          },
-          {
-            "name": "Duration",
-            "type": "string"
-          },
-          {
-            "name": "GrowthHabit",
-            "type": "string"
-          },
-          {
-            "name": "NativeStatus",
-            "type": "string"
-          },
-          {
-            "name": "NationalWetlandIndicatorStatus",
-            "type": "string"
-          },
-          {
-            "name": "RegionalWetlandIndicatorStatus",
-            "type": "string"
-          },
-          {
-            "name": "ActiveGrowthPeriod",
-            "type": "string"
-          },
-          {
-            "name": "AfterHarvestRegrowthRate",
-            "type": "string"
-          },
-          {
-            "name": "Bloat",
-            "type": "string"
-          },
-          {
-            "name": "C2N_Ratio",
-            "type": "string"
-          },
-          {
-            "name": "CoppicePotential",
-            "type": "string"
-          },
-          {
-            "name": "FallConspicuous",
-            "type": "string"
-          },
-          {
-            "name": "FireResistance",
-            "type": "string"
-          },
-          {
-            "name": "FoliageTexture",
-            "type": "string"
-          },
-          {
-            "name": "GrowthForm",
-            "type": "string"
-          },
-          {
-            "name": "GrowthRate",
-            "type": "string"
-          },
-          {
-            "name": "MaxHeight20Yrs",
-            "type": "number"
-          },
-          {
-            "name": "MatureHeight",
-            "type": "number"
-          },
-          {
-            "name": "KnownAllelopath",
-            "type": "string"
-          },
-          {
-            "name": "LeafRetention",
-            "type": "string"
-          },
-          {
-            "name": "Lifespan",
-            "type": "string"
-          },
-          {
-            "name": "LowGrowingGrass",
-            "type": "string"
-          },
-          {
-            "name": "NitrogenFixation",
-            "type": "boolean"
-          },
-          {
-            "name": "ResproutAbility",
-            "type": "string"
-          },
-          {
-            "name": "AdaptedCoarseSoils",
-            "type": "string"
-          },
-          {
-            "name": "AdaptedMediumSoils",
-            "type": "string"
-          },
-          {
-            "name": "AdaptedFineSoils",
-            "type": "string"
-          },
-          {
-            "name": "AnaerobicTolerance",
-            "type": "string"
-          },
-          {
-            "name": "CaCO3Tolerance",
-            "type": "string"
-          },
-          {
-            "name": "ColdStratification",
-            "type": "string"
-          },
-          {
-            "name": "DroughtTolerance",
-            "type": "string"
-          },
-          {
-            "name": "FertilityRequirement",
-            "type": "string"
-          },
-          {
-            "name": "FireTolerance",
-            "type": "string"
-          },
-          {
-            "name": "MinFrostFreeDays",
-            "type": "number"
-          },
-          {
-            "name": "HedgeTolerance",
-            "type": "string"
-          },
-          {
-            "name": "MoistureUse",
-            "type": "string"
-          },
-          {
-            "name": "pH_Minimum",
-            "type": "number"
-          },
-          {
-            "name": "pH_Maximum",
-            "type": "number"
-          },
-          {
-            "name": "Min_PlantingDensity",
-            "type": "number"
-          },
-          {
-            "name": "Max_PlantingDensity",
-            "type": "number"
-          },
-          {
-            "name": "Precipitation_Minimum",
-            "type": "number"
-          },
-          {
-            "name": "Precipitation_Maximum",
-            "type": "number"
-          },
-          {
-            "name": "RootDepthMinimum",
-            "type": "number"
-          },
-          {
-            "name": "SalinityTolerance",
-            "type": "string"
-          },
-          {
-            "name": "ShadeTolerance",
-            "type": "string"
-          },
-          {
-            "name": "TemperatureMinimum",
-            "type": "number"
-          },
-          {
-            "name": "BloomPeriod",
-            "type": "string"
-          },
-          {
-            "name": "CommercialAvailability",
-            "type": "string"
-          },
-          {
-            "name": "FruitSeedPeriodBegin",
-            "type": "string"
-          },
-          {
-            "name": "FruitSeedPeriodEnd",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_BareRoot",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Bulbs",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Container",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Corms",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Cuttings",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Seed",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Sod",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Sprigs",
-            "type": "string"
-          },
-          {
-            "name": "Propogated_by_Tubers",
-            "type": "string"
-          },
-          {
-            "name": "Seeds_per_Pound",
-            "type": "number"
-          },
-          {
-            "name": "SeedSpreadRate",
-            "type": "string"
-          },
-          {
-            "name": "SeedlingVigor",
-            "type": "string"
-          }
-        ]
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
+          },
+          { "name": "spcd", "type": "number" },
+          { "name": "genus", "type": "string" },
+          { "name": "species", "type": "string" },
+          { "name": "scientificname", "type": "string" },
+          { "name": "commonname", "type": "string" },
+          { "name": "notes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "AcceptedSymbol", "type": "string" },
+          { "name": "SynonymSymbol", "type": "boolean" },
+          { "name": "Symbol", "type": "string" },
+          { "name": "PLANTS_Floristic_Area", "type": "string" },
+          { "name": "State", "type": "string" },
+          { "name": "Category", "type": "string" },
+          { "name": "Family", "type": "string" },
+          { "name": "FamilySymbol", "type": "string" },
+          { "name": "FamilyCommonName", "type": "string" },
+          { "name": "xOrder", "type": "string" },
+          { "name": "SubClass", "type": "string" },
+          { "name": "Class", "type": "string" },
+          { "name": "SubDivision", "type": "string" },
+          { "name": "Division", "type": "string" },
+          { "name": "SuperDivision", "type": "string" },
+          { "name": "SubKingdom", "type": "string" },
+          { "name": "Kingdom", "type": "string" },
+          { "name": "ITIS_TSN", "type": "number" },
+          { "name": "Duration", "type": "string" },
+          { "name": "GrowthHabit", "type": "string" },
+          { "name": "NativeStatus", "type": "string" },
+          { "name": "NationalWetlandIndicatorStatus", "type": "string" },
+          { "name": "RegionalWetlandIndicatorStatus", "type": "string" },
+          { "name": "ActiveGrowthPeriod", "type": "string" },
+          { "name": "AfterHarvestRegrowthRate", "type": "string" },
+          { "name": "Bloat", "type": "string" },
+          { "name": "C2N_Ratio", "type": "string" },
+          { "name": "CoppicePotential", "type": "string" },
+          { "name": "FallConspicuous", "type": "string" },
+          { "name": "FireResistance", "type": "string" },
+          { "name": "FoliageTexture", "type": "string" },
+          { "name": "GrowthForm", "type": "string" },
+          { "name": "GrowthRate", "type": "string" },
+          { "name": "MaxHeight20Yrs", "type": "number" },
+          { "name": "MatureHeight", "type": "number" },
+          { "name": "KnownAllelopath", "type": "string" },
+          { "name": "LeafRetention", "type": "string" },
+          { "name": "Lifespan", "type": "string" },
+          { "name": "LowGrowingGrass", "type": "string" },
+          { "name": "NitrogenFixation", "type": "boolean" },
+          { "name": "ResproutAbility", "type": "string" },
+          { "name": "AdaptedCoarseSoils", "type": "string" },
+          { "name": "AdaptedMediumSoils", "type": "string" },
+          { "name": "AdaptedFineSoils", "type": "string" },
+          { "name": "AnaerobicTolerance", "type": "string" },
+          { "name": "CaCO3Tolerance", "type": "string" },
+          { "name": "ColdStratification", "type": "string" },
+          { "name": "DroughtTolerance", "type": "string" },
+          { "name": "FertilityRequirement", "type": "string" },
+          { "name": "FireTolerance", "type": "string" },
+          { "name": "MinFrostFreeDays", "type": "number" },
+          { "name": "HedgeTolerance", "type": "string" },
+          { "name": "MoistureUse", "type": "string" },
+          { "name": "pH_Minimum", "type": "number" },
+          { "name": "pH_Maximum", "type": "number" },
+          { "name": "Min_PlantingDensity", "type": "number" },
+          { "name": "Max_PlantingDensity", "type": "number" },
+          { "name": "Precipitation_Minimum", "type": "number" },
+          { "name": "Precipitation_Maximum", "type": "number" },
+          { "name": "RootDepthMinimum", "type": "number" },
+          { "name": "SalinityTolerance", "type": "string" },
+          { "name": "ShadeTolerance", "type": "string" },
+          { "name": "TemperatureMinimum", "type": "number" },
+          { "name": "BloomPeriod", "type": "string" },
+          { "name": "CommercialAvailability", "type": "string" },
+          { "name": "FruitSeedPeriodBegin", "type": "string" },
+          { "name": "FruitSeedPeriodEnd", "type": "string" },
+          { "name": "Propogated_by_BareRoot", "type": "string" },
+          { "name": "Propogated_by_Bulbs", "type": "string" },
+          { "name": "Propogated_by_Container", "type": "string" },
+          { "name": "Propogated_by_Corms", "type": "string" },
+          { "name": "Propogated_by_Cuttings", "type": "string" },
+          { "name": "Propogated_by_Seed", "type": "string" },
+          { "name": "Propogated_by_Sod", "type": "string" },
+          { "name": "Propogated_by_Sprigs", "type": "string" },
+          { "name": "Propogated_by_Tubers", "type": "string" },
+          { "name": "Seeds_per_Pound", "type": "number" },
+          { "name": "SeedSpreadRate", "type": "string" },
+          { "name": "SeedlingVigor", "type": "string" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -544,81 +293,56 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "city",
-            "type": "string"
-          },
-          {
-            "name": "state",
-            "type": "string"
-          },
-          {
-            "name": "country",
-            "type": "string"
-          },
+          { "name": "city", "type": "string" },
+          { "name": "state", "type": "string" },
+          { "name": "country", "type": "string" },
           {
             "name": "mat",
-            "type": "number"
+            "type": "number",
+            "description": "Mean Annual Temperature (C)",
+            "constraints": { "minimum": -25, "maximum": 40 }
           },
           {
             "name": "map",
-            "type": "number"
+            "type": "number",
+            "description": "Mean Annual Precipitation (mm)",
+            "constraints": { "minimum": 0, "maximum": 12000 }
           },
-          {
-            "name": "soil",
-            "type": "string"
-          },
+          { "name": "soil", "type": "string" },
           {
             "name": "som",
-            "type": "boolean"
+            "type": "number",
+            "description": "Soil organic matter percent",
+            "constraints": { "minimum": 0, "maximum": 100 }
           },
-          {
-            "name": "notes",
-            "type": "string"
-          },
-          {
-            "name": "soilnotes",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
+          { "name": "notes", "type": "string" },
+          { "name": "soilnotes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
           {
             "name": "sitename",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
-          {
-            "name": "greenhouse",
-            "type": "boolean"
-          },
-          {
-            "name": "user_id",
-            "type": "number"
-          },
+          { "name": "greenhouse", "type": "boolean" },
+          { "name": "user_id", "type": "number" },
           {
             "name": "sand_pct",
-            "type": "number"
+            "type": "number",
+            "constraints": { "minimum": 0, "maximum": 100 }
           },
           {
             "name": "clay_pct",
-            "type": "number"
+            "type": "number",
+            "constraints": { "minimum": 0, "maximum": 100 }
           },
-          {
-            "name": "geometry",
-            "type": "string"
-          },
-          {
-            "name": "time_zone",
-            "type": "string"
-          }
-        ]
+          { "name": "geometry", "type": "string" },
+          { "name": "time_zone", "type": "string" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -630,57 +354,39 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "description",
-            "type": "string"
-          },
+          { "name": "description", "type": "string" },
           {
             "name": "units",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
-          {
-            "name": "notes",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
+          { "name": "notes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
           {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true, "unique": true }
           },
           {
             "name": "max",
-            "type": "string"
+            "type": "string",
+            "description": "Upper bound for trait mean values of this variable. NULL means no upper limit."
           },
           {
             "name": "min",
-            "type": "string"
+            "type": "string",
+            "description": "Lower bound for trait mean values of this variable. NULL means no lower limit."
           },
-          {
-            "name": "standard_name",
-            "type": "string"
-          },
-          {
-            "name": "standard_units",
-            "type": "string"
-          },
-          {
-            "name": "label",
-            "type": "string"
-          },
-          {
-            "name": "type",
-            "type": "string"
-          }
-        ]
+          { "name": "standard_name", "type": "string" },
+          { "name": "standard_units", "type": "string" },
+          { "name": "label", "type": "string" },
+          { "name": "type", "type": "string" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -692,57 +398,23 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "author",
-            "type": "string"
-          },
-          {
-            "name": "year",
-            "type": "number"
-          },
-          {
-            "name": "title",
-            "type": "string"
-          },
-          {
-            "name": "journal",
-            "type": "string"
-          },
-          {
-            "name": "vol",
-            "type": "number"
-          },
-          {
-            "name": "pg",
-            "type": "string"
-          },
-          {
-            "name": "url",
-            "type": "string"
-          },
-          {
-            "name": "pdf",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "doi",
-            "type": "string"
-          },
-          {
-            "name": "user_id",
-            "type": "number"
-          }
-        ]
+          { "name": "author", "type": "string" },
+          { "name": "year", "type": "number" },
+          { "name": "title", "type": "string" },
+          { "name": "journal", "type": "string" },
+          { "name": "vol", "type": "number" },
+          { "name": "pg", "type": "string" },
+          { "name": "url", "type": "string" },
+          { "name": "pdf", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "doi", "type": "string" },
+          { "name": "user_id", "type": "number" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -754,35 +426,33 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
           {
             "name": "specie_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
           {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
+          { "name": "ecotype", "type": "string" },
+          { "name": "notes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "previous_id", "type": "string" }
+        ],
+        "primaryKey": ["id"],
+        "foreignKeys": [
           {
-            "name": "ecotype",
-            "type": "string"
-          },
-          {
-            "name": "notes",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "previous_id",
-            "type": "string"
+            "fields": ["specie_id"],
+            "reference": {
+              "resource": "species",
+              "fields": ["id"]
+            }
           }
         ]
       }
@@ -796,29 +466,20 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
           {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
-          {
-            "name": "description",
-            "type": "string"
-          },
-          {
-            "name": "citation_id",
-            "type": "number"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          }
-        ]
+          { "name": "description", "type": "string" },
+          { "name": "citation_id", "type": "number" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -830,33 +491,25 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
           {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
           {
             "name": "definition",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "control",
-            "type": "boolean"
-          },
-          {
-            "name": "user_id",
-            "type": "number"
-          }
-        ]
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "control", "type": "boolean" },
+          { "name": "user_id", "type": "number" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -868,37 +521,22 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "definition",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
+          { "name": "definition", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
           {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
-          {
-            "name": "parent_id",
-            "type": "number"
-          },
-          {
-            "name": "pft_type",
-            "type": "string"
-          },
-          {
-            "name": "modeltype_id",
-            "type": "number"
-          }
-        ]
+          { "name": "parent_id", "type": "number" },
+          { "name": "pft_type", "type": "string" },
+          { "name": "modeltype_id", "type": "number" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -910,51 +548,41 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "citation_id",
-            "type": "number"
-          },
+          { "name": "citation_id", "type": "number" },
           {
             "name": "variable_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
-          {
-            "name": "phylogeny",
-            "type": "string"
-          },
+          { "name": "phylogeny", "type": "string" },
           {
             "name": "distn",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
-          {
-            "name": "parama",
-            "type": "number"
-          },
-          {
-            "name": "paramb",
-            "type": "number"
-          },
-          {
-            "name": "paramc",
-            "type": "number"
-          },
+          { "name": "parama", "type": "number" },
+          { "name": "paramb", "type": "number" },
+          { "name": "paramc", "type": "number" },
           {
             "name": "n",
-            "type": "number"
+            "type": "number",
+            "constraints": { "minimum": 0 }
           },
+          { "name": "notes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" }
+        ],
+        "primaryKey": ["id"],
+        "foreignKeys": [
           {
-            "name": "notes",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
+            "fields": ["variable_id"],
+            "reference": {
+              "resource": "variables",
+              "fields": ["id"]
+            }
           }
         ]
       }
@@ -968,49 +596,33 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "citation_id",
-            "type": "number"
-          },
+          { "name": "citation_id", "type": "number" },
           {
             "name": "date",
-            "type": "date"
+            "type": "date",
+            "constraints": { "required": true }
           },
-          {
-            "name": "dateloc",
-            "type": "number"
-          },
+          { "name": "dateloc", "type": "number" },
           {
             "name": "mgmttype",
-            "type": "string"
+            "type": "string",
+            "constraints": { "required": true }
           },
           {
             "name": "level",
-            "type": "number"
+            "type": "number",
+            "constraints": { "minimum": 0 }
           },
-          {
-            "name": "units",
-            "type": "string"
-          },
-          {
-            "name": "notes",
-            "type": "string"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "user_id",
-            "type": "number"
-          }
-        ]
+          { "name": "units", "type": "string" },
+          { "name": "notes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "user_id", "type": "number" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -1022,29 +634,16 @@
         "fields": [
           {
             "name": "id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true, "unique": true }
           },
-          {
-            "name": "parent_id",
-            "type": "boolean"
-          },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "notes",
-            "type": "boolean"
-          },
-          {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          }
-        ]
+          { "name": "parent_id", "type": "number" },
+          { "name": "name", "type": "string" },
+          { "name": "notes", "type": "string" },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" }
+        ],
+        "primaryKey": ["id"]
       }
     },
     {
@@ -1056,23 +655,27 @@
         "fields": [
           {
             "name": "pft_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
           {
             "name": "specie_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
+          },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "id", "type": "number" }
+        ],
+        "primaryKey": ["pft_id", "specie_id"],
+        "foreignKeys": [
+          {
+            "fields": ["pft_id"],
+            "reference": { "resource": "pfts", "fields": ["id"] }
           },
           {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "id",
-            "type": "number"
+            "fields": ["specie_id"],
+            "reference": { "resource": "species", "fields": ["id"] }
           }
         ]
       }
@@ -1086,23 +689,27 @@
         "fields": [
           {
             "name": "pft_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
           {
             "name": "prior_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
+          },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "id", "type": "number" }
+        ],
+        "primaryKey": ["pft_id", "prior_id"],
+        "foreignKeys": [
+          {
+            "fields": ["pft_id"],
+            "reference": { "resource": "pfts", "fields": ["id"] }
           },
           {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "id",
-            "type": "number"
+            "fields": ["prior_id"],
+            "reference": { "resource": "priors", "fields": ["id"] }
           }
         ]
       }
@@ -1116,23 +723,27 @@
         "fields": [
           {
             "name": "treatment_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
           {
             "name": "management_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
+          },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "id", "type": "number" }
+        ],
+        "primaryKey": ["treatment_id", "management_id"],
+        "foreignKeys": [
+          {
+            "fields": ["treatment_id"],
+            "reference": { "resource": "treatments", "fields": ["id"] }
           },
           {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "id",
-            "type": "number"
+            "fields": ["management_id"],
+            "reference": { "resource": "managements", "fields": ["id"] }
           }
         ]
       }
@@ -1146,23 +757,27 @@
         "fields": [
           {
             "name": "pft_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
           },
           {
             "name": "cultivar_id",
-            "type": "number"
+            "type": "number",
+            "constraints": { "required": true }
+          },
+          { "name": "created_at", "type": "datetime" },
+          { "name": "updated_at", "type": "datetime" },
+          { "name": "id", "type": "number" }
+        ],
+        "primaryKey": ["pft_id", "cultivar_id"],
+        "foreignKeys": [
+          {
+            "fields": ["pft_id"],
+            "reference": { "resource": "pfts", "fields": ["id"] }
           },
           {
-            "name": "created_at",
-            "type": "datetime"
-          },
-          {
-            "name": "updated_at",
-            "type": "datetime"
-          },
-          {
-            "name": "id",
-            "type": "number"
+            "fields": ["cultivar_id"],
+            "reference": { "resource": "cultivars", "fields": ["id"] }
           }
         ]
       }
