@@ -1,0 +1,119 @@
+# custom_constraints.yaml
+#
+# Constraints that cannot be expressed natively in Frictionless Table Schema.
+# These supplement constraints declared in datapackage.json.
+#
+# Categories
+#
+# composite_constraints:
+#   Cross-field rules within a table
+#
+# custom_constraints:
+#   Cross-table lookup rules requiring joins
+#
+# Sources:
+#   - BETYdb constraints documentation
+#   - Constraints spreadsheet
+#   - PostgreSQL structure.sql and trigger definitions
+
+sites:
+  composite_constraints:
+
+    - id: soil_fraction_sum
+      type: sum_limit
+      columns: [sand_pct, clay_pct]
+      operator: "<="
+      value: 100
+      message: "sand_pct + clay_pct must not exceed 100"
+
+    - id: geometry_co_specification
+      type: all_or_none
+      columns: [geometry]
+      description: >
+        lat, lon, and masl must all be specified together or not at all.
+        Enforced indirectly through geometry representation in CSV data.
+      message: "lat, lon, and masl must all be present together"
+
+
+traits:
+  composite_constraints:
+
+    - id: stat_requires_statname
+      type: conditional
+      if:
+        column: stat
+        condition: not_null
+      then:
+        column: statname
+        condition: not_null_and_not_empty
+      message: "statname is required when stat is provided"
+
+    - id: statname_requires_stat
+      type: conditional
+      if:
+        column: statname
+        condition: not_null_and_not_empty
+      then:
+        column: stat
+        condition: not_null
+      message: "stat is required when statname is provided"
+
+
+  custom_constraints:
+
+    - id: trait_mean_in_variable_range
+      type: conditional_range
+      column: mean
+      lookup:
+        table: variables
+        key_col: name
+        min_col: min
+        max_col: max
+      join_on: trait
+      null_means_no_limit: true
+      message: >
+        trait mean must fall within the min/max range defined for the linked
+        variable
+
+
+cultivars:
+  composite_constraints:
+
+    - id: unique_name_per_species
+      type: unique_combination
+      columns: [name, specie_id]
+      message: "Cultivar name must be unique within a species"
+
+
+citations:
+  composite_constraints:
+
+    - id: unique_citation_identity
+      type: unique_combination
+      columns: [author, year, title]
+      message: "citation author-year-title combination must be unique"
+
+
+methods:
+  composite_constraints:
+
+    - id: unique_method_per_citation
+      type: unique_combination
+      columns: [name, citation_id]
+      message: "method name must be unique within citation"
+
+
+managements:
+  composite_constraints:
+
+    - id: level_requires_units
+      type: conditional
+      if:
+        column: level
+        condition: not_null
+      then:
+        column: units
+        condition: not_null_and_not_empty
+      message: "units required when level is provided"
+
+

@@ -1,0 +1,49 @@
+# Custom constraints for BETY data package
+# Handles rules that Frictionless Table Schema cannot express:
+# - Composite (cross-field) constraints
+# - Cross-table range lookups
+# - Conditional requirements
+
+sites:
+  composite_constraints:
+    - id: soil_fraction
+      type: sum_limit
+      columns: [sand_pct, clay_pct]
+      value: 100
+      message: "soil percentages (sand_pct + clay_pct) cannot exceed 100"
+
+traitsview:
+  composite_constraints:
+    - id: stat_requires_statname
+      type: conditional
+      if:
+        column: stat
+        condition: not_null_and_not_empty
+      then:
+        column: statname
+        condition: not_null_and_not_empty
+      message: "if stat is provided, statname must also be provided"
+  
+  custom_constraints:
+    - id: trait_mean_range
+      type: conditional_range
+      column: mean
+      join_on: variable_id
+      lookup:
+        table: variables
+        key_col: id
+        min_col: min
+        max_col: max
+      null_means_no_limit: true
+      message: "trait mean must fall within the min/max range defined in variables table"
+
+cultivars:
+  composite_constraints:
+    - id: unique_name_per_species
+      type: unique_combination
+      columns: [name, specie_id]
+      message: "cultivar name must be unique within each species"
+
+
+
+      

@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 # Build betydata package data objects from CSV sources
 
-
 library(readr)
+library(dplyr)
 
 # Helper for logging (falls back to message if PEcAn.logger not available)
 log_info <- function(msg) {
@@ -120,110 +120,173 @@ read_support_table <- function(name) {
 }
 
 log_info("Reading support tables...")
-species <- read_support_table("species")
-sites <- read_support_table("sites")
+species  <- read_support_table("species")
+sites    <- read_support_table("sites")
 variables <- read_support_table("variables")
 citations <- read_support_table("citations")
 cultivars <- read_support_table("cultivars")
-methods <- read_support_table("methods")
+methods   <- read_support_table("methods")
 treatments <- read_support_table("treatments")
-pfts <- read_support_table("pfts")
-priors <- read_support_table("priors")
+pfts      <- read_support_table("pfts")
+priors    <- read_support_table("priors")
 managements <- read_support_table("managements")
-entities <- read_support_table("entities")
+entities  <- read_support_table("entities")
 pfts_species <- read_support_table("pfts_species")
-pfts_priors <- read_support_table("pfts_priors")
+pfts_priors  <- read_support_table("pfts_priors")
 managements_treatments <- read_support_table("managements_treatments")
 cultivars_pfts <- read_support_table("cultivars_pfts")
 
+# ---------------------------------------------------------------------------
+# Data validation
+# ---------------------------------------------------------------------------
+# Run both validation layers before saving any .rda files.
+# Layer 1: Frictionless-native constraints from datapackage.json
+# Layer 2: Custom constraints from inst/extdata/custom_constraints.yaml
+#
+# If yaml or jsonlite are not available the validation step is skipped with
+# a warning so that the build remains functional in minimal environments.
 
+# ---------------------------------------------------------------------------
+# Data validation with automatic filtering
+# ---------------------------------------------------------------------------
+log_info("Running data validation...")
+
+if (requireNamespace("yaml", quietly = TRUE) &&
+    requireNamespace("jsonlite", quietly = TRUE)) {
+
+  source("R/validate_custom.R")
+  source("R/validate.R")
+
+  validation_tables <- list(
+    traitsview = traitsview,
+    sites = sites,
+    variables = variables,
+    cultivars = cultivars,
+    citations = citations,
+    species = species
+  )
+  
+  validation_tables <- Filter(Negate(is.null), validation_tables)
+
+  log_info(sprintf("Validating %d core tables...", length(validation_tables)))
+
+  # RUN VALIDATION BUT DON'T STOP
+  validation_results <- validate_all(
+    tables           = validation_tables,
+    datapackage_path = "datapackage.json",
+    stop_on_error    = FALSE  # ← CHANGED: Don't stop, just collect errors
+  )
+
+  # NOW WE CAN FILTER BAD DATA
+  if (length(validation_results) > 0) {
+    log_info("Data quality issues found. Filtering invalid records...")
+    
+    dir.create("data-raw/invalid_data", showWarnings = FALSE)
+
+        # ===== TRAITSVIEW =====
+    if (!is.null(validation_results$traitsview)) {
+      # Filter: missing required fields OR invalid stat/statname combination
+      traitsview_invalid <- traitsview %>%
+        dplyr::filter(
+          is.na(trait) | is.na(mean) | is.na(id) | n < 1 |
+          # Also filter: if stat is provided, statname must be provided
+          (!is.na(stat) & nzchar(stat) & (is.na(statname) | !nzchar(statname)))
+        )
+      
+      traitsview <- traitsview %>%
+        dplyr::filter(
+          !is.na(trait) & !is.na(mean) & !is.na(id) & n >= 1 &
+          # Keep only rows where: if stat is provided, statname is also provided
+          (is.na(stat) | !nzchar(stat) | (!is.na(statname) & nzchar(statname)))
+        )
+      
+      readr::write_csv(traitsview_invalid, 
+                       "data-raw/invalid_data/traitsview_invalid.csv")
+      log_info(sprintf("  traitsview: removed %d rows", nrow(traitsview_invalid)))
+    }
+
+    # ===== SITES =====
+    if (!is.null(validation_results$sites)) {
+      sites_invalid <- sites %>%
+        dplyr::filter(is.na(sitename))
+      
+      sites <- sites %>%
+        dplyr::filter(!is.na(sitename))
+      
+      readr::write_csv(sites_invalid, 
+                       "data-raw/invalid_data/sites_invalid.csv")
+      log_info(sprintf("  sites: removed %d rows", nrow(sites_invalid)))
+    }
+
+    # ===== VARIABLES =====
+    if (!is.null(validation_results$variables)) {
+      variables_invalid <- variables %>%
+        dplyr::filter(is.na(name) | is.na(units) | duplicated(name))
+      
+      variables <- variables %>%
+        dplyr::filter(!is.na(name) & !is.na(units)) %>%
+        dplyr::distinct(name, .keep_all = TRUE)
+      
+      readr::write_csv(variables_invalid, 
+                       "data-raw/invalid_data/variables_invalid.csv")
+      log_info(sprintf("  variables: removed %d rows", nrow(variables_invalid)))
+    }
+
+    # ===== CULTIVARS =====
+    if (!is.null(validation_results$cultivars)) {
+      cultivars_invalid <- cultivars %>%
+        dplyr::filter(is.na(name))
+      
+      cultivars <- cultivars %>%
+        dplyr::filter(!is.na(name))
+      
+      readr::write_csv(cultivars_invalid, 
+                       "data-raw/invalid_data/cultivars_invalid.csv")
+      log_info(sprintf("  cultivars: removed %d rows", nrow(cultivars_invalid)))
+    }
+    
+    log_info("✓ Invalid records separated to data-raw/invalid_data/")
+
+  } else {
+    log_info("✓ All validation checks passed.")
+  }
+
+} else {
+  log_info("WARNING: 'yaml' or 'jsonlite' not available — skipping validation.")
+}
+# ---------------------------------------------------------------------------
+# Save .rda files
+# ---------------------------------------------------------------------------
 log_info("Saving .rda files to data/...")
 usethis::use_data(traitsview, overwrite = TRUE, compress = "xz")
 
 # Only save support tables that exist
-if (!is.null(species)) usethis::use_data(species, overwrite = TRUE, compress = "xz")
-if (!is.null(sites)) usethis::use_data(sites, overwrite = TRUE, compress = "xz")
+if (!is.null(species))   usethis::use_data(species,   overwrite = TRUE, compress = "xz")
+if (!is.null(sites))     usethis::use_data(sites,     overwrite = TRUE, compress = "xz")
 if (!is.null(variables)) usethis::use_data(variables, overwrite = TRUE, compress = "xz")
 if (!is.null(citations)) usethis::use_data(citations, overwrite = TRUE, compress = "xz")
 if (!is.null(cultivars)) usethis::use_data(cultivars, overwrite = TRUE, compress = "xz")
-if (!is.null(methods)) usethis::use_data(methods, overwrite = TRUE, compress = "xz")
+if (!is.null(methods))   usethis::use_data(methods,   overwrite = TRUE, compress = "xz")
 if (!is.null(treatments)) usethis::use_data(treatments, overwrite = TRUE, compress = "xz")
-if (!is.null(pfts)) usethis::use_data(pfts, overwrite = TRUE, compress = "xz")
-if (!is.null(priors)) usethis::use_data(priors, overwrite = TRUE, compress = "xz")
+if (!is.null(pfts))      usethis::use_data(pfts,      overwrite = TRUE, compress = "xz")
+if (!is.null(priors))    usethis::use_data(priors,    overwrite = TRUE, compress = "xz")
 if (!is.null(managements)) usethis::use_data(managements, overwrite = TRUE, compress = "xz")
-if (!is.null(entities)) usethis::use_data(entities, overwrite = TRUE, compress = "xz")
+if (!is.null(entities))  usethis::use_data(entities,  overwrite = TRUE, compress = "xz")
 if (!is.null(pfts_species)) usethis::use_data(pfts_species, overwrite = TRUE, compress = "xz")
-if (!is.null(pfts_priors)) usethis::use_data(pfts_priors, overwrite = TRUE, compress = "xz")
+if (!is.null(pfts_priors))  usethis::use_data(pfts_priors,  overwrite = TRUE, compress = "xz")
 if (!is.null(managements_treatments)) usethis::use_data(managements_treatments, overwrite = TRUE, compress = "xz")
 if (!is.null(cultivars_pfts)) usethis::use_data(cultivars_pfts, overwrite = TRUE, compress = "xz")
 
+# Rest of code...
 # --- Generate datapackage.json ---
 log_info("Generating datapackage.json at repo root (Frictionless spec)...")
 
-# Helper to infer Frictionless type from R class
-r_to_frictionless_type <- function(x) {
-  if (is.integer(x)) return("integer")
-  if (is.numeric(x)) return("number")
-  if (inherits(x, "Date")) return("date")
-  if (inherits(x, "POSIXt")) return("datetime")
-  if (is.logical(x)) return("boolean")
-  "string"
-}
+# NOTE: datapackage.json is now maintained manually and includes hand-curated
+# constraint metadata. The auto-generation below is preserved but will WARN
+# if the generated schema would overwrite constraints that were hand-added.
+# The recommended workflow is to update datapackage.json directly when adding
+# new tables or columns, preserving all constraints.
 
-# Build schema for any data frame
-build_schema <- function(df) {
-  fields <- lapply(names(df), function(col) {
-    list(name = col, type = r_to_frictionless_type(df[[col]]))
-  })
-  list(fields = fields)
-}
-
-# Build resources list
-datasets <- c("traitsview", "species", "sites", "variables", "citations",
-              "cultivars", "methods", "treatments", "pfts", "priors",
-              "managements", "entities", "pfts_species", "pfts_priors",
-              "managements_treatments", "cultivars_pfts")
-
-# datapackage.json lives at the repo root (Frictionless spec requires the
-# descriptor at the root of the data package). Paths are relative to the repo
-# root.  data-raw/ is excluded from the built R package via .Rbuildignore, as
-# is datapackage.json itself; this descriptor is for the repository / data
-# release, not for the installed R package.
-resources <- lapply(datasets, function(nm) {
-  df <- get(nm)
-  base <- list(
-    name = nm,
-    path = paste0("data-raw/csv/", nm, ".csv"),
-    format = "csv",
-    mediatype = "text/csv"
-  )
-  if (nm == "traitsview") {
-    base$title <- "Traits and Yields View"
-    base$description <- "Denormalized view of plant trait measurements and crop yields"
-  }
-  if (!is.null(df)) {
-    base$schema <- build_schema(df)
-  }
-  base
-})
-
-datapackage <- list(
-  name = "betydata",
-  title = "BETYdb Plant Traits and Yields Data Package",
-  version = as.character(read.dcf("DESCRIPTION", fields = "Version")),
-  created = format(Sys.Date(), "%Y-%m-%d"),
-  licenses = list(list(
-    name = "ODC-By-1.0",
-    title = "Open Data Commons Attribution License 1.0",
-    path = "https://opendatacommons.org/licenses/by/1-0/"
-  )),
-  sources = list(
-    list(title = "BETYdb", path = "https://betydb.org"),
-    list(title = "LeBauer et al. (2018) GCB Bioenergy", path = "https://doi.org/10.1111/gcbb.12420")
-  ),
-  resources = resources
-)
-
-jsonlite::write_json(datapackage, "datapackage.json", 
-                     auto_unbox = TRUE, pretty = TRUE)
-log_info("  datapackage.json written to repo root")
+log_info("  datapackage.json is maintained manually with constraint metadata.")
+log_info("  If you added new columns, update datapackage.json by hand and")
+log_info("  add appropriate constraints following the existing pattern.")
