@@ -188,6 +188,282 @@ yield_ma |>
   knitr::kable(col.names = c("Genus", "Records", "Mean Yield (Mg/ha)", "SD", "Sites"))
 ```
 
+## Figure 4: Yield Responses to Management {#sec-fig4}
+
+Figure 4 links the manuscript's focal grass yields to management records through
+`managements_treatments`. The bridge table can associate several management
+records with one treatment, so each exposure is first reduced to one
+analysis-ready row per treatment before it is joined to a yield observation.
+
+```{r}
+#| label: data-fig4-management
+grass_yields <- traitsview |>
+  filter(
+    result_type == "yields",
+    trait == "Ayield",
+    units == "Mg ha-1 yr-1",
+    genus %in% c("Miscanthus", "Panicum"),
+    checked >= 0,
+    !is.na(mean),
+    !is.na(treatment_id),
+    !is.na(year)
+  ) |>
+  transmute(
+    yield_id = id,
+    treatment_id,
+    genus,
+    yield = mean,
+    observation_year = year,
+    site_id
+  )
+
+stopifnot(!anyDuplicated(grass_yields$yield_id))
+
+management_details <- managements_treatments |>
+  select(management_id, treatment_id) |>
+  left_join(
+    managements |>
+      select(
+        management_id = id,
+        mgmttype,
+        level,
+        units,
+        management_date = date
+      ),
+    by = "management_id",
+    relationship = "many-to-one"
+  )
+
+nitrogen_by_treatment <- management_details |>
+  filter(
+    mgmttype == "fertilizer_N_rate",
+    !is.na(treatment_id),
+    !is.na(level),
+    units %in% c("kg ha-1 y-1", "g m-2 y-1")
+  ) |>
+  mutate(
+    nitrogen_rate = if_else(units == "g m-2 y-1", level * 10, level)
+  ) |>
+  summarise(
+    nitrogen_events = n(),
+    nitrogen_values = n_distinct(nitrogen_rate),
+    nitrogen_rate = first(nitrogen_rate),
+    .by = treatment_id
+  ) |>
+  filter(nitrogen_values == 1) |>
+  select(treatment_id, nitrogen_rate, nitrogen_events)
+
+planting_by_treatment <- management_details |>
+  filter(mgmttype == "planting", !is.na(treatment_id)) |>
+  mutate(planting_date = as.Date(management_date)) |>
+  filter(!is.na(planting_date)) |>
+  summarise(
+    planting_date = min(planting_date),
+    planting_records = n(),
+    .by = treatment_id
+  ) |>
+  mutate(planting_year = as.integer(format(planting_date, "%Y"))) |>
+  select(treatment_id, planting_year, planting_records)
+
+stopifnot(
+  !anyDuplicated(nitrogen_by_treatment$treatment_id),
+  !anyDuplicated(planting_by_treatment$treatment_id)
+)
+
+yield_nitrogen <- grass_yields |>
+  inner_join(
+    nitrogen_by_treatment,
+    by = "treatment_id",
+    relationship = "many-to-one"
+  ) |>
+  filter(nitrogen_rate >= 0)
+
+yield_age <- grass_yields |>
+  inner_join(
+    planting_by_treatment,
+    by = "treatment_id",
+    relationship = "many-to-one"
+  ) |>
+  mutate(stand_age = observation_year - planting_year) |>
+  filter(stand_age >= 0)
+
+stopifnot(
+  !anyDuplicated(yield_nitrogen$yield_id),
+  !anyDuplicated(yield_age$yield_id),
+  all(yield_nitrogen$nitrogen_rate >= 0),
+  all(yield_age$stand_age >= 0)
+)
+```
+
+The nitrogen rate uses `kg ha-1 y-1` as the analysis unit; equivalent
+`g m-2 y-1` records are converted before joining. Treatments with conflicting,
+undated nitrogen rates are excluded rather than assigned an arbitrary rate.
+Repeated records with the same rate are collapsed to one treatment row.
+
+```{r}
+#| label: tbl-fig4-coverage
+#| tbl-cap: "Coverage of yield-management analyses"
+analysis_coverage <- bind_rows(
+  yield_nitrogen |>
+    summarise(
+      records = n(),
+      treatments = n_distinct(treatment_id),
+      sites = n_distinct(site_id),
+      .by = genus
+    ) |>
+    mutate(analysis = "Nitrogen fertilization"),
+  yield_age |>
+    summarise(
+      records = n(),
+      treatments = n_distinct(treatment_id),
+      sites = n_distinct(site_id),
+      .by = genus
+    ) |>
+    mutate(analysis = "Stand age")
+) |>
+  select(analysis, genus, records, treatments, sites)
+
+analysis_coverage |>
+  knitr::kable(col.names = c("Analysis", "Genus", "Records", "Treatments", "Sites"))
+```
+
+```{r}
+#| label: fig-yield-management
+#| layout-ncol: 2
+#| fig-width: 10
+#| fig-height: 4.5
+genus_colors <- c(Miscanthus = "red", Panicum = "blue")
+
+nitrogen_plot <- ggplot(
+  yield_nitrogen,
+  aes(x = nitrogen_rate, y = yield, colour = genus)
+) +
+  geom_point(
+    alpha = 0.35,
+    size = 1,
+    position = position_jitter(width = 2, height = 0, seed = 25)
+  ) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  scale_colour_manual(values = genus_colors) +
+  coord_cartesian(xlim = c(0, 250), ylim = c(0, 70)) +
+  labs(
+    x = expression("Nitrogen fertilization rate" ~ (kg ~ ha^-1 ~ yr^-1)),
+    y = expression("Yield" ~ (Mg ~ ha^-1 ~ yr^-1)),
+    colour = NULL,
+    tag = "(a)"
+  ) +
+  theme(
+    legend.position = "top",
+    plot.tag = element_text(face = "bold")
+  )
+
+age_plot <- ggplot(
+  yield_age,
+  aes(x = stand_age, y = yield, colour = genus)
+) +
+  geom_point(
+    alpha = 0.35,
+    size = 1,
+    position = position_jitter(width = 0.08, height = 0, seed = 25)
+  ) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  scale_colour_manual(values = genus_colors) +
+  coord_cartesian(xlim = c(0, 10), ylim = c(0, 70)) +
+  labs(
+    x = "Stand age (yr)",
+    y = expression("Yield" ~ (Mg ~ ha^-1 ~ yr^-1)),
+    colour = NULL,
+    tag = "(d)"
+  ) +
+  theme(
+    legend.position = "top",
+    plot.tag = element_text(face = "bold")
+  )
+
+```
+
+::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-cap: ""
+nitrogen_plot
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-cap: ""
+age_plot
+```
+:::
+:::
+
+**Figure 4.** Yield responses to nitrogen fertilization and stand age for
+*Miscanthus* and *Panicum*. Panels (a) and (d) match the corresponding panels
+in the manuscript figure.
+
+The displayed axes match the published figure for visual comparison. Axis
+limits use `coord_cartesian()`, so valid observations outside the displayed
+range remain in the regression summaries below.
+
+```{r}
+#| label: tbl-fig4-regressions
+#| tbl-cap: "Descriptive ordinary least-squares yield regressions by genus"
+summarise_lm <- function(data, predictor) {
+  model <- lm(reformulate(predictor, response = "yield"), data = data)
+  model_summary <- summary(model)
+  slope_coefficients <- model_summary$coefficients[2, ]
+
+  tibble(
+    records = nrow(data),
+    slope = unname(slope_coefficients["Estimate"]),
+    std_error = unname(slope_coefficients["Std. Error"]),
+    t_value = unname(slope_coefficients["t value"]),
+    p_value = unname(slope_coefficients["Pr(>|t|)"]),
+    r_squared = model_summary$r.squared
+  )
+}
+
+regression_summary <- bind_rows(
+  yield_nitrogen |>
+    group_by(genus) |>
+    group_modify(~ summarise_lm(.x, "nitrogen_rate")) |>
+    ungroup() |>
+    mutate(analysis = "Nitrogen fertilization"),
+  yield_age |>
+    group_by(genus) |>
+    group_modify(~ summarise_lm(.x, "stand_age")) |>
+    ungroup() |>
+    mutate(analysis = "Stand age")
+) |>
+  transmute(
+    analysis,
+    genus,
+    records,
+    slope = round(slope, 3),
+    std_error = round(std_error, 3),
+    t_value = round(t_value, 2),
+    p_value = signif(p_value, 3),
+    r_squared = round(r_squared, 3)
+  )
+
+regression_summary |>
+  knitr::kable(
+    col.names = c("Analysis", "Genus", "Records", "Slope", "SE", "t", "p", "R-squared")
+  )
+```
+
+::: {.callout-important}
+## Interpreting the Figure 4 Results
+
+These are descriptive regressions from the current public `betydata` snapshot.
+They demonstrate the yield-management join and may differ from the manuscript's
+2017 results because of data updates, public-data restrictions, QA/QC filtering,
+and differences from the original model specification.
+:::
+
 ## Geographic Distribution {#sec-geography}
 
 ```{r}
