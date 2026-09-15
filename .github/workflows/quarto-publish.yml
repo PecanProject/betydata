@@ -29,6 +29,7 @@ jobs:
         with:
           extra-packages: |
             local::.
+            any::DT
             any::dplyr
             any::ggplot2
             any::knitr

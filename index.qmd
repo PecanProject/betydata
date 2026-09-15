@@ -6,31 +6,36 @@ subtitle: "Public Data from the BETYdb Database"
 ```{r}
 #| echo: false
 library(betydata)
-library(dplyr)
+source("R/homepage-data.R", local = TRUE)
 ```
 
 **betydata** is an R data package providing offline access to public data from [BETYdb](https://betydb.org) (Biofuel Ecophysiological Traits and Yields database). It enables reproducible analyses of plant traits, crop yields, and supporting metadata without requiring database connectivity.
+
+## Guides
+
+| Guide | Description |
+|-------|-------------|
+| [Getting Started](vignettes/getting_started.qmd) | Package overview, data model, and key concepts |
+| [Common Analyses](vignettes/common_analyses.qmd) | Practical analysis patterns with dplyr |
+| [PFTs & Priors](vignettes/pfts-priors.qmd) | Plant Functional Types and Bayesian prior distributions |
+| [Manuscript Reproduction](vignettes/manuscript.qmd) | Reproduce key analyses from LeBauer et al. (2018) |
 
 ## At a Glance
 
 ```{r}
 #| echo: false
-#| label: tbl-overview
-#| tbl-cap: "Dataset summary"
-tibble::tibble(
-  Metric = c(
-    "Total observations", "Unique traits", "Plant species",
-    "Research sites", "Literature citations", "Tables"
-  ),
-  Value = c(
-    format(nrow(traitsview), big.mark = ","),
-    n_distinct(traitsview$trait),
-    format(nrow(species), big.mark = ","),
-    nrow(sites),
-    nrow(citations),
-    16
-  )
-) |> knitr::kable()
+#| results: asis
+metrics <- homepage_metrics(traitsview)
+
+cat("::: {.homepage-metrics}\n")
+for (i in seq_len(nrow(metrics))) {
+  cat("::: {.homepage-metric-card}\n")
+  cat(sprintf("### %s\n\n", metrics$metric[[i]]))
+  cat(sprintf("<span class=\"homepage-metric-value\">%s</span>\n\n", format(metrics$value[[i]], big.mark = ",")))
+  cat(sprintf("%s\n", metrics$definition[[i]]))
+  cat(":::\n")
+}
+cat(":::\n")
 ```
 
 ## Installation
@@ -43,27 +48,58 @@ remotes::install_github("PecanProject/betydata")
 ## Quick Start
 
 ```{r}
-library(betydata)
-library(dplyr)
+#| echo: false
+if (!requireNamespace("DT", quietly = TRUE)) {
+  stop("Package 'DT' is required to render the searchable homepage preview.", call. = FALSE)
+}
 
-# The primary table -- key columns first, IDs last
-traitsview
+preview <- traitsview[, c(
+  "trait", "mean", "units", "scientificname", "sitename",
+  "author", "citation_year", "year"
+)]
+names(preview) <- c(
+  "Trait", "Value", "Units", "Species", "Site",
+  "Data-source author", "Citation year", "Observation year"
+)
 
-# Bioenergy crop observations
-bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Salix", "Saccharum")
-traitsview |>
-  filter(genus %in% bioenergy_genera) |>
-  count(genus, sort = TRUE)
+DT::datatable(
+  preview,
+  caption = "Searchable preview of trait and yield observations",
+  rownames = FALSE,
+  options = list(
+    deferRender = TRUE,
+    pageLength = 25,
+    lengthMenu = c(10, 25, 50, 100),
+    scrollX = TRUE
+  )
+)
 ```
 
-## Guides
+## Most Represented Variables and Species
 
-| Guide | Description |
-|-------|-------------|
-| [Getting Started](vignettes/getting_started.qmd) | Package overview, data model, and key concepts |
-| [Common Analyses](vignettes/common_analyses.qmd) | Practical analysis patterns with dplyr |
-| [PFTs & Priors](vignettes/pfts-priors.qmd) | Plant Functional Types and Bayesian prior distributions |
-| [Manuscript Reproduction](vignettes/manuscript.qmd) | Reproduce key analyses from LeBauer et al. (2018) |
+```{r}
+#| echo: false
+#| label: tbl-top-traits
+#| tbl-cap: "Variables with the most observation records"
+homepage_top_traits(traitsview) |>
+  knitr::kable(
+    col.names = c("Variable", "Description", "Observations"),
+    row.names = FALSE
+  )
+```
+
+```{r}
+#| echo: false
+#| label: tbl-top-species
+#| tbl-cap: "Species with the most observation records"
+homepage_top_species(traitsview)[
+  , c("scientific_name", "common_name", "observations")
+] |>
+  knitr::kable(
+    col.names = c("Scientific name", "Common name", "Observations"),
+    row.names = FALSE
+  )
+```
 
 ## Data License
 

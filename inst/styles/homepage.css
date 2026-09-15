@@ -1,0 +1,29 @@
+.homepage-metrics {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  margin: 1.5rem 0 2rem;
+}
+
+.homepage-metric-card {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 0.375rem;
+  padding: 1rem;
+}
+
+.homepage-metric-card h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.homepage-metric-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.5rem 0;
+}
+
+.homepage-metric-card p {
+  margin: 0;
+}

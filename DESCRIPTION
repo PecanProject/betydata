@@ -4,7 +4,13 @@ Title: Public Data from the BETYdb Database
 Version: 0.1.0
 Authors@R: c(
     person("David", "LeBauer", email = "dlebauer@arizona.edu", role = c("aut", "cre")),
-    person("Akash B V", email = "www.divinehome12@gmail.com", role = "aut")
+    person("Akash B V", email = "www.divinehome12@gmail.com", role = "aut"),
+    person(
+        "Gaurav",
+        "Chaudhary",
+        email = "chaudharygaurav2004@gmail.com",
+        role = "ctb"
+    )
     )
 Description: An R data package providing offline access to public data from 
     the BETYdb database (betydb.org). Includes plant traits, crop yields, 
@@ -17,6 +23,7 @@ BugReports: https://github.com/PecanProject/betydata/issues
 Depends:
     R (>= 4.1.0)
 Suggests:
+    DT,
     dplyr (>= 1.1.0),
     ggplot2,
     jsonlite,
@@ -24,7 +31,8 @@ Suggests:
     maps,
     quarto,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tibble
 VignetteBuilder: quarto
 SystemRequirements: Quarto command line tool (https://github.com/quarto-dev/quarto-cli)
 Encoding: UTF-8

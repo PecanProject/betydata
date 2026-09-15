@@ -1,6 +1,9 @@
 # betydata (development version)
 
+* Improved the website homepage with observation-backed summary metrics, a searchable observation preview, and summaries of the most represented
+  variables and species (#26).
 * Replaced `Infinity` and `-Infinity` variable-bound placeholders with `NA`.
+
 
 # betydata 0.1.0
 

@@ -35,6 +35,7 @@ website:
 format:
   html:
     theme: cosmo
+    css: inst/styles/homepage.css
     toc: true
     self-contained: false
     df-print: paged
