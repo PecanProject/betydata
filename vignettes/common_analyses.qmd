@@ -167,7 +167,10 @@ variables |>
 
 Since all tables are loaded in memory as R data frames, filtering and joining operations run at in-memory speed with no network overhead.
 
+Run this example locally to measure timing on your machine. Timing output is not included in the published guide because it varies between builds.
+
 ```{r}
+#| eval: false
 system.time({
   result <- traitsview |>
     filter(

@@ -1,5 +1,12 @@
 # betydata (development version)
 
+* Added the BETYdb public website, lazy-loaded static data explorer, validated
+  public observation CSV, and contribution/citation guidance (#15). Homepage
+  summary design builds on the contribution in PR #33.
+* Preserved database IDs larger than 32-bit integers when preparing traitsview;
+  restored twelve missing ID values across three observations without changing
+  measurements or source CSVs.
+
 * Replaced `Infinity` and `-Infinity` variable-bound placeholders with `NA`.
 
 # betydata 0.1.0

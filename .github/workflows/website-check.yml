@@ -1,0 +1,58 @@
+name: Verify BETYdb website
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  website:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      R_LIBS_USER: ${{ github.workspace }}/.website-r-library
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: local::.
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: '1.10.19'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install checkout and verify public data
+        run: |
+          mkdir -p "$R_LIBS_USER"
+          R CMD INSTALL --library="$R_LIBS_USER" .
+          Rscript -e 'testthat::test_local()'
+      - name: Install locked browser test dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Render and verify
+        run: |
+          npm test
+          quarto render --execute
+          npm run check:site
+          Rscript scripts/test-site-freshness.R
+          python3 scripts/check-reproducibility.py
+          npm run test:browser
+      - name: Upload reviewable site and test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: betydb-website-review
+          path: |
+            _site/
+            playwright-report/
+            test-results/
+          retention-days: 14

@@ -18,14 +18,15 @@ log_info("Building betydata package data objects...")
 # Create output directories
 dir.create("data", showWarnings = FALSE)
 
-# Column type specifications for stable parsing
+# Column type specifications for stable parsing. Database IDs can exceed the
+# 32-bit integer limit; doubles preserve integer IDs exactly through 2^53 - 1.
 traitsview_cols <- cols(
   checked = col_integer(),
   result_type = col_character(),
-  id = col_integer(),
-  citation_id = col_integer(),
-  site_id = col_integer(),
-  treatment_id = col_integer(),
+  id = col_double(),
+  citation_id = col_double(),
+  site_id = col_double(),
+  treatment_id = col_double(),
   sitename = col_character(),
   city = col_character(),
   lat = col_double(),
@@ -34,8 +35,8 @@ traitsview_cols <- cols(
   commonname = col_character(),
 
   genus = col_character(),
-  species_id = col_integer(),
-  cultivar_id = col_integer(),
+  species_id = col_double(),
+  cultivar_id = col_double(),
   author = col_character(),
   citation_year = col_integer(),
   treatment = col_character(),

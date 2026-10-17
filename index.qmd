@@ -1,75 +1,110 @@
 ---
-title: "betydata"
-subtitle: "Public Data from the BETYdb Database"
+title: "BETYdb"
+pagetitle: "BETYdb — plant traits & crop yields"
+title-block-banner: false
+page-layout: full
+toc: false
+execute:
+  freeze: false
 ---
 
+::: {.home-hero}
+::: {.eyebrow}
+Biofuel Ecophysiological Traits and Yields database
+:::
+
+# Plant data.<br>Grounded in research. {.hero-title}
+
+::: {.hero-intro}
+Explore measurements of plant traits, crop yields, and ecosystem services, gathered from published research. Find evidence for ecological analyses, bioenergy research, and ecosystem models.
+:::
+
+```{=html}
+<form class="home-search" action="search.html" method="get" role="search" aria-label="Search BETYdb data">
+  <label for="home-query">What are you researching?</label>
+  <div class="search-input-row">
+    <input id="home-query" name="query" type="search" placeholder="A species, variable, or author" required aria-describedby="home-query-help">
+    <button type="submit">Search data <span aria-hidden="true">→</span></button>
+  </div>
+  <p id="home-query-help">Try photosynthesis, Panicum, or a citation author. Refine by species and variable in the explorer.</p>
+</form>
+```
+:::
+
+## A shared resource for plant science {.section-heading}
+
+These counts describe observations in this public snapshot, rather than the full reference catalogs. Each observation is identified by its source table and record ID.
+
 ```{r}
 #| echo: false
-library(betydata)
-library(dplyr)
+#| results: asis
+summary <- jsonlite::read_json("site-data/summary.json", simplifyVector = TRUE)
+labels <- c(observations = "Observations", variables = "Measured variables",
+            species = "Represented species", sites = "Research sites",
+            sources = "Sources")
+cat('<dl class="summary-grid" aria-label="Public dataset summary">')
+for (key in names(labels)) {
+  stopifnot(is.numeric(summary[[key]]), length(summary[[key]]) == 1L,
+            !is.na(summary[[key]]), summary[[key]] >= 0)
+  cat(sprintf('<div class="summary-card"><dt>%s</dt><dd data-metric="%s">%s</dd></div>',
+              labels[[key]], key, format(summary[[key]], big.mark = ",", scientific = FALSE, trim = TRUE)))
+}
+cat('</dl>')
 ```
 
-**betydata** is an R data package providing offline access to public data from [BETYdb](https://betydb.org) (Biofuel Ecophysiological Traits and Yields database). It enables reproducible analyses of plant traits, crop yields, and supporting metadata without requiring database connectivity.
+## Your next question starts here {.section-heading}
 
-## At a Glance
+::: {.action-grid}
+::: {.action-card}
+### [Access data](access.qmd)
 
-```{r}
-#| echo: false
-#| label: tbl-overview
-#| tbl-cap: "Dataset summary"
-tibble::tibble(
-  Metric = c(
-    "Total observations", "Unique traits", "Plant species",
-    "Research sites", "Literature citations", "Tables"
-  ),
-  Value = c(
-    format(nrow(traitsview), big.mark = ","),
-    n_distinct(traitsview$trait),
-    format(nrow(species), big.mark = ","),
-    nrow(sites),
-    nrow(citations),
-    16
-  )
-) |> knitr::kable()
+Choose a CSV download or the `betydata` R package for reproducible work.
+:::
+::: {.action-card}
+### [Explore data](search.qmd)
+
+Search observations and variable definitions, with species and author filters.
+:::
+::: {.action-card}
+### [Download data](site-data/observations.csv)
+
+Get the complete public observation snapshot as a CSV, including metadata.
+:::
+::: {.action-card}
+### [Add data](contribute.qmd)
+
+Learn how to contribute measurements and the context needed to use them.
+:::
+::: {.action-card}
+### [Use the R package](vignettes/getting_started.qmd)
+
+Install `betydata` and work offline with observations and supporting tables.
+:::
+::: {.action-card}
+### [Report corrections](https://github.com/PecanProject/betydata/issues/new?template=data_correction.md)
+
+Help improve a record. Include its source table, ID, and supporting evidence.
+:::
+:::
+
+::: {.research-note}
+## Know the data behind the result
+
+This snapshot includes public records and excludes records flagged as failing quality control. Unchecked records remain available, so review quality flags, units, source citations, and study context before analysis. [Read the data-use guidance](about.qmd#data-use).
+:::
+
+## Built through collaboration {.section-heading}
+
+BETYdb grew from research supported by the Energy Biosciences Institute and its founding partners. These original graphics acknowledge that historical support; they do not imply current sponsorship.
+
+```{=html}
+<div class="sponsor-strip" aria-label="Historical sponsors and partners">
+  <img src="site-assets/images/logo-ebi.png" alt="Energy Biosciences Institute" width="180" height="70" loading="lazy">
+  <img src="site-assets/images/logo-illinois.png" alt="University of Illinois" width="150" height="70" loading="lazy">
+  <img src="site-assets/images/logo-berkeley.png" alt="University of California, Berkeley" width="150" height="70" loading="lazy">
+  <img src="site-assets/images/logo-lbl.png" alt="Lawrence Berkeley National Laboratory" width="150" height="70" loading="lazy">
+  <img src="site-assets/images/logo-bp.png" alt="BP" width="90" height="70" loading="lazy">
+</div>
 ```
 
-## Installation
-
-```r
-# install.packages("remotes")
-remotes::install_github("PecanProject/betydata")
-```
-
-## Quick Start
-
-```{r}
-library(betydata)
-library(dplyr)
-
-# The primary table -- key columns first, IDs last
-traitsview
-
-# Bioenergy crop observations
-bioenergy_genera <- c("Miscanthus", "Panicum", "Populus", "Salix", "Saccharum")
-traitsview |>
-  filter(genus %in% bioenergy_genera) |>
-  count(genus, sort = TRUE)
-```
-
-## Guides
-
-| Guide | Description |
-|-------|-------------|
-| [Getting Started](vignettes/getting_started.qmd) | Package overview, data model, and key concepts |
-| [Common Analyses](vignettes/common_analyses.qmd) | Practical analysis patterns with dplyr |
-| [PFTs & Priors](vignettes/pfts-priors.qmd) | Plant Functional Types and Bayesian prior distributions |
-| [Manuscript Reproduction](vignettes/manuscript.qmd) | Reproduce key analyses from LeBauer et al. (2018) |
-
-## Data License
-
-Data: [ODC-By-1.0](https://opendatacommons.org/licenses/by/1-0/)
-Code: [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause)
-
-## Citation
-
-LeBauer, D. S., et al. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. *GCB Bioenergy*. [doi:10.1111/gcbb.12420](https://doi.org/10.1111/gcbb.12420)
+[About BETYdb, citation, and attribution](about.qmd)

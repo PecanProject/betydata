@@ -1,0 +1,47 @@
+---
+title: "Explore the data"
+description: "Search public BETYdb observations and variable definitions."
+toc: false
+html-table-processing: none
+---
+
+Find measurements by author, variable, description, or species. Searches use literal words, ignoring case. Combine a concept such as **yield** with species **Panicum** or **switchgrass**.
+
+```{=html}
+<form id="data-search" class="search-panel" method="get" action="search.html" aria-label="Search BETYdb data">
+  <label for="query">Keywords</label>
+  <div class="search-line"><input id="query" name="query" type="search" placeholder="Try photosynthesis, yield, or an author" aria-describedby="search-help"><button type="submit">Search data</button></div>
+  <div class="search-filters">
+    <div><label for="variable">Variable name or description</label><input id="variable" name="variable" type="search" placeholder="e.g. leaf area"></div>
+    <div><label for="species">Scientific or common species name</label><input id="species" name="species" type="search" placeholder="e.g. switchgrass"></div>
+    <div><label for="author">Author</label><input id="author" name="author" type="search" placeholder="Publication author"></div>
+  </div>
+  <p id="search-help">All words and active filters must match. Results appear only after submitting a keyword or filter.</p>
+</form>
+<p id="search-status" role="status" aria-live="polite" aria-atomic="true">Enter a keyword or at least one filter to search.</p>
+<button id="search-retry" type="button" hidden>Retry search</button>
+<noscript><p>Interactive search requires JavaScript. You can still download the complete public observation CSV below and use the R guides.</p></noscript>
+<section id="search-results" hidden aria-label="Search results">
+  <h2>Observations <span id="observation-total" class="result-count"></span></h2>
+  <p id="observation-empty" hidden>No observations match these filters. Try a broader term or remove a filter. Matching variable definitions may still appear below.</p>
+  <div class="table-scroll" role="region" aria-label="Observation results" tabindex="0">
+    <table id="observations"><caption>Public observations; record links open the correction issue form.</caption><thead><tr><th scope="col">Variable</th><th scope="col">Value</th><th scope="col">Units</th><th scope="col">Scientific name</th><th scope="col">Common name</th><th scope="col">Author</th><th scope="col">Citation year</th><th scope="col">Site</th><th scope="col">Quality</th><th scope="col">Record</th></tr></thead><tbody id="observation-body"></tbody></table>
+  </div>
+  <nav class="result-pager" aria-label="Observation pages"><button id="observation-previous" type="button">Previous observations</button><span id="observation-page" tabindex="-1"></span><button id="observation-next" type="button">Next observations</button></nav>
+  <h2>Variable definitions <span id="variable-total" class="result-count"></span></h2>
+  <p>Definitions match keywords and the variable filter against their own name and description. Species and author filters change observation counts, but do not hide matching definitions. A zero means no observations match the current search for that name.</p>
+  <p>Observations identify variable names, not catalog IDs. Definitions sharing a name share the same count; these counts cannot be attributed to individual IDs or added together.</p>
+  <p id="variable-empty" hidden>No variable definitions match these keywords and variable filters. Authors and species are searched in observations above.</p>
+  <div class="table-scroll" role="region" aria-label="Variable definitions" tabindex="0">
+    <table id="definitions"><caption>Original catalog IDs with name-level observation counts.</caption><thead><tr><th scope="col">Catalog ID</th><th scope="col">Variable</th><th scope="col">Description</th><th scope="col">Units</th><th scope="col">Matching observations with this variable name</th></tr></thead><tbody id="variable-body"></tbody></table>
+  </div>
+  <nav class="result-pager" aria-label="Variable definition pages"><button id="variable-previous" type="button">Previous definitions</button><span id="variable-page" tabindex="-1"></span><button id="variable-next" type="button">Next definitions</button></nav>
+</section>
+<script type="module" src="site-assets/js/search.js"></script>
+```
+
+## Download the full snapshot
+
+[Download all public observations (CSV)](site-data/observations.csv){.download-link download="observations.csv"} · [Data access and quality guide](access.qmd) · [Use the R package](vignettes/getting_started.qmd)
+
+The CSV includes every public observation in this snapshot, regardless of your search or the current page. Keyword and variable searches include catalog descriptions associated by exact variable name; a catalog match does not establish which catalog ID an observation belongs to.

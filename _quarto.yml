@@ -1,43 +1,73 @@
 project:
   type: website
   output-dir: _site
+  pre-render:
+    - Rscript scripts/build-search-index.R
+  resources:
+    - site-data/
+    - site-assets/
   preview:
     watch-inputs: true
   render:
     - index.qmd
+    - search.qmd
+    - access.qmd
+    - contribute.qmd
+    - about.qmd
     - vignettes/*.qmd
 
 website:
-  title: "betydata"
-  search: true
-  sidebar:
-    style: docked
-    collapse-level: 1
-    contents:
-      - href: index.qmd
-        text: Home
-      - section: Guides
-        contents:
+  title: "BETYdb"
+  description: "Public plant trait and crop yield data for ecological research."
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    background: "#173f35"
+    foreground: "#ffffff"
+    left:
+      - href: search.qmd
+        text: Explore
+      - href: access.qmd
+        text: Access & download
+      - href: contribute.qmd
+        text: Add data
+      - text: R guides
+        menu:
           - href: vignettes/getting_started.qmd
-            text: Getting Started
+            text: Getting started
           - href: vignettes/common_analyses.qmd
-            text: Common Analyses
-      - section: Advanced
-        contents:
+            text: Common analyses
           - href: vignettes/pfts-priors.qmd
-            text: PFTs & Priors
+            text: PFTs & priors
           - href: vignettes/manuscript.qmd
-            text: Manuscript Reproduction
-    tools:
+            text: Manuscript reproduction
+      - href: about.qmd
+        text: About & citation
+    right:
       - icon: github
         href: https://github.com/PecanProject/betydata
+        aria-label: BETYdb source on GitHub
+  page-footer:
+    left: "BETYdb · Plant traits, yields, and the research behind them."
+    right:
+      - text: License & citation
+        href: about.qmd
+      - text: Report corrections
+        href: https://github.com/PecanProject/betydata/issues/new?template=data_correction.md
 
 format:
   html:
     theme: cosmo
+    css: site-assets/css/site.css
     toc: true
     self-contained: false
     df-print: paged
+    lang: en
+
+language:
+  search-text-placeholder: "Search documentation"
+  search-text-no-results: "No documentation results"
 
 execute:
   echo: true
@@ -45,5 +75,3 @@ execute:
   message: false
   freeze: auto
 
-author: "David LeBauer and Akash B V"
-date: today

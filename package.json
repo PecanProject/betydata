@@ -1,0 +1,14 @@
+{
+  "name": "betydb-website-checks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/site/search-core.test.js",
+    "test:browser": "playwright test",
+    "check:site": "node scripts/check-site.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@axe-core/playwright": "4.14.0"
+  }
+}

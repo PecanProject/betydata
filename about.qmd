@@ -1,0 +1,40 @@
+---
+title: "About BETYdb"
+subtitle: "Plant traits, crop yields, and the evidence behind them."
+---
+
+BETYdb—the Biofuel Ecophysiological Traits and Yields database—collects plant trait, crop yield, and ecosystem service measurements with their species, sites, treatments, and literature sources. Researchers use these measurements for bioenergy studies, ecological synthesis, and ecosystem model parameterization.
+
+This website publishes the public snapshot distributed by the **`betydata`** R package. [Browse the data](search.qmd), [download the observations](access.qmd), or [use R](vignettes/getting_started.qmd) for reproducible offline analysis.
+
+## Citation
+
+If you use the dataset, cite BETYdb and the original studies underlying the records you analyze:
+
+LeBauer, D. S., Kooper, R., Mulrooney, P., Rohde, S., Wang, D., Long, S. P., and Dietze, M. C. (2018). BETYdb: a yield, trait, and ecosystem service database applied to second-generation bioenergy feedstock production. *GCB Bioenergy*, 10(1), 61–71. [doi:10.1111/gcbb.12420](https://doi.org/10.1111/gcbb.12420).
+
+For the R package, use `citation("betydata")` and record your installed version. The repository's [machine-readable citation](https://github.com/PecanProject/betydata/blob/main/CITATION.cff) provides additional bibliographic information.
+
+## License and terms of use {#data-use}
+
+The data are provided under the [Open Data Commons Attribution License 1.0 (ODC-By)](https://opendatacommons.org/licenses/by/1-0/). The package code uses the [BSD 3-Clause license](https://opensource.org/license/bsd-3-clause). Follow those licenses' attribution and other applicable conditions; this page adds no new license terms.
+
+Public availability does not mean that every observation has been independently verified. Records flagged as failing quality control are excluded; unchecked records remain. Check `checked`, units, study context, and source publications when deciding whether observations are suitable for your analysis. Treat `(result_type, id)` as the observation identifier.
+
+The website is a versioned snapshot, not a live query service. Retain the data file used in your work, record the package version when using R, and [report corrections](contribute.qmd#report-a-correction) with supporting evidence.
+
+## Historical support and design attribution
+
+The original BETYdb site acknowledged the Energy Biosciences Institute, University of Illinois, University of California Berkeley, Lawrence Berkeley National Laboratory, and BP. The homepage preserves their original graphics as historical attribution, not as a statement of current sponsorship or endorsement. Logos remain the marks of their respective owners.
+
+Graphics are copied from the [legacy BETYdb repository at a fixed revision](https://github.com/PecanProject/bety/tree/822c17a99d997db3698223f68ed372412f5dd8fd/app/assets/images); see [asset provenance](site-assets/ATTRIBUTION.md).
+
+The observation-based homepage summary follows the approach proposed in [PR #33](https://github.com/PecanProject/betydata/pull/33). This website change consolidates that work into one summary implementation and separates the full data explorer from the homepage.
+
+## Project and documentation
+
+- [Source code and issue tracker](https://github.com/PecanProject/betydata)
+- [Data-entry guidance](https://pecanproject.github.io/bety-documentation/dataentry/)
+- [Legacy technical documentation](https://pecanproject.github.io/bety-documentation/technical/)
+- [Website and service migration: issue #16](https://github.com/PecanProject/betydata/issues/16)
+- [Reusable documentation migration: issue #17](https://github.com/PecanProject/betydata/issues/17)

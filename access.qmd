@@ -1,0 +1,38 @@
+---
+title: "Access & download"
+subtitle: "A public snapshot. Two ways to work with it."
+---
+
+BETYdb brings together plant trait measurements, crop yields, and their research context. Use the browser explorer to find relevant records, then download the complete snapshot for analysis.
+
+## Download the observations {#download}
+
+[Download the complete public observation CSV](site-data/observations.csv){.primary-link download="observations.csv"}
+
+The CSV includes **every public observation in this packaged snapshot**, not just the current search results. It retains the package's observation columns, including units, species, site and citation metadata, quality flags, and source identifiers. It is generated from the validated packaged data at website build time.
+
+Each row's unique key is **`(result_type, id)`**. A trait and a yield may have the same numeric ID. Only public records (`access_level = 4`) are included; failed quality-control records (`checked < 0`) are excluded. Missing quality flags are represented as unchecked (`checked = 0`).
+
+The snapshot is not a live database feed. Preserve the downloaded file with your analysis and cite the original studies as well as BETYdb. [Read the license, citation, and data-use guidance](about.qmd#data-use).
+
+## Explore before downloading
+
+[Open the data explorer](search.qmd){.primary-link}
+
+Search by author, variable name or description, and species scientific or common name. Combine filters to narrow the observations. The explorer also searches variable definitions, including definitions with no matching observations in this snapshot.
+
+When several variable definitions share a name, counts are **name-level counts** shared across those definitions. They cannot be attributed to a particular catalog ID or added together.
+
+## Work offline with R
+
+The **`betydata`** R package includes the observation snapshot and supporting reference and relationship tables. It requires no database connection for analysis.
+
+[Install the package and get started](vignettes/getting_started.qmd){.primary-link}
+
+- [Common analyses](vignettes/common_analyses.qmd): filtering, summarizing, and working with study metadata.
+- [Plant functional types and priors](vignettes/pfts-priors.qmd): connecting observations to ecosystem modeling.
+- [Manuscript reproduction](vignettes/manuscript.qmd): examples from the BETYdb paper.
+
+## Existing data-access services
+
+This website provides static downloads and browser search. It does not provide a database query API. Existing legacy services and machine-client migration are being tracked separately in [issue #16](https://github.com/PecanProject/betydata/issues/16). An HTML documentation page is not a replacement for an API response.

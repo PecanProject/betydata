@@ -1,0 +1,29 @@
+---
+title: "Contribute to BETYdb"
+subtitle: "Make the evidence more useful for everyone."
+---
+
+## Add data
+
+Start with the [BETYdb data-entry guide](https://pecanproject.github.io/bety-documentation/dataentry/). It describes preparing measurements, citations, species, sites, treatments, and units for entry. Follow the existing review and submission procedures in that guide.
+
+This website is a static public snapshot and cannot accept uploads or create database records. Account-based data entry remains part of the legacy BETYdb service while its future is resolved in [issue #16](https://github.com/PecanProject/betydata/issues/16).
+
+If you are unsure how to contribute a dataset, [open a contribution question](https://github.com/PecanProject/betydata/issues/new) describing the type of data and its source. Do not attach restricted records or personal information.
+
+## Report a correction
+
+[Open the data-correction template](https://github.com/PecanProject/betydata/issues/new?template=data_correction.md){.primary-link}
+
+Include:
+
+- The record's **`result_type` and `id`**. Numeric IDs alone are not unique across traits and yields.
+- The current value and proposed correction, including units.
+- The source publication and the evidence supporting your correction.
+- The downloaded snapshot or package version you used.
+
+You can find identifiers in the explorer and the complete observation CSV. Corrections are reviewed; submitting an issue does not automatically change the published data.
+
+## Improve the tools and documentation
+
+The website and R package are maintained in [PecanProject/betydata](https://github.com/PecanProject/betydata). Report reproducible problems with the page or package version, steps to reproduce, and expected behavior. Reusable legacy documentation is being migrated under [issue #17](https://github.com/PecanProject/betydata/issues/17).

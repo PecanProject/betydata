@@ -25,6 +25,17 @@ The `betydata` package provides offline access to public data from [BETYdb](http
 
 A **trait** is a measurable characteristic of a plant -- for example, Specific Leaf Area (SLA, m2/kg), maximum carboxylation rate (Vcmax, umol/m2/s), or leaf nitrogen content (%). A **yield** is a measure of crop production per unit area (typically Mg/ha). Together, traits and yields form the foundation of ecosystem model parameterization and agricultural research.
 
+## Installation
+
+Install the current package from GitHub:
+
+```r
+# install.packages("remotes")
+remotes::install_github("PecanProject/betydata")
+```
+
+The installed package includes the public data snapshot, so subsequent analyses can run offline. Record `packageVersion("betydata")` alongside your results. For available data formats, see the [repository documentation](https://github.com/PecanProject/betydata#data-formats).
+
 ## Loading the Package
 
 ```{r}
